@@ -23,19 +23,47 @@ INVOICE_STATUSES = [
     ('4', _('тестове заняття')),
 ]
 
+TEACHER_STATUSES = [
+    ('1', _('активний')),
+    ('2', _('відпустка')),
+    ('3', _('неактивний')),
+]
+
+INVOICE_RECEIVERS = [
+    ('1', 'Школа'),
+    ('2', 'Вчитель'),
+]
+
 
 class Subject(models.Model):
-    name = models.CharField(max_length=100)
-    lessons_duration = models.DurationField(blank=True, null=True)
+    class Meta:
+        verbose_name = 'Предмети'
+        verbose_name_plural = 'Предмети'
+
+    name = models.CharField(
+        'Назва предмету',
+        max_length=100
+    )
+    lessons_duration = models.DurationField(
+        'Тривалість заняття',
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return self.name
 
 
 class ContactMixin(models.Model):
-    first_name = models.CharField(max_length=50, blank=False)
-    last_name = models.CharField(max_length=100, blank=False)
-    phone_number = models.CharField(max_length=13, blank=False)  # +380995588779
+    first_name = models.CharField(
+        'Імʼя',
+        max_length=50, 
+        blank=False
+    )
+    last_name = models.CharField(
+        'Прізвище', max_length=100, blank=False)
+    phone_number = models.CharField(
+        'Номер телефону', max_length=13, blank=False)  # +380995588779
     email = models.CharField(max_length=150, blank=True, null=True)
     date_created = models.DateTimeField(auto_now=True)
 
@@ -47,27 +75,54 @@ class ContactMixin(models.Model):
 
 
 class Teacher(ContactMixin):
-    date_release = models.DateTimeField(blank=True, null=True)
-    subject = models.ManyToManyField(Subject)
+    class Meta:
+        verbose_name = 'Викладачі'
+        verbose_name_plural = 'Викладачі'
+
+    status = models.CharField(
+        'Статус',
+        max_length=2,
+        choices=TEACHER_STATUSES,
+        default=TEACHER_STATUSES[0][0],
+    )
+    date_release = models.DateTimeField(
+        'Дата звільнення', blank=True, null=True)
+    subjects = models.ManyToManyField(
+        Subject, verbose_name='Предмети', blank=True, null=True)
 
 
 class Student(ContactMixin):
-    date_test_lessons = models.DateTimeField(default=now)
-    date_start_studying = models.DateTimeField(blank=True, null=True)
-    parent_phone = models.CharField(max_length=13, blank=True, null=True)
-    parent_first_name = models.CharField(max_length=50, blank=True, null=True)
-    parent_last_name = models.CharField(max_length=100, blank=True, null=True)
+    class Meta:
+        verbose_name = 'Учні'
+        verbose_name_plural = 'Учні'
+
+    date_test_lessons = models.DateTimeField(
+        'Дата тестового заняття', default=now)
+    date_start_studying = models.DateTimeField(
+        'Дата старту навчання', blank=True, null=True)
+    parent_phone = models.CharField(
+        'Номер телефону батьків', max_length=13, blank=True, null=True)
+    parent_first_name = models.CharField(
+        'Імʼя одного з батьків', max_length=50, blank=True, null=True)
+    parent_last_name = models.CharField(
+        'Прізвище одного з батьків', max_length=100, blank=True, null=True)
 
 
 class ClassRoom(models.Model):
-    name = models.CharField(max_length=100)
-    places_count = models.IntegerField(blank=True, null=True, default=None)
+    class Meta:
+        verbose_name = 'Аудиторії'
+        verbose_name_plural = 'Аудиторії'
+
+    name = models.CharField('Назва аудиторії', max_length=100)
+    places_count = models.IntegerField(
+        'К-сть місць', blank=True, null=True, default=None)
     room_type = models.CharField(
+        'Тип аудиторії',
         max_length=2,
         choices=CLASS_ROOM_TYPES,
         default=GROUP,
     )
-    description = models.TextField(max_length=500, blank=True)
+    description = models.TextField('Додатково', max_length=500, blank=True)
 
     def __str__(self):
         return f"Аудиторія: {self.name}, " \
@@ -81,25 +136,50 @@ class ClassRoom(models.Model):
 
 
 class Group(models.Model):
-    name = models.CharField(max_length=150)
-    subject = models.ForeignKey(Subject, on_delete=models.DO_NOTHING)
-    age_from = models.IntegerField(default=0)
+    class Meta:
+        verbose_name = 'Групи'
+        verbose_name_plural = 'Групи'
 
-    teacher = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
-    students = models.ManyToManyField(Student)
+    name = models.CharField('Назва групи', max_length=150)
+    subject = models.ForeignKey(
+        Subject,
+        on_delete=models.DO_NOTHING,
+        verbose_name='Предмет',
+        blank=True,
+        null=True,
+    )
+    age_from = models.IntegerField('Вік з', default=0)
+
+    teacher = models.ForeignKey(
+        Teacher,
+        on_delete=models.DO_NOTHING,
+        verbose_name='Викладач',
+        blank=True,
+        null=True,
+    )
+    students = models.ManyToManyField(
+        Student, verbose_name='Учні', blank=True, null=True)
 
     def __str__(self):
-        return f"{self.name}, Вік: {self.age_from}+, {self.subject.name}"
+        return f"{self.name}, Вік: {self.age_from}+"
 
 
 class Lessons(models.Model):
-    class_room = models.ForeignKey(ClassRoom, on_delete=models.DO_NOTHING)
-    date = models.DateField()
-    time_start = models.TimeField()
-    time_end = models.TimeField()
-    lessons_type = models.CharField(max_length=2, choices=LESSONS_TYPES)
-    subject = models.ForeignKey(Subject, on_delete=models.DO_NOTHING)
-    teacher = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING)
+    class Meta:
+        verbose_name = 'Заняття'
+        verbose_name_plural = 'Заняття'
+
+    class_room = models.ForeignKey(
+        ClassRoom, on_delete=models.DO_NOTHING, verbose_name='Аудиторія')
+    date = models.DateField('Дата заняття')
+    time_start = models.TimeField('Час початку')
+    time_end = models.TimeField('Час закінчення')
+    lessons_type = models.CharField(
+        'Тип заняття', max_length=2, choices=LESSONS_TYPES)
+    subject = models.ForeignKey(
+        Subject, on_delete=models.DO_NOTHING, verbose_name='Предмет')
+    teacher = models.ForeignKey(
+        Teacher, on_delete=models.DO_NOTHING, verbose_name='Викладач')
 
     students = models.ManyToManyField(Student)
 
@@ -108,28 +188,51 @@ class Lessons(models.Model):
 
 
 class Service(models.Model):
-    name = models.CharField(max_length=50)
-    price = models.IntegerField()
-    lessons_count = models.IntegerField(blank=True, null=True)
-    currency = models.CharField(max_length=3, default='UAH')
+    class Meta:
+        verbose_name = 'Послуги'
+        verbose_name_plural = 'Послуги'
+
+    name = models.CharField('Назва послуги', max_length=50)
+    price = models.IntegerField('Ціна',)
+    lessons_count = models.IntegerField('К-сть занять', blank=True, null=True)
+    currency = models.CharField('Валюта', max_length=3, default='UAH')
 
     def __str__(self):
         return self.name
 
 
 class Invoice(models.Model):
-    number = models.CharField(unique=True, db_index=True, max_length=100)
-    student = models.ForeignKey(Student, on_delete=models.DO_NOTHING)
-    service = models.ForeignKey(Service, on_delete=models.DO_NOTHING)
-    receiver = models.ForeignKey(
+    class Meta:
+        verbose_name = 'Рахунки'
+        verbose_name_plural = 'Рахунки'
+
+    number = models.CharField(
+        'Унікальний номер рахунку', unique=True, db_index=True, max_length=100)
+    student = models.ForeignKey(
+        Student, on_delete=models.DO_NOTHING, verbose_name='Студент')
+    service = models.ForeignKey(
+        Service, on_delete=models.DO_NOTHING, verbose_name='Послуга')
+    receiver = models.CharField(
+        'Отримувач',
+        max_length=2,
+        choices=INVOICE_RECEIVERS,
+        default=INVOICE_RECEIVERS[0][0],
+        blank=True,
+        null=True,
+    )
+    receiver_teacher = models.ForeignKey(
         Teacher,
         on_delete=models.DO_NOTHING,
         blank=True,
-        null=True
+        null=True,
+        verbose_name='Вчитель',
     )
     date_created = models.DateTimeField(auto_now=True)
-    date_when_should_pay = models.DateField()
-    status = models.CharField(max_length=2, choices=INVOICE_STATUSES)
+    date_when_should_pay = models.DateField('Дата до якої здійснити оплату')
+    status = models.CharField(
+        'Статус рахунку', max_length=2, choices=INVOICE_STATUSES)
 
     def __str__(self):
-        return f"{self.number}, Статус: {self.status}, Учень: {self.student}"
+        return f"{self.id}, {self.number}, " \
+               f"Статус: {self.status}, " \
+               f"Учень: {self.student}"
