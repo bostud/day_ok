@@ -29,6 +29,11 @@ TEACHER_STATUSES = [
     ('3', _('неактивний')),
 ]
 
+STUDENT_STATUSES = [
+    ('1', _('активний')),
+    ('2', _('неактивний')),
+]
+
 INVOICE_RECEIVERS = [
     ('1', 'Школа'),
     ('2', 'Вчитель'),
@@ -91,15 +96,39 @@ class Teacher(ContactMixin):
         Subject, verbose_name='Предмети', blank=True, null=True)
 
 
+class Source(models.Model):
+    class Meta:
+        verbose_name = 'Джерела'
+        verbose_name_plural = 'Джерела'
+
+    name = models.CharField('Назва', max_length=100)
+    date_created = models.DateTimeField(auto_now=True)
+
+
 class Student(ContactMixin):
     class Meta:
         verbose_name = 'Учні'
         verbose_name_plural = 'Учні'
 
+    source = models.ForeignKey(
+        Source,
+        on_delete=models.DO_NOTHING,
+        verbose_name='Звідки дізнались про нашу школу?',
+        blank=True,
+        null=True,
+    )
+    status = models.CharField(
+        'Статус',
+        max_length=2,
+        choices=STUDENT_STATUSES,
+        default=STUDENT_STATUSES[0][0],
+    )
     date_test_lessons = models.DateTimeField(
         'Дата тестового заняття', default=now)
     date_start_studying = models.DateTimeField(
         'Дата старту навчання', blank=True, null=True)
+    date_end_studying = models.DateTimeField(
+        'Дата закінчення навчання', blank=True, null=True)
     parent_phone = models.CharField(
         'Номер телефону батьків', max_length=13, blank=True, null=True)
     parent_first_name = models.CharField(
@@ -163,6 +192,20 @@ class Group(models.Model):
     def __str__(self):
         return f"{self.name}, Вік: {self.age_from}+"
 
+    def students_count(self):
+        q = (
+            Group.objects.filter(
+                id=self.id
+            ).prefetch_related(
+                'students'
+            ).first()
+        )
+        if q:
+            return q.students.count()
+        return 0
+
+    students_count.short_description = 'К-сть учнів'
+
 
 class Lessons(models.Model):
     class Meta:
@@ -184,7 +227,27 @@ class Lessons(models.Model):
     students = models.ManyToManyField(Student)
 
     def __str__(self):
-        return f"{self.class_room}, {self.date}, {self.lessons_type}"
+        return f"{self.class_room}"
+
+    def format_date(self):
+        return self.date.strftime('%d.%m.%Y')
+
+    def format_time_start(self):
+        return self.time_start.strftime("%H:%M")
+
+    def format_time_end(self):
+        return self.time_end.strftime("%H:%M")
+
+    def duration(self):
+        end_minutes = self.time_end.hour * 60 + self.time_end.minute
+        start_minute = self.time_start.hour * 60 + self.time_start.minute
+
+        return (end_minutes - start_minute) / 60
+
+    format_date.short_description = 'Дата заняття'
+    format_time_start.short_description = 'Час початку'
+    format_time_end.short_description = 'Час закінчення'
+    duration.short_description = 'Тривалість, год.'
 
 
 class Service(models.Model):
