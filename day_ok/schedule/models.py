@@ -280,9 +280,13 @@ class Service(models.Model):
 
 
 def get_new_unique_invoice_number():
-    return f'INVOICE-' \
-           f'{Invoice.objects.last().id + 1}-' \
-           f'{now().strftime("%d%m%Y")}'
+    last = Invoice.objects.last()
+    if not last:
+        last_id = 0
+    else:
+        last_id = last.id
+
+    return f'INVOICE-{last_id + 1}-{now().strftime("%d%m%Y")}'
 
 
 class Invoice(models.Model):
