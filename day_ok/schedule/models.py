@@ -104,6 +104,17 @@ class Source(models.Model):
     name = models.CharField('Назва', max_length=100)
     date_created = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
+    def students_from_source_total(self):
+        q = (
+            Student.objects.filter(source=self)
+        )
+        return q.count()
+
+    students_from_source_total.short_description = 'К-сть учнів'
+
 
 class Student(ContactMixin):
     class Meta:
@@ -193,16 +204,7 @@ class Group(models.Model):
         return f"{self.name}, Вік: {self.age_from}+"
 
     def students_count(self):
-        q = (
-            Group.objects.filter(
-                id=self.id
-            ).prefetch_related(
-                'students'
-            ).first()
-        )
-        if q:
-            return q.students.count()
-        return 0
+        return self.students.count()
 
     students_count.short_description = 'К-сть учнів'
 
@@ -224,7 +226,20 @@ class Lessons(models.Model):
     teacher = models.ForeignKey(
         Teacher, on_delete=models.DO_NOTHING, verbose_name='Викладач')
 
-    students = models.ManyToManyField(Student)
+    student = models.ForeignKey(
+        Student,
+        on_delete=models.DO_NOTHING,
+        verbose_name='Учень',
+        blank=True,
+        null=True,
+    )
+    group = models.ForeignKey(
+        Group,
+        on_delete=models.DO_NOTHING,
+        verbose_name='Група',
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return f"{self.class_room}"
@@ -264,13 +279,24 @@ class Service(models.Model):
         return self.name
 
 
+def get_new_unique_invoice_number():
+    return f'INVOICE-' \
+           f'{Invoice.objects.last().id + 1}-' \
+           f'{now().strftime("%d%m%Y")}'
+
+
 class Invoice(models.Model):
     class Meta:
         verbose_name = 'Рахунки'
         verbose_name_plural = 'Рахунки'
 
     number = models.CharField(
-        'Унікальний номер рахунку', unique=True, db_index=True, max_length=100)
+        'Унікальний номер рахунку',
+        unique=True,
+        db_index=True,
+        max_length=100,
+        default=get_new_unique_invoice_number,
+    )
     student = models.ForeignKey(
         Student, on_delete=models.DO_NOTHING, verbose_name='Студент')
     service = models.ForeignKey(
@@ -280,8 +306,6 @@ class Invoice(models.Model):
         max_length=2,
         choices=INVOICE_RECEIVERS,
         default=INVOICE_RECEIVERS[0][0],
-        blank=True,
-        null=True,
     )
     receiver_teacher = models.ForeignKey(
         Teacher,
@@ -296,6 +320,5 @@ class Invoice(models.Model):
         'Статус рахунку', max_length=2, choices=INVOICE_STATUSES)
 
     def __str__(self):
-        return f"{self.id}, {self.number}, " \
-               f"Статус: {self.status}, " \
-               f"Учень: {self.student}"
+        return f'{self.number}'
+
