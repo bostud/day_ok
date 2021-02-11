@@ -13,12 +13,25 @@ class ServiceAdmin(admin.ModelAdmin):
         'lessons_count',
         'price',
         'currency',
+        'total_invoices',
+        'payed_invoices',
     )
 
     list_editable = (
         'price',
         'lessons_count',
     )
+
+    list_per_page = 10
+
+    def total_invoices(self, rec: Service):
+        return Invoice.objects.filter(service=rec).count()
+
+    def payed_invoices(self, rec: Service):
+        return Invoice.objects.filter(service=rec, status='1').count()
+
+    total_invoices.short_description = 'Всього рахунків'
+    payed_invoices.short_description = 'Оплачених рахунків'
 
 
 class TeacherAdmin(admin.ModelAdmin):
@@ -27,11 +40,21 @@ class TeacherAdmin(admin.ModelAdmin):
         'last_name',
         'phone_number',
         'status',
+        'count_of_subjects',
     )
 
     list_editable = (
         'status',
     )
+
+    list_per_page = 10
+
+    def count_of_subjects(self, rec: Teacher):
+        if rec.subjects:
+            return rec.subjects.count()
+        return 0
+
+    count_of_subjects.short_description = 'К-сть предметів'
 
 
 class StudentAdmin(admin.ModelAdmin):
@@ -47,7 +70,7 @@ class StudentAdmin(admin.ModelAdmin):
         'status',
     )
 
-    list_per_page = 20
+    list_per_page = 10
 
 
 class ClassRoomAdmin(admin.ModelAdmin):
@@ -67,6 +90,8 @@ class GroupAdmin(admin.ModelAdmin):
         'students_count',
     )
 
+    list_per_page = 10
+
 
 class LessonsAdmin(admin.ModelAdmin):
     list_display = (
@@ -80,7 +105,7 @@ class LessonsAdmin(admin.ModelAdmin):
         'duration',
     )
 
-    list_per_page = 20
+    list_per_page = 10
 
 
 class SubjectAdmin(admin.ModelAdmin):
@@ -150,17 +175,15 @@ class InvoiceAdmin(admin.ModelAdmin):
             return (rec.date_when_should_pay - now().date()).days
         return 0
 
-    format_date_created.short_description = 'Дата створення'
-    format_date_when_should_pay.short_description = (
-        'Дата до якої здійснити оплату'
-    )
-
     def status_payed(self, res: Invoice) -> bool:
         return res.status != '2'
 
     status_payed.boolean = True
     status_payed.short_description = 'Оплата'
-
+    format_date_created.short_description = 'Дата створення'
+    format_date_when_should_pay.short_description = (
+        'Дата до якої здійснити оплату'
+    )
     days_left_for_payment.short_description = 'Днів до оплати'
 
 

@@ -70,6 +70,7 @@ class ContactMixin(models.Model):
     phone_number = models.CharField(
         'Номер телефону', max_length=13, blank=False)  # +380995588779
     email = models.CharField(max_length=150, blank=True, null=True)
+    date_of_birth = models.DateField('Дата народження', blank=True, null=True)
     date_created = models.DateTimeField(auto_now=True)
 
     class Meta:
