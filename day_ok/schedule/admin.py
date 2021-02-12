@@ -35,9 +35,10 @@ class ServiceAdmin(admin.ModelAdmin):
 
 
 class TeacherAdmin(admin.ModelAdmin):
+    search_fields = ['last_name', 'first_name']
     list_display = (
-        'first_name',
         'last_name',
+        'first_name',
         'phone_number',
         'status',
         'count_of_subjects',
@@ -49,6 +50,8 @@ class TeacherAdmin(admin.ModelAdmin):
 
     list_per_page = 10
 
+    autocomplete_fields = ['subjects', ]
+
     def count_of_subjects(self, rec: Teacher):
         if rec.subjects:
             return rec.subjects.count()
@@ -58,9 +61,10 @@ class TeacherAdmin(admin.ModelAdmin):
 
 
 class StudentAdmin(admin.ModelAdmin):
+    search_fields = ['last_name', 'first_name']
     list_display = (
-        'first_name',
         'last_name',
+        'first_name',
         'phone_number',
         'status',
         'source',
@@ -109,6 +113,8 @@ class GroupAdmin(admin.ModelAdmin):
         'students_count',
     )
 
+    autocomplete_fields = ['students', 'teacher', 'subject']
+
     list_per_page = 10
 
 
@@ -132,6 +138,8 @@ class SubjectAdmin(admin.ModelAdmin):
         'name',
         'lessons_duration'
     )
+
+    search_fields = ['name', ]
 
 
 class InvoiceStatusFilter(admin.SimpleListFilter):
@@ -174,7 +182,14 @@ class InvoiceAdmin(admin.ModelAdmin):
         'status_payed',
     )
 
-    search_fields = ('^student', '^status', '^service',)
+    autocomplete_fields = ['student', 'receiver_teacher', ]
+
+    search_fields = (
+        'student__last_name',
+        'student__first_name',
+        'status',
+        'service__name',
+    )
     list_filter = (
         InvoiceStatusFilter,
         InvoiceReceiverFilter,
