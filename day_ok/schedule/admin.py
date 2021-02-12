@@ -64,13 +64,32 @@ class StudentAdmin(admin.ModelAdmin):
         'phone_number',
         'status',
         'source',
+        'years_old',
     )
+
+    readonly_fields = ('years_old', )
 
     list_editable = (
         'status',
     )
 
     list_per_page = 10
+
+    def years_old(self, rec: Student):
+        dt_birth = rec.date_of_birth
+        if dt_birth:
+            dt_now = now()
+            years = dt_now.year - dt_birth.year
+            if (
+                dt_now.month >= dt_birth.month and
+                dt_now.day >= dt_birth.day
+            ):
+                return years
+            else:
+                return years - 1
+        return '---'
+
+    years_old.short_description = 'Вік'
 
 
 class ClassRoomAdmin(admin.ModelAdmin):
