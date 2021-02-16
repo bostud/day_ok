@@ -1,4 +1,4 @@
-from typing import Optional, List
+from asgiref.sync import sync_to_async
 from django.shortcuts import loader, render
 from django.http import HttpResponse, HttpRequest
 # Create your views here.
@@ -39,7 +39,7 @@ def lessons_view(request: HttpRequest, *args, **kwargs):
             context['lessons_date_to'] = (
                     date_from + timedelta(days=7)
             ).strftime('%d.%m.%Y')
-            context['selected_class_room'] = (
+            context['selected_class_room'] = sync_to_async(
                 ClassRoom.objects.get(id=class_room).name
             )
             week_days_names = ([

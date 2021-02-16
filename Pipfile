@@ -9,6 +9,7 @@ uvicorn = "*"
 gunicorn = "*"
 uvloop = "*"
 httptools = "*"
+asgiref = "*"
 
 [dev-packages]
 
