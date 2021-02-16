@@ -3,7 +3,7 @@ from django.utils.timezone import now
 # Register your models here.
 from .models import (
     ClassRoom, Service, Teacher, Group, Student, Subject, Invoice, Lessons,
-    Source, INVOICE_STATUSES, INVOICE_RECEIVERS
+    Source, INVOICE_STATUSES, INVOICE_RECEIVERS, StudentPresence, Event,
 )
 
 
@@ -17,10 +17,7 @@ class ServiceAdmin(admin.ModelAdmin):
         'payed_invoices',
     )
 
-    list_editable = (
-        'price',
-        'lessons_count',
-    )
+    search_fields = ['name']
 
     list_per_page = 10
 
@@ -102,6 +99,7 @@ class ClassRoomAdmin(admin.ModelAdmin):
         'places_count',
         'room_type',
     )
+    search_fields = ['name', ]
 
 
 class GroupAdmin(admin.ModelAdmin):
@@ -228,6 +226,44 @@ class SourceAdmin(admin.ModelAdmin):
     )
 
 
+class StudentPresenceAdmin(admin.ModelAdmin):
+    list_display = (
+        'lessons',
+        'student',
+        'is_presence',
+        'date',
+    )
+
+    def date(self, rec: StudentPresence):
+        return rec.lessons.date.strftime('%d.%m.%Y')
+
+    date.short_description = 'Дата заняття'
+
+
+class EventAdmin(admin.ModelAdmin):
+    list_filter = ()
+    list_display = (
+        'name',
+        'class_room',
+        'date_of_event_formated',
+        'time_start',
+        'time_end',
+        'count_of_participants',
+    )
+    autocomplete_fields = ['participants', 'class_room']
+
+    def count_of_participants(self, rec: Event):
+        return rec.participants.count()
+
+    def date_of_event_formated(self, rec: Event):
+        return rec.date_of_event.strftime('%d.%m.%Y')
+
+    date_of_event_formated.short_description = 'Дата заходу'
+    count_of_participants.short_description = 'К-сть учасників'
+
+    list_per_page = 10
+
+
 admin.site.register(ClassRoom, ClassRoomAdmin)
 admin.site.register(Service, ServiceAdmin)
 admin.site.register(Teacher, TeacherAdmin)
@@ -237,3 +273,5 @@ admin.site.register(Subject, SubjectAdmin)
 admin.site.register(Invoice, InvoiceAdmin)
 admin.site.register(Lessons, LessonsAdmin)
 admin.site.register(Source, SourceAdmin)
+admin.site.register(StudentPresence, StudentPresenceAdmin)
+admin.site.register(Event, EventAdmin)

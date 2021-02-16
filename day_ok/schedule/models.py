@@ -94,7 +94,7 @@ class Teacher(ContactMixin):
     date_release = models.DateTimeField(
         'Дата звільнення', blank=True, null=True)
     subjects = models.ManyToManyField(
-        Subject, verbose_name='Предмети', blank=True, null=True)
+        Subject, verbose_name='Предмети', blank=True)
 
 
 class Source(models.Model):
@@ -199,7 +199,7 @@ class Group(models.Model):
         null=True,
     )
     students = models.ManyToManyField(
-        Student, verbose_name='Учні', blank=True, null=True)
+        Student, verbose_name='Учні', blank=True)
 
     def __str__(self):
         return f"{self.name}, Вік: {self.age_from}+"
@@ -327,3 +327,65 @@ class Invoice(models.Model):
     def __str__(self):
         return f'{self.number}'
 
+
+class StudentPresence(models.Model):
+    class Meta:
+        verbose_name = 'Відвідування'
+        verbose_name_plural = 'Відвідування'
+
+    lessons = models.ForeignKey(
+        Lessons, on_delete=models.CASCADE,
+        verbose_name='Заняття',
+    )
+    student = models.ForeignKey(
+        Student,
+        on_delete=models.CASCADE,
+        verbose_name='Учень',
+    )
+    is_presence = models.BooleanField(
+        default=True,
+        verbose_name='Був присутній?',
+    )
+    date_created = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.lessons}/{self.student}"
+
+
+class Event(models.Model):
+    class Meta:
+        verbose_name = 'Заходи'
+        verbose_name_plural = 'Заходи'
+    name = models.CharField(
+        verbose_name='Назва заходу',
+        max_length=150,
+    )
+    date_created = models.DateTimeField(auto_now=True)
+    date_of_event = models.DateField(
+        verbose_name='Дата заходу',
+        default=now,
+    )
+    time_start = models.TimeField(
+        verbose_name='Час початку(не обовʼязково)',
+        blank=True,
+        null=True,
+        default=None,
+    )
+    time_end = models.TimeField(
+        verbose_name='Час закінчення(не обовʼязково)',
+        blank=True,
+        null=True,
+        default=None,
+    )
+    class_room = models.ForeignKey(
+        ClassRoom,
+        on_delete=models.DO_NOTHING,
+        verbose_name='Аудиторія'
+    )
+    participants = models.ManyToManyField(
+        Student,
+        verbose_name='Учасники'
+    )
+
+    def __str__(self):
+        return str(self.name)
