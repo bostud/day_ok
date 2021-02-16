@@ -1,0 +1,84 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+    <script>
+    $(document).ready(function() {
+      $('.datepicker').datepicker();
+    });
+    </script>
+  <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons.css' %}">
+{% endblock %}
+{% block body %}
+    <div class="row text-center" style="background-color: lightgrey">
+        <div>
+            <h3>Графік занять</h3>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-sm-2">
+            <div class="row">
+                <button type="button" class="btn btn-secondary">+ Додати аудиторію</button>
+            </div>
+        </div>
+        <div class="col-sm-2">
+            <div class="row">
+                <button type="button" class="btn btn-secondary">+ Додати заняття</button>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <form class="form-inline" method="POST">
+            {% csrf_token %}
+            {{ form }}
+            <br /><span>&nbsp;&nbsp;&nbsp;</span>
+            <input type="submit" class="btn btn-secondary" value="Показати">
+        </form>
+    </div>
+    <br />
+    {% if total_schedule %}
+        <div class="row">
+            <p>Розклад занять з {{ lessons_date_from }} по {{ lessons_date_to }} для {{ selected_class_room }}</p>
+        </div>
+        <div class="row">
+            {% for day_name, data, date in total_schedule %}
+            <div class="divTable">
+                <div class="headRow">
+                    <div class="headCell" align="center">
+                        <p>{{ day_name }}<br />{{ date }}</p>
+                    </div>
+                </div>
+                {% for lessons in data %}
+                <div class="divRow">
+                    <div class="divCell">
+                        <div id="accordion-{{lessons.id}}">
+                            <div class="card">
+                                <div class="card-header">
+                                  <a class="card-link" data-toggle="collapse" href="#collapse-{{lessons.id}}" aria-expanded="false">
+                                      {{ lessons.class_room.get_room_type_name }}, <br />
+                                      {{ lessons.format_t_start}} - {{ lessons.format_t_end}}
+                                  </a>
+                                </div>
+                                <div id="collapse-{{lessons.id}}" class="collapse show" data-parent="#accordion-{{lessons.id}}">
+                                  <div class="card-body">
+                                    <p>
+                                        {{ lessons.subject }}<br>
+                                        {{ lessons.teacher }}<br>
+                                    </p>
+                                    <a href="set_prevence/{{ lessons.id }}">Проставити присутність</a>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
