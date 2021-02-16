@@ -1,0 +1,26 @@
+.divTable
+{
+    width: 200px;
+    background-color:#eee;
+    border-spacing: 1px;
+}
+
+.divRow
+{
+   display: table-row;
+   width: auto;
+}
+
+.divCell
+{
+    float: left;
+    width: 200px;
+    background-color: #ccc;
+}
+
+.headCell
+{
+    text-align: center;
+    background-color: #343a40!important;
+    color: #999999;
+}

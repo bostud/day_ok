@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'dayok.space',
+    '127.0.0.1',
+    'localhost',
 ]
 
 
@@ -57,7 +59,9 @@ ROOT_URLCONF = 'day_ok.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -121,5 +125,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 STATIC_ROOT = '/var/www/day_ok/static/'
 STATICFILES_ROOT = '/var/www/day_ok/static/'

@@ -167,12 +167,12 @@ class ClassRoom(models.Model):
 
     def __str__(self):
         return f"Аудиторія: {self.name}, " \
-               f"Тип: {self.get_room_type_name(str(self.room_type))}"
+               f"Тип: {self.get_room_type_name}"
 
-    @staticmethod
-    def get_room_type_name(room_type: str):
+    @property
+    def get_room_type_name(self):
         for k, v in CLASS_ROOM_TYPES:
-            if k == room_type:
+            if self.room_type == k:
                 return v
 
 
@@ -264,6 +264,14 @@ class Lessons(models.Model):
     format_time_start.short_description = 'Час початку'
     format_time_end.short_description = 'Час закінчення'
     duration.short_description = 'Тривалість, год.'
+
+    @property
+    def format_t_start(self):
+        return self.format_time_start()
+
+    @property
+    def format_t_end(self):
+        return self.format_time_end()
 
 
 class Service(models.Model):
