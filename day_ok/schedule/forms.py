@@ -1,12 +1,13 @@
-from .models import ClassRoom, Lessons
+from .models import ClassRoom
 from django import forms
 from functools import partial
 DateInput = partial(forms.DateInput, {'class': ''})
 
 
 def get_class_rooms() -> list:
+    cl_r = ClassRoom.objects.all()
     res = []
-    for room in ClassRoom.objects.all():
+    for room in cl_r:
         res.append((room.id, str(room)))
     return res
 
