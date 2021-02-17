@@ -15,8 +15,7 @@ def get_class_rooms() -> list:
 class LessonsForm(forms.Form):
     class_room = forms.ChoiceField(
         label='Виберіть аудиторію',
-        # choices=get_class_rooms(),
-        choices=[],
+        choices=get_class_rooms,
     )
 
     date_from = forms.DateField(

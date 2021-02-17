@@ -59,17 +59,24 @@
                             <div class="card">
                                 <div class="card-header">
                                   <a class="card-link" data-toggle="collapse" href="#collapse-{{lessons.id}}" aria-expanded="false">
-                                      {{ lessons.class_room.get_room_type_name }}, <br />
+                                      {{ lessons.get_lessons_type_name }},
                                       {{ lessons.format_t_start}} - {{ lessons.format_t_end}}
-                                  </a>
+                                  </a><br/>
+                                    <a  class="btn btn-outline-dark btn-sm" role="button" href="lessons/{{lessons.id}}" target="_blank">Редагувати</a>
                                 </div>
                                 <div id="collapse-{{lessons.id}}" class="collapse show" data-parent="#accordion-{{lessons.id}}">
                                   <div class="card-body">
                                     <p>
                                         {{ lessons.subject }}<br>
                                         {{ lessons.teacher }}<br>
+                                        Пристуність: {{ lessons.presence_count }}/{{ lessons.students_count }}
                                     </p>
-                                    <a href="set_prevence/{{ lessons.id }}">Проставити присутність</a>
+                                    {% if lessons.presence_count != lessons.students_count %}
+                                      <a href="all_present/{{ lessons.id }}" target="_blank">Усі присутні</a><br />
+                                      <a href="set_presence/{{ lessons.id }}" target="_blank">Проставити присутність</a>
+                                    {% else %}
+                                      <a href="set_presence/{{ lessons.id }}" target="_blank">Змінити присутність</a>
+                                    {% endif %}
                                   </div>
                                 </div>
                             </div>

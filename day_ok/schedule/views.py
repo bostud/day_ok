@@ -1,13 +1,15 @@
-from asgiref.sync import sync_to_async
 from django.shortcuts import loader, render
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 # Create your views here.
 from .middleware import authenticated
 from datetime import datetime, timedelta
 
 from .forms import LessonsForm
 from .models import ClassRoom
-from .controllers.lessons import get_weekly_class_room_lessons_by_day
+from .controllers.lessons import (
+    get_weekly_class_room_lessons_by_day,
+    all_presence,
+)
 from .utils import get_weekday_number, get_weekday_name
 
 
@@ -39,7 +41,7 @@ def lessons_view(request: HttpRequest, *args, **kwargs):
             context['lessons_date_to'] = (
                     date_from + timedelta(days=7)
             ).strftime('%d.%m.%Y')
-            context['selected_class_room'] = sync_to_async(
+            context['selected_class_room'] = (
                 ClassRoom.objects.get(id=class_room).name
             )
             week_days_names = ([
@@ -52,6 +54,16 @@ def lessons_view(request: HttpRequest, *args, **kwargs):
                 weekly_schedule.values(),
                 weekly_schedule.keys(),
             ))
-            print(context['total_schedule'])
 
     return render(request, 'schedule/lessons.html', context)
+
+
+@authenticated
+def set_presence(request: HttpRequest, lessons_id: int, *args, **kwargs):
+    return HttpResponseRedirect('/schedule/lessons')
+
+
+@authenticated
+def all_present(request: HttpRequest, lessons_id: int, *args, **kwargs):
+    all_presence(lessons_id)
+    return HttpResponseRedirect('/schedule/lessons')

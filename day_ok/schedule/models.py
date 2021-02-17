@@ -260,6 +260,13 @@ class Lessons(models.Model):
 
         return (end_minutes - start_minute) / 60
 
+    @property
+    def get_lessons_type_name(self):
+        for _id, name in LESSONS_TYPES:
+            if self.lessons_type == _id:
+                return name
+        return '(undefined))'
+
     format_date.short_description = 'Дата заняття'
     format_time_start.short_description = 'Час початку'
     format_time_end.short_description = 'Час закінчення'
@@ -340,6 +347,9 @@ class StudentPresence(models.Model):
     class Meta:
         verbose_name = 'Відвідування'
         verbose_name_plural = 'Відвідування'
+        unique_together = [
+            ['lessons', 'student'],
+        ]
 
     lessons = models.ForeignKey(
         Lessons, on_delete=models.CASCADE,
