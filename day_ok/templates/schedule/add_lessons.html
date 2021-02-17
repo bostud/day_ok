@@ -1,0 +1,132 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+    <script>
+    $(document).ready(function() {
+      $('.datepicker').datepicker();
+    });
+    </script>
+  <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons.css' %}">
+{% endblock %}
+{% block body %}
+    <div class="row text-center" style="background-color: lightgrey">
+        <div>
+            <h3>Створити заняття</h3>
+        </div>
+    </div>
+    <br />
+    {% if new_lessons %}
+        <div class="alert alert-success">
+          <strong>Успіх!</strong> Створено {{ new_lessons }} нові(-их) заняття(-ть)
+        </div>
+    {% endif %}
+    <div class="container-fluid">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-sm-4">
+                    <div>
+                        <label for="id_class_room">Аудиторія</label>
+                        <select class="custom-select" id="id_class_room" name="class_room">
+                            <option selected></option>
+                            {% for room_id, room_name in class_rooms %}
+                                <option value="{{ room_id }}">{{ room_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="id_teacher">Викладач</label>
+                        <select class="custom-select" id="id_teacher" name="teacher">
+                            <option selected></option>
+                            {% for id_, name in teachers %}
+                                <option value="{{ id_ }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="id_subjects">Предмет</label>
+                        <select class="custom-select" id="id_subjects" name="subject">
+                            <option selected></option>
+                            {% for id_, name in subjects %}
+                                <option value="{{ id_ }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="id_lessons_type">Тип заняття</label>
+                        <select class="custom-select" id="id_lessons_type" name="lessons_type">
+                            <option selected></option>
+                            {% for id_, name in lessons_types %}
+                                <option value="{{ id_ }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="small">Звернуть увагу!<br />
+                        Якщо тип заняття <mark>груповий</mark> - вказуємо лише <mark>групу</mark><br />
+                        Якщо тип заняття <mark>індивідуальний</mark> - вказуємо лише <mark>учня</mark></span>
+                    </div>
+                    <div>
+                        <label for="id_student">Учень</label>
+
+                        <select class="custom-select" id="id_student" name="student">
+                            <option selected></option>
+                            {% for id_, name in students %}
+                                <option value="{{ id_ }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="id_group">Група</label>
+                        <select class="custom-select" id="id_group" name="group">
+                            <option selected></option>
+                            {% for id_, name in groups %}
+                                <option value="{{ id_ }}">{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div>
+                        <label for="id_time_start">Час початку</label>
+                        <input class="form-control" id="id_time_start" name="time_start" type="time">
+                    </div>
+                    <div>
+                        <label for="id_date_from_valid">Дата з якої почати заняття</label>
+                        <input class="form-control datepicker"
+                               name="date_from_valid"
+                               id="id_date_from_valid"
+                        required>
+                    </div>
+                    <div>
+                        <label for="id_date_util_valid">Дата до якої створити заняття</label>
+                        <input class="form-control datepicker"
+                               name="date_until_valid"
+                               id="id_date_util_valid" required>
+                    </div>
+                    <div>
+                        <label>Дні тижня коли повторюється</label>
+                        {% for id_, name in weekdays %}
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           value="{{ id_ }}"
+                                           name="week_days_for_repeating">{{ name }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-sm-4">
+                    <input type="submit" class="btn btn-secondary form-control" value="Створити">
+                </div>
+            </div>
+        </form>
+    </div>
+    <br />
+{% endblock %}

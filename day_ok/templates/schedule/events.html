@@ -14,7 +14,7 @@
 {% block body %}
     <div class="row text-center" style="background-color: lightgrey">
         <div>
-            <h3>Графік занять</h3>
+            <h3>Графік заходів</h3>
         </div>
     </div>
     <br />
@@ -29,15 +29,15 @@
         <div class="col-sm-1"></div>
         <div class="col-sm-2">
             <div class="row">
-                <a class="btn btn-secondary btn-sm form-control" role="button" href="{% url 'add_lessons' %}">
-                    + Додати заняття
+                <a class="btn btn-secondary btn-sm form-control" role="button" href="{% url 'add_event' %}">
+                    + Додати захід
                 </a>
             </div>
         </div>
     </div>
     <br />
     <div class="row">
-        <form class="form-inline" method="GET" action="{% url 'lessons' %}">
+        <form class="form-inline" method="GET" action="{% url 'events' %}">
             {{ form }}
             <br /><span>&nbsp;&nbsp;&nbsp;</span>
             <input type="submit" class="btn btn-secondary" value="Показати">
@@ -46,7 +46,7 @@
     <br />
     {% if total_schedule %}
         <div class="row">
-            <p>Розклад занять з {{ lessons_date_from }} по {{ lessons_date_to }} для {{ selected_class_room }}</p>
+            <p>Розклад заходів з {{ events_date_from }} по {{ events_date_to }} для {{ selected_class_room_name }}</p>
         </div>
         <div class="row">
             {% for day_name, data, date in total_schedule %}
@@ -56,48 +56,37 @@
                         <p>{{ day_name }}<br />{{ date }}</p>
                     </div>
                 </div>
-                {% for lessons in data %}
+                {% for event in data %}
                 <div class="divRow">
                     <div class="divCell">
-                        <div id="accordion-{{lessons.id}}">
+                        <div id="accordion-{{event.id}}">
                             <div class="card">
                                 <div class="card-header">
                                     <div class="container-fluid">
                                         <div class="row">
-                                          <a class="card-link" data-toggle="collapse" href="#collapse-{{lessons.id}}" aria-expanded="false">
-                                              {{ lessons.get_lessons_type_name }}
+                                          <a class="card-link" data-toggle="collapse" href="#collapse-{{event.id}}" aria-expanded="false">
+                                              {{ event.name }}<br />
                                           </a>
                                         </div>
                                         <div class="row">
-                                        {{ lessons.format_t_start}}-{{ lessons.format_t_end}}
+                                            <span>{{ event.format_t_start}} - {{ event.format_t_end}}</span>
                                         </div>
                                         <div class="row">
-                                            <a class="btn btn-outline-dark btn-sm form-control" role="button" href="{% url 'edit_lessons' lessons.id %}">Редагувати</a>
+                                            <a class="btn btn-outline-dark btn-sm form-control" role="button" href="{% url 'edit_event' event.id %}" target="_blank">
+                                                Редагувати
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
-                                <div id="collapse-{{lessons.id}}" class="collapse" data-parent="#accordion-{{lessons.id}}">
+                                <div id="collapse-{{event.id}}" class="collapse" data-parent="#accordion-{{event.id}}">
                                   <div class="card-body">
                                       <div class="container-fluid">
                                           <div class="row">
                                               <p>
-                                                {{ lessons.subject }}<br>
-                                                {{ lessons.teacher }}<br>
-                                                Пристуність: {{ lessons.presence_count }}/{{ lessons.students_count }}
+                                                  {{ event.class_room }}<br />
+                                                  К-сть учасників - {{ event.participants_count}}
                                               </p>
                                           </div>
-                                        {% if lessons.presence_count != lessons.students_count %}
-                                          <div class="row">
-                                            <a class="btn btn-outline-dark btn-sm form-control" role="button" href="{% url 'all_present' lessons.id %}">Усі присутні</a>
-                                          </div>
-                                          <div class="row">
-                                            <a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'set_present' lessons.id %}" target="_blank">Проставити присутність</a>
-                                          </div>
-                                        {% else %}
-                                          <div class="row">
-                                            <a class="btn btn-outline-dark btn-sm" role="button" href="{% url 'set_present' lessons.id %}" target="_blank">Змінити присутність</a>
-                                          </div>
-                                        {% endif %}
                                       </div>
                                   </div>
                                 </div>

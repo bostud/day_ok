@@ -23,15 +23,21 @@ INVOICE_STATUSES = [
     ('4', _('тестове заняття')),
 ]
 
+STATUS_TEACHER_ACTIVE = '1'
+STATUS_TEACHER_VACATION = '2'
+STATUS_TEACHER_INACTIVE = '3'
 TEACHER_STATUSES = [
-    ('1', _('активний')),
-    ('2', _('відпустка')),
-    ('3', _('неактивний')),
+    (STATUS_TEACHER_ACTIVE, _('активний')),
+    (STATUS_TEACHER_VACATION, _('відпустка')),
+    (STATUS_TEACHER_INACTIVE, _('неактивний')),
 ]
 
+
+STATUS_STUDENT_ACTIVE = '1'
+STATUS_STUDENT_INACTIVE = '2'
 STUDENT_STATUSES = [
-    ('1', _('активний')),
-    ('2', _('неактивний')),
+    (STATUS_STUDENT_ACTIVE, _('активний')),
+    (STATUS_STUDENT_INACTIVE, _('неактивний')),
 ]
 
 INVOICE_RECEIVERS = [
@@ -51,8 +57,6 @@ class Subject(models.Model):
     )
     lessons_duration = models.DurationField(
         'Тривалість заняття',
-        blank=True,
-        null=True
     )
 
     def __str__(self):
@@ -407,3 +411,28 @@ class Event(models.Model):
 
     def __str__(self):
         return str(self.name)
+
+    @property
+    def participants_count(self):
+        return self.participants.count()
+
+    @property
+    def format_t_start(self):
+        return self.format_time_start()
+
+    @property
+    def format_t_end(self):
+        return self.format_time_end()
+
+    def format_date(self):
+        return self.date_of_event.strftime('%d.%m.%Y')
+
+    def format_time_start(self):
+        if self.time_start:
+            return self.time_start.strftime("%H:%M")
+        return '--:--'
+
+    def format_time_end(self):
+        if self.time_end:
+            return self.time_end.strftime("%H:%M")
+        return '--:--'

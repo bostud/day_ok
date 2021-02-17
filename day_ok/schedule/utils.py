@@ -1,5 +1,5 @@
-from typing import Union, Optional
-from datetime import datetime, date
+from typing import Union, Optional, List, Tuple
+from datetime import datetime, date, timedelta
 
 WEEK_DAYS_NAMES_UA = {
     1: 'Понеділок',
@@ -21,3 +21,17 @@ def get_weekday_number(dt: Union[datetime, date]) -> Optional[int]:
 
 def get_weekday_name(day_number: int) -> Optional[str]:
     return WEEK_DAYS_NAMES_UA.get(day_number)
+
+
+def get_days_from_date(
+    date_start: date,
+    days_forward: int = 7,
+) -> List[date]:
+    return [
+        date_start + timedelta(days=i)
+        for i in range(days_forward)
+    ]
+
+
+def get_weekdays_tuple() -> Tuple[Tuple[int, str]]:
+    return tuple((id_, name) for id_, name in WEEK_DAYS_NAMES_UA.items())
