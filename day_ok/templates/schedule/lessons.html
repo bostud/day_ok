@@ -70,7 +70,7 @@
         {% endif %}
     </div>
     <br />
-    {% if show_type == 'classroom' %}
+    {% if show_type == 'classroom' and total_schedule %}
         <div class="row">
             <p>Розклад занять з {{ lessons_date_from }} по {{ lessons_date_to }} для {{ selected_class_room }}</p>
         </div>
