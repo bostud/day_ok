@@ -284,6 +284,10 @@ class Lessons(models.Model):
     def format_t_end(self):
         return self.format_time_end()
 
+    @property
+    def condition_individual(self):
+        return self.lessons_type == INDIVIDUAL
+
 
 class Service(models.Model):
     class Meta:

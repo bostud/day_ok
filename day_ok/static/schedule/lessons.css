@@ -24,3 +24,9 @@
     background-color: #343a40!important;
     color: #999999;
 }
+
+.horizontalHeadCell
+{
+    float: left;
+    width: 200px;
+}

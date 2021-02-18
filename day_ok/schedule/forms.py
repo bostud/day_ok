@@ -51,7 +51,7 @@ def get_groups() -> list:
     return res
 
 
-class LessonsForm(forms.Form):
+class LessonsByClassRoomForm(forms.Form):
     class_room = forms.ChoiceField(
         label='Виберіть аудиторію',
         choices=get_class_rooms,
@@ -65,8 +65,15 @@ class LessonsForm(forms.Form):
     class_room.widget.attrs.update({'class': 'form-control'})
 
 
-class EventsForm(LessonsForm):
+class EventsForm(LessonsByClassRoomForm):
     pass
+
+
+class LessonsByDayForm(forms.Form):
+    date = forms.DateField(
+        label='Виберіть дату для показу занять',
+        widget=DateInput(),
+    )
 
 
 class AddLessonsForm(forms.Form):

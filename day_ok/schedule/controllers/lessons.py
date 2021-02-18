@@ -13,7 +13,7 @@ from ..forms import (
 log = logging.getLogger(__name__)
 
 
-def get_weekly_class_room_lessons_by_day(
+def get_weekly_class_room_lessons_by_classroom(
     class_room_id: int,
     date_from: date,
 ) -> dict:
@@ -55,7 +55,7 @@ def all_presence(lessons_id: int):
             )
 
 
-def prepare_add_lessons_landing_data() -> dict:
+def prepare_add_lessons_form_data() -> dict:
     return {
         'class_rooms': get_class_rooms(),
         'teachers': get_teachers(),
@@ -111,3 +111,25 @@ def add_lessons_from_form(form: AddLessonsForm) -> int:
             lessons_created += 1
 
     return lessons_created
+
+
+def get_weekly_class_room_lessons_by_day(
+    date_from: datetime,
+) -> dict:
+    result = {}
+    classrooms = ClassRoom.objects.all()
+    for clr in classrooms:
+        lessons = Lessons.objects.filter(
+            date=date_from,
+            class_room__id=clr.id,
+        ).order_by('time_start').all()
+        for les in lessons:
+            les.presence_count = (
+                StudentPresence.objects.filter(lessons=les).count())
+            if les.lessons_type == INDIVIDUAL:
+                les.students_count = 1
+            else:
+                les.students_count = les.group.students.count()
+        result[str(clr)] = list(lessons)
+
+    return result

@@ -5,13 +5,17 @@ from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 from .middleware import authenticated
 from datetime import datetime, timedelta
 
-from .forms import LessonsForm, EventsForm, AddLessonsForm
+from .forms import (
+    LessonsByClassRoomForm, EventsForm,
+    AddLessonsForm, LessonsByDayForm,
+)
 from .models import ClassRoom
 from .controllers.lessons import (
-    get_weekly_class_room_lessons_by_day,
+    get_weekly_class_room_lessons_by_classroom,
     all_presence,
-    prepare_add_lessons_landing_data,
+    prepare_add_lessons_form_data,
     add_lessons_from_form,
+    get_weekly_class_room_lessons_by_day,
 )
 from .controllers.events import (
     get_weekly_class_room_events_by_day,
@@ -26,17 +30,22 @@ def home_view(request: HttpRequest, *args, **kwargs):
 
 
 @authenticated
-def lessons_view(request: HttpRequest, *args, **kwargs):
+def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
+    if show_type == 'day':
+        landing_form = LessonsByDayForm
+    else:
+        landing_form = LessonsByClassRoomForm
+
     context: Dict[Any, Any] = {
-        'form': LessonsForm(),
+        'form': landing_form(),
+        'show_type': show_type,
     }
 
-    def _fill_context_by_form_data(dt, cls_room):
-        weekly_schedule = get_weekly_class_room_lessons_by_day(
+    def _fill_context_by_form_data_for_classroom(dt, cls_room):
+        weekly_schedule = get_weekly_class_room_lessons_by_classroom(
             cls_room,
             dt
         )
-        context['lessons_date_from'] = dt.strftime('%d.%m.%Y')
         context['lessons_date_to'] = (
                 dt + timedelta(days=6)
         ).strftime('%d.%m.%Y')
@@ -54,15 +63,27 @@ def lessons_view(request: HttpRequest, *args, **kwargs):
             weekly_schedule.keys(),
         ))
 
+    def _fill_context_by_form_data_for_date(dt: datetime):
+        day_schedule = get_weekly_class_room_lessons_by_day(dt)
+        context['total_schedule'] = day_schedule.items()
+
     if request.method == 'GET':
-        form = LessonsForm(request.GET)
+        form = landing_form(request.GET)
         if form.is_valid():
-            class_room = int(form['class_room'].value())
-            date_from = datetime.strptime(
-                form['date_from'].value(),
-                '%m/%d/%Y'
-            ).date()
-            _fill_context_by_form_data(date_from, class_room)
+            if show_type == 'day':
+                date_from = form.cleaned_data['date']
+                _fill_context_by_form_data_for_date(date_from)
+            else:
+                class_room = int(form['class_room'].value())
+                date_from = datetime.strptime(
+                    form['date_from'].value(),
+                    '%m/%d/%Y'
+                ).date()
+                _fill_context_by_form_data_for_classroom(date_from, class_room)
+            context['lessons_date_from'] = date_from.strftime('%d.%m.%Y')
+        elif show_type == 'day':
+            _fill_context_by_form_data_for_date(datetime.today())
+            context['lessons_date_from'] = datetime.today().strftime('%d.%m.%Y')
 
     return render(request, 'schedule/lessons.html', context)
 
@@ -127,7 +148,7 @@ def add_lessons(request: HttpRequest, *args, **kwargs):
     context = {
         'form': AddLessonsForm(),
     }
-    context.update(**prepare_add_lessons_landing_data())
+    context.update(**prepare_add_lessons_form_data())
     if request.method == 'POST':
         form = AddLessonsForm(request.POST)
         if form.is_valid():
