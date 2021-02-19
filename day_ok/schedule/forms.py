@@ -122,9 +122,18 @@ class AddLessonsForm(forms.Form):
         label='Вкажіть дату до якої створити заняття',
         help_text='',
         widget=DateInput(),
+        required=False,
     )
 
-    week_days_for_repeating = forms.MultipleChoiceField(
+    weekdays_for_repeating = forms.MultipleChoiceField(
         label='Вкажіть дні тижня',
         choices=get_weekdays_tuple,
+        required=False,
+    )
+
+
+class EditLessonsForm(AddLessonsForm):
+    change_all = forms.BooleanField(
+        required=False,
+        initial=False,
     )

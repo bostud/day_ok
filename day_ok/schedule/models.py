@@ -1,3 +1,4 @@
+import json
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils.timezone import now
@@ -214,6 +215,24 @@ class Group(models.Model):
     students_count.short_description = 'К-сть учнів'
 
 
+class LessonsParent(models.Model):
+    date_created = models.DateTimeField(auto_now=True)
+    date_from_valid = models.DateField(null=True, blank=True)
+    date_until_valid = models.DateField(blank=True, null=True)
+    weekdays_for_repeating = models.JSONField(
+        blank=True, editable=True, null=True)
+
+    @property
+    def weekdays_list(self):
+        if self.weekdays_for_repeating:
+            return [
+                int(v)
+                for v in json.loads(str(self.weekdays_for_repeating))
+            ]
+        else:
+            return ''
+
+
 class Lessons(models.Model):
     class Meta:
         verbose_name = 'Заняття'
@@ -244,6 +263,14 @@ class Lessons(models.Model):
         verbose_name='Група',
         blank=True,
         null=True,
+    )
+
+    parent = models.ForeignKey(
+        LessonsParent,
+        on_delete=models.DO_NOTHING,
+        blank=True,
+        null=True,
+        verbose_name='Творець'
     )
 
     def __str__(self):

@@ -128,6 +128,14 @@ class LessonsAdmin(admin.ModelAdmin):
         'duration',
     )
 
+    fields = (
+        ('class_room',), ('subject',),
+        ('lessons_type', 'student', 'group'),
+        ('date', 'time_start', 'time_end'),
+    )
+
+    readonly_fields = ['parent']
+
     list_per_page = 10
 
 

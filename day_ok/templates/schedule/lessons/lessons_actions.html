@@ -1,0 +1,40 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+    <script>
+    $(document).ready(function() {
+      $('.datepicker').datepicker();
+    });
+    </script>
+  <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons.css' %}">
+{% endblock %}
+{% block body %}
+    <div class="row text-center" style="background-color: lightgrey">
+        <div>
+            {% if create_lessons %}
+                <h3>Створити заняття</h3>
+            {% elif edit_lessons %}
+                <h3>Редагувати заняття</h3>
+            {% elif view_lessons %}
+                <h3>Перегляд заняття</h3>
+            {% endif %}
+        </div>
+    </div>
+    <br />
+    {% if new_lessons and create_lessons %}
+        <div class="alert alert-success">
+          <strong>Успіх!</strong> Створено {{ new_lessons }} нові(-их) заняття(-ть)
+        </div>
+    {% elif edited_lessons and edit_lessons %}
+        <div class="alert alert-success">
+          <strong>Успіх!</strong> Заняття успішно відредаговано
+        </div>
+    {% endif %}
+    <div class="container-fluid">
+        {% include 'schedule/lessons/actions_form.html' %}
+    </div>
+    <br />
+{% endblock %}
