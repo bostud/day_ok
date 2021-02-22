@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from .forms import (
     LessonsByClassRoomForm, EventsForm,
     AddLessonsForm, LessonsByDayForm,
-    EditLessonsForm,
+    EditLessonsForm, FilterLessonsForm,
 )
 from .models import ClassRoom
 from .controllers.lessons import (
@@ -20,6 +20,7 @@ from .controllers.lessons import (
     prepare_edit_lessons_form_data,
     delete_lessons,
     edit_lessons_from_form,
+    get_lessons_data_by_filter_form,
 )
 from .controllers.events import (
     get_weekly_class_room_events_by_day,
@@ -37,8 +38,10 @@ def home_view(request: HttpRequest, *args, **kwargs):
 def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
     if show_type == 'day':
         landing_form = LessonsByDayForm
-    else:
+    elif show_type == 'classroom':
         landing_form = LessonsByClassRoomForm
+    else:
+        landing_form = FilterLessonsForm
 
     context: Dict[Any, Any] = {
         'form': landing_form(),
@@ -71,25 +74,36 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
         day_schedule = get_weekly_class_room_lessons_by_day(dt)
         context['total_schedule'] = day_schedule.items()
 
+    def _fill_context_by_form_filter(frm: FilterLessonsForm):
+        day_schedule = get_lessons_data_by_filter_form(frm)
+        context['total_schedule'] = day_schedule
+
     if request.method == 'GET':
         form = landing_form(request.GET)
         if form.is_valid():
             if show_type == 'day':
                 date_from = form.cleaned_data['date']
                 _fill_context_by_form_data_for_date(date_from)
-            else:
+            elif show_type == 'classroom':
                 class_room = int(form['class_room'].value())
                 date_from = datetime.strptime(
                     form['date_from'].value(),
                     '%m/%d/%Y'
                 ).date()
                 _fill_context_by_form_data_for_classroom(date_from, class_room)
+            else:
+                date_from = form.cleaned_data['date_from']
+                _fill_context_by_form_filter(form)
             context['lessons_date_from'] = date_from.strftime('%d.%m.%Y')
         elif show_type == 'day':
             _fill_context_by_form_data_for_date(datetime.today())
             context['lessons_date_from'] = datetime.today().strftime('%d.%m.%Y')
+        elif show_type == 'filter':
+            form = FilterLessonsForm(data={'date_from': datetime.today()})
+            form.is_valid()
+            _fill_context_by_form_filter(form)
 
-    return render(request, 'schedule/lessons/lessons_schedule.html', context)
+    return render(request, 'schedule/lessons/main.html', context)
 
 
 @authenticated
@@ -137,7 +151,7 @@ def events_view(request: HttpRequest, *args, **kwargs):
 @authenticated
 def present_actions(request: HttpRequest, action: str, lessons_id: int):
     ctx = {}
-    template_name = 'schedule/lessons/lessons_schedule.html'
+    template_name = 'schedule/lessons/main.html'
 
     def _all_present():
         all_presence(lessons_id)
@@ -178,29 +192,39 @@ def add_lessons(request: HttpRequest, *args, **kwargs):
             new_lessons_count = add_lessons_from_form(form)
             context['new_lessons'] = new_lessons_count
 
-    return render(request, 'schedule/lessons/lessons_actions.html', context)
+    return render(request, 'schedule/lessons/actions.html', context)
 
 
 @authenticated
 def lessons_actions(request: HttpRequest, action: str, lessons_id: int):
     ctx = {}
-    template_name = 'schedule/lessons/lessons_actions.html'
+    template_name = 'schedule/lessons/actions.html'
 
     def _edit():
         ctx.update(edit_lessons=True)
-        if request.method == 'GET':
-            ctx.update(**prepare_edit_lessons_form_data(lessons_id))
-        elif request.method == 'POST':
+        ctx.update(**prepare_edit_lessons_form_data(lessons_id))
+        ctx.update(**prepare_add_lessons_form_data())
+        if request.method == 'POST':
             edit_form = EditLessonsForm(request.POST)
             if edit_form.is_valid():
-                edit_lessons_from_form(form=edit_form)
+                edit_lessons_from_form(form=edit_form, lessons_id=lessons_id)
+                ctx.update(edited_lessons=True)
+                ctx.update(**prepare_edit_lessons_form_data(lessons_id))
+                return redirect('lessons_action', 'edit', lessons_id)
 
     def _delete():
         ctx.update(delete_lessons=True)
-        delete_lessons(lessons_id, delete_all=False)
+        ctx.update(**prepare_edit_lessons_form_data(lessons_id))
+        ctx.update(**prepare_add_lessons_form_data())
+        if request.method == 'POST':
+            edit_form = EditLessonsForm(request.POST)
+            edit_form.is_valid()
+            delete_lessons(lessons_id, edit_form.cleaned_data['change_all'])
 
     def _view():
-        pass
+        ctx.update(view_lessons=True)
+        ctx.update(**prepare_add_lessons_form_data())
+        ctx.update(**prepare_edit_lessons_form_data(lessons_id))
 
     actions_func = {
         'edit': _edit,
@@ -210,8 +234,6 @@ def lessons_actions(request: HttpRequest, action: str, lessons_id: int):
 
     if actions_func.get(action):
         actions_func[action]()
-    else:
-        return redirect('lessons_by_day')
 
     return render(request, template_name, ctx)
 
@@ -254,6 +276,6 @@ def event_actions(request: HttpRequest, action: str, event_id: int):
     if actions_func.get(action):
         actions_func[action]()
     else:
-        return redirect('lessons_by_day')
+        return redirect('lessons')
 
     return render(request, template_name, ctx)

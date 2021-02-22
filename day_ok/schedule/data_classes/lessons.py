@@ -7,7 +7,7 @@ class Base:
     def to_dict(self, key_prefix: str = '') -> dict:
         return {
             self.get_key_name(k, key_prefix): v
-            for k, v in self.__dict__
+            for k, v in self.__dict__.items()
         }
 
     @staticmethod
@@ -33,14 +33,13 @@ class EditLessonsDC(Base):
     time_start: datetime
     lessons_type: int
     teacher: int
-    student: int
     parent: int
+    subject: int
     group: int = None
-    subject: int = None
+    student: int = None
 
     weekdays_for_repeating: Optional[List[int]] = None
     date_until_valid: datetime = None
-    time_end: datetime = None
     change_all: bool = False
 
     def to_dict(self, **kwargs) -> dict:

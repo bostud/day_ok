@@ -1,0 +1,16 @@
+<form method="POST">
+{% csrf_token %}
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" name="change_all">
+                    Змінити усі схожі заняття?
+                    {% if edit_parent %}
+                        (Всього таких: {{ edit_parent.count_of_children|add:"-1" }})
+                    {% endif %}
+                </label>
+            </div>
+        </div>
+    </div>
+</form>

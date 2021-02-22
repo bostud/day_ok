@@ -1,0 +1,45 @@
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('select').selectpicker();
+        });
+    </script>
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons/filter_form.css' %}">
+{% endblock %}
+<form class="form-inline">
+    <div style="float:left;margin-right:20px;">
+        <label for="id_class_rooms">{{ form.class_rooms.label }}</label>
+        {{ form.class_rooms }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        <label for="id_teachers">{{ form.teachers.label }}</label>
+        {{ form.teachers }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        <label for="id_types">{{ form.types.label }}</label>
+        {{ form.types }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        <label for="id_students">{{ form.students.label }}</label>
+        {{ form.students }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        <label for="id_groups">{{ form.groups.label }}</label>
+        {{ form.groups }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        <label for="id_date_from">{{ form.date_from.label }}</label>
+        {{ form.date_from }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        <label for="id_additional_days">{{ form.additional_days.label }}(днів)</label>
+        {{ form.additional_days }}
+    </div>
+    <div style="float:left; text-align: center;">
+        <input type="submit" class="btn btn-secondary" value="Показати">
+    </div>
+</form>

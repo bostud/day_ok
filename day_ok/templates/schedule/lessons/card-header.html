@@ -1,0 +1,21 @@
+<div class="dropdown">
+    <button type="button" class="btn btn-outline-primary dropdown-toggle " data-toggle="dropdown">
+        Дії
+    </button>
+    <div class="dropdown-menu">
+        <a class="dropdown-item" href="{% url 'lessons_action' 'edit'  lessons.id %}">Редагувати</a>
+        <a class="dropdown-item" href="{% url 'lessons_action' 'view'  lessons.id %}">Переглянути</a>
+        <a class="dropdown-item" href="{% url 'lessons_action' 'delete'  lessons.id %}">Видалити</a>
+        <div class="dropdown-header">Присутність</div>
+        {% if lessons.condition_individual %}
+            {% if lessons.presence_count < lessons.students_count %}
+                <a class="dropdown-item" href="{% url 'lessons_action' 'all'  lessons.id %}">Урок відбувся</a>
+            {% endif %}
+        {% else %}
+            {% if lessons.presence_count != lessons.students_count %}
+                <a class="dropdown-item" href="{% url 'lessons_action' 'all'  lessons.id %}">Усі є</a>
+            {% endif %}
+            <a class="dropdown-item" href="{% url 'lessons_action' 'all'  lessons.id %}">Редагувати</a>
+        {% endif %}
+    </div>
+</div>

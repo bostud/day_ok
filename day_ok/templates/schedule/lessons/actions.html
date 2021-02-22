@@ -14,13 +14,17 @@
 {% block body %}
     <div class="row text-center" style="background-color: lightgrey">
         <div>
+            <h3>
             {% if create_lessons %}
-                <h3>Створити заняття</h3>
+                Створити заняття
             {% elif edit_lessons %}
-                <h3>Редагувати заняття</h3>
+                Редагувати заняття
             {% elif view_lessons %}
-                <h3>Перегляд заняття</h3>
+                Перегляд заняття
+            {% elif delete_lessons %}
+                Видалити заняття
             {% endif %}
+            </h3>
         </div>
     </div>
     <br />
@@ -34,7 +38,7 @@
         </div>
     {% endif %}
     <div class="container-fluid">
-        {% include 'schedule/lessons/actions_form.html' %}
+        {% include 'schedule/lessons/form.html' %}
     </div>
     <br />
 {% endblock %}

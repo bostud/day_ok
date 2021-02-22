@@ -6,6 +6,7 @@ from .models import (
 from django import forms
 from functools import partial
 from .utils import get_weekdays_tuple
+from django.utils.timezone import now
 DateInput = partial(forms.DateInput, {'class': 'datepicker form-control'})
 
 
@@ -49,6 +50,28 @@ def get_groups() -> list:
         if i.students:
             res.append((i.id, str(i)))
     return res
+
+
+def convert_cleaned_data_to_objects(form_cleaned_data: dict) -> dict:
+    fcd = form_cleaned_data
+    _converting_settings = (
+        ('class_room', ClassRoom, int, None),
+        ('subject', Subject, int, None),
+        ('teacher', Teacher, int, None),
+        ('student', Student, int, None),
+        ('group', Group, int, None),
+
+    )
+
+    result = {
+        k: obj.objects.get(id=fmt(fcd[k])) if fcd.get(k) and fcd[k] else df
+        for k, obj, fmt, df in _converting_settings
+    }
+    result.update(
+        weekdays_for_repeating=[int(v) for v in fcd['weekdays_for_repeating']]
+    )
+    fcd.update(**result)
+    return fcd
 
 
 class LessonsByClassRoomForm(forms.Form):
@@ -137,3 +160,75 @@ class EditLessonsForm(AddLessonsForm):
         required=False,
         initial=False,
     )
+
+
+class FilterLessonsForm(forms.Form):
+    date_from = forms.DateField(
+        label='Дата',
+        help_text='',
+        widget=DateInput(),
+        initial=now,
+    )
+    class_rooms = forms.MultipleChoiceField(
+        label='Аудиторія:',
+        choices=get_class_rooms,
+        required=False,
+    )
+    teachers = forms.MultipleChoiceField(
+        label='Викладач:',
+        choices=get_teachers,
+        required=False,
+    )
+    students = forms.MultipleChoiceField(
+        label='Учень:',
+        choices=get_students,
+        required=False,
+    )
+    groups = forms.MultipleChoiceField(
+        label='Група',
+        choices=get_groups,
+        required=False,
+    )
+    types = forms.MultipleChoiceField(
+        label='Типи',
+        choices=LESSONS_TYPES,
+        required=False,
+    )
+    additional_days = forms.IntegerField(
+        label='Період',
+        required=False,
+        initial=7,
+        min_value=0,
+        max_value=7,
+    )
+
+    class_rooms.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'multiply': 'multiply',
+    })
+    teachers.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'multiply': 'multiply',
+    })
+    students.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'multiply': 'multiply',
+    })
+    groups.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'multiply': 'multiply',
+    })
+    additional_days.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'multiply': 'multiply',
+    })
+    types.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'multiply': 'multiply',
+    })
