@@ -1,3 +1,4 @@
+import json
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.utils.timezone import now
@@ -214,6 +215,28 @@ class Group(models.Model):
     students_count.short_description = 'К-сть учнів'
 
 
+class LessonsParent(models.Model):
+    date_created = models.DateTimeField(auto_now=True)
+    date_from_valid = models.DateField(null=True, blank=True)
+    date_until_valid = models.DateField(blank=True, null=True)
+    weekdays_for_repeating = models.JSONField(
+        blank=True, editable=True, null=True)
+
+    @property
+    def weekdays_list(self):
+        if self.weekdays_for_repeating:
+            return [
+                int(v)
+                for v in json.loads(str(self.weekdays_for_repeating))
+            ]
+        else:
+            return ''
+
+    @property
+    def count_of_children(self):
+        return Lessons.objects.filter(parent=self).count()
+
+
 class Lessons(models.Model):
     class Meta:
         verbose_name = 'Заняття'
@@ -246,8 +269,16 @@ class Lessons(models.Model):
         null=True,
     )
 
+    parent = models.ForeignKey(
+        LessonsParent,
+        on_delete=models.DO_NOTHING,
+        blank=True,
+        null=True,
+        verbose_name='Творець'
+    )
+
     def __str__(self):
-        return f"{self.class_room}"
+        return f"{self.class_room.name}/{self.get_lessons_type_name}"
 
     def format_date(self):
         return self.date.strftime('%d.%m.%Y')
@@ -269,7 +300,7 @@ class Lessons(models.Model):
         for _id, name in LESSONS_TYPES:
             if self.lessons_type == _id:
                 return name
-        return '(undefined))'
+        return '(undefined)'
 
     format_date.short_description = 'Дата заняття'
     format_time_start.short_description = 'Час початку'
@@ -287,6 +318,17 @@ class Lessons(models.Model):
     @property
     def condition_individual(self):
         return self.lessons_type == INDIVIDUAL
+
+    @property
+    def presence_count(self):
+        return StudentPresence.objects.filter(lessons=self).count()
+
+    @property
+    def students_count(self):
+        if self.condition_individual:
+            return 1
+        else:
+            return self.group.students.count()
 
 
 class Service(models.Model):

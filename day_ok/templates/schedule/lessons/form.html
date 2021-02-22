@@ -1,0 +1,182 @@
+<form method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-sm-4">
+            <div>
+                <label for="id_class_room">Аудиторія</label>
+                <select class="custom-select" id="id_class_room" name="class_room" required>
+                    <option selected></option>
+                    {% for room_id, room_name in class_rooms %}
+                        {% if edit_class_room and edit_class_room == room_id %}'
+                            <option selected value="{{ room_id }}">{{ room_name }}</option>
+                        {% else %}
+                            <option value="{{ room_id }}">{{ room_name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="id_teacher">Викладач</label>
+                <select class="custom-select" id="id_teacher" name="teacher" required>
+                    <option selected></option>
+                    {% for id_, name in teachers %}
+                        {% if edit_teacher and edit_teacher == id_ %}
+                            <option selected value="{{ id_ }}">{{ name }}</option>
+                        {% else %}
+                            <option value="{{ id_ }}">{{ name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="id_subjects">Предмет</label>
+                <select class="custom-select" id="id_subjects" name="subject" required>
+                    <option selected></option>
+                    {% for id_, name in subjects %}
+                        {% if edit_subject and edit_subject == id_ %}
+                            <option selected value="{{ id_ }}">{{ name }}</option>
+                        {% else %}
+                            <option value="{{ id_ }}">{{ name }}</option>
+                        {% endif %}}
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="id_lessons_type">Тип заняття</label>
+                <select class="custom-select" id="id_lessons_type" name="lessons_type" required>
+                    <option selected></option>
+                    {% for id_, name in lessons_types %}
+                        {% if edit_lessons_type and edit_lessons_type == id_ %}
+                            <option selected value="{{ id_ }}">{{ name }}</option>
+                        {% else %}
+                            <option value="{{ id_ }}">{{ name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                 {% if create_lessons or edit_lessons %}
+                    <span class="small">Зверніть увагу!<br />
+                    Якщо тип заняття <mark>груповий</mark> - вказуємо лише <mark>групу</mark><br />
+                    Якщо тип заняття <mark>індивідуальний</mark> - вказуємо лише <mark>учня</mark></span>
+                {% endif %}
+            </div>
+            <div>
+                <label for="id_student">Учень</label>
+                <select class="custom-select" id="id_student" name="student">
+                    <option selected></option>
+                    {% for id_, name in students %}
+                        {% if edit_student and edit_student == id_ %}
+                            <option value="{{ id_ }}" selected>{{ name }}</option>
+                        {% else %}
+                            <option value="{{ id_ }}">{{ name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="id_group">Група</label>
+                <select class="custom-select" id="id_group" name="group">
+                    <option selected></option>
+                    {% for id_, name in groups %}
+                        {% if edit_group and edit_group == id_ %}
+                            <option selected value="{{ id_ }}">{{ name }}</option>
+                        {% else %}
+                            <option value="{{ id_ }}">{{ name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div>
+                <label for="id_time_start">Час початку</label>
+                <input class="form-control"
+                       id="id_time_start"
+                       name="time_start"
+                       type="time"
+                       value='{{ edit_time_start|date:"H:i" }}'
+                       required
+                >
+            </div>
+            <div>
+                <label for="id_date_from_valid">Дата з якої почати заняття</label>
+                <input class="form-control datepicker"
+                       name="date_from_valid"
+                       id="id_date_from_valid"
+                       value='{{ edit_date_from_valid|date:"m/d/Y" }}'
+                       required
+                >
+            </div>
+            {% if create_lessons or edit_lessons %}
+            <div>
+                <p class="small">
+                    Якщо потрібно створити заняття <strong>на один день</strong> - ігноруйте поля:
+                    <br /><strong>- "Дата до якої створити заняття"</strong>
+                    <br /><strong>- "Дні тижня коли повторюється"</strong>
+                </p>
+            </div>
+            {% endif %}
+            <div>
+                <label for="id_date_util_valid">Дата до якої створити заняття</label>
+                <input class="form-control datepicker"
+                       name="date_until_valid"
+                       id="id_date_util_valid"
+                       value='{{ edit_date_until_valid|date:"m/d/Y" }}'
+                >
+            </div>
+            <div>
+                <label>Дні тижня коли повторюється</label>
+                {% for id_, name in weekdays %}
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            {% if edit_weekdays_for_repeating and id_ in edit_weekdays_for_repeating %}
+                                <input type="checkbox"
+                                       class="form-check-input"
+                                       value="{{ id_ }}"
+                                       name="weekdays_for_repeating" checked>
+                            {% else %}
+                                <input type="checkbox"
+                                       class="form-check-input"
+                                       value="{{ id_ }}"
+                                       name="weekdays_for_repeating">
+                            {% endif %}
+                            {{ name }}
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <br />
+    {% if edit_change_all %}
+        {% if edit_lessons or delete_lessons %}
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <input type="checkbox" class="form-check-input" name="change_all">
+                        {% if edit_lessons %}
+                            Змінити усі схожі заняття?
+                        {% elif delete_lessons %}
+                            Видалити усі схожі заняття?
+                        {% endif %}
+                        {% if edit_parent %}
+                            (Всього таких: {{ edit_parent.count_of_children|add:"-1" }})
+                        {% endif %}
+                    </label>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endif %}
+    <div class="row">
+        <div class="col-sm-4">
+            {% if create_lessons %}
+                <input type="submit" class="btn btn-secondary form-control" value="Створити">
+            {% elif edit_lessons %}
+                <input type="submit" class="btn btn-secondary form-control" value="Змінити">
+            {% elif delete_lessons %}
+                <input type="submit" class="btn btn-secondary form-control" value="Видалити">
+            {% endif %}
+        </div>
+    </div>
+</form>

@@ -1,0 +1,8 @@
+input, label, select {
+    display: block;
+}
+
+#id_date_from {
+    width: 120px;
+}
+

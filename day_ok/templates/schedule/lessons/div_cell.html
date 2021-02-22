@@ -1,0 +1,31 @@
+<div id="accordion-{{ show_name }}-{{lessons.id}}">
+    <div class="card">
+        <div class="card-header">
+            <div class="container-fluid">
+                <div class="row">
+                  <a class="card-link" data-toggle="collapse" href="#collapse-{{ show_name }}-{{ lessons.id }}" aria-expanded="false">
+                      {{ lessons.subject.name }}/{{ lessons.get_lessons_type_name }}
+                  </a>
+                </div>
+                <div class="row">
+                {{ lessons.format_t_start}}-{{ lessons.format_t_end }}
+                </div>
+                <div class="row">
+                    {% include 'schedule/lessons/card-header.html' with lessons=lessons %}
+                </div>
+            </div>
+        </div>
+        <div id="collapse-{{ show_name }}-{{lessons.id}}" class="collapse" data-parent="#accordion-{{ show_name }}-{{lessons.id}}">
+          <div class="card-body">
+              <p>
+                {{ lessons.teacher }}<br>
+                {% if lessons.condition_individual %}
+                    Учень: {{ lessons.student }}
+                {% else %}
+                    Пристуність: {{ lessons.presence_count }}/{{ lessons.students_count }}
+                {% endif %}
+              </p>
+          </div>
+        </div>
+    </div>
+</div>
