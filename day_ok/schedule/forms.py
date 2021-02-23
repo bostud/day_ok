@@ -83,7 +83,8 @@ class LessonsByClassRoomForm(forms.Form):
     date_from = forms.DateField(
         label='Виберіть дату',
         widget=DateInput(),
-        help_text='* Буде показано 7 днів після вибраної дати'
+        help_text='* Буде показано 7 днів після вибраної дати',
+        input_formats=['%d.%m.%Y'],
     )
     class_room.widget.attrs.update({'class': 'form-control'})
 
@@ -96,6 +97,7 @@ class LessonsByDayForm(forms.Form):
     date = forms.DateField(
         label='Виберіть дату для показу занять',
         widget=DateInput(),
+        input_formats=['%d.%m.%Y'],
     )
 
 
@@ -139,12 +141,14 @@ class AddLessonsForm(forms.Form):
         label='Вкажіть дату початку занять',
         help_text='',
         widget=DateInput(),
+        input_formats=['%d.%m.%Y'],
     )
 
     date_until_valid = forms.DateField(
         label='Вкажіть дату до якої створити заняття',
         help_text='',
         widget=DateInput(),
+        input_formats=['%d.%m.%Y'],
         required=False,
     )
 
@@ -167,6 +171,7 @@ class FilterLessonsForm(forms.Form):
         label='Дата',
         help_text='',
         widget=DateInput(),
+        input_formats=['%d.%m.%Y'],
         initial=now,
     )
     class_rooms = forms.MultipleChoiceField(

@@ -17,6 +17,8 @@ from ..forms import (
     convert_cleaned_data_to_objects, FilterLessonsForm,
 )
 from ..data_classes.lessons import AddLessonsDC, EditLessonsDC
+from django.utils.timezone import now
+
 log = logging.getLogger(__name__)
 
 
@@ -31,13 +33,6 @@ def get_weekly_class_room_lessons_by_classroom(
             date=d,
             class_room__id=class_room_id,
         ).order_by('time_start').all()
-        for les in lessons:
-            les.presence_count = (
-                StudentPresence.objects.filter(lessons=les).count())
-            if les.lessons_type == INDIVIDUAL:
-                les.students_count = 1
-            else:
-                les.students_count = les.group.students.count()
         result[d.strftime('%d.%m.%Y')] = list(lessons)
 
     return result
@@ -102,9 +97,10 @@ def calculate_time_end(
         time_start: datetime.time,
         subject: Subject,
 ) -> datetime.time:
-    dt_start = datetime.combine(date.today(), time_start)
+    date_today = now()
+    dt_start = datetime.combine(date_today, time_start)
     datetime_end = dt_start + subject.lessons_duration
-    assert date.today().day == datetime_end.day
+    assert date_today.day == datetime_end.day
 
     return datetime_end.time()
 

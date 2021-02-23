@@ -17,8 +17,14 @@
             </div>
             <div>
                 <label for="id_teacher">Викладач</label>
-                <select class="custom-select" id="id_teacher" name="teacher" required>
-                    <option selected></option>
+                <select
+                        class="selectpicker form-control"
+                        data-live-search="true"
+                        title="Виберіть викладача ..."
+                        id="id_teacher"
+                        name="teacher"
+                        required
+                >
                     {% for id_, name in teachers %}
                         {% if edit_teacher and edit_teacher == id_ %}
                             <option selected value="{{ id_ }}">{{ name }}</option>
@@ -30,8 +36,11 @@
             </div>
             <div>
                 <label for="id_subjects">Предмет</label>
-                <select class="custom-select" id="id_subjects" name="subject" required>
-                    <option selected></option>
+                <select class="selectpicker form-control"
+                        data-live-search="true"
+                        title="Виберіть предмет ..."
+                        id="id_subjects"
+                        name="subject" required>
                     {% for id_, name in subjects %}
                         {% if edit_subject and edit_subject == id_ %}
                             <option selected value="{{ id_ }}">{{ name }}</option>
@@ -61,8 +70,10 @@
             </div>
             <div>
                 <label for="id_student">Учень</label>
-                <select class="custom-select" id="id_student" name="student">
-                    <option selected></option>
+                <select class="selectpicker form-control"
+                        data-live-search="true"
+                        title="Виберіть учня ..."
+                        id="id_student" name="student">
                     {% for id_, name in students %}
                         {% if edit_student and edit_student == id_ %}
                             <option value="{{ id_ }}" selected>{{ name }}</option>
@@ -74,8 +85,11 @@
             </div>
             <div>
                 <label for="id_group">Група</label>
-                <select class="custom-select" id="id_group" name="group">
-                    <option selected></option>
+                <select class="selectpicker form-control"
+                        data-live-search="true"
+                        title="Виберіть групу..."
+                        id="id_group"
+                        name="group">
                     {% for id_, name in groups %}
                         {% if edit_group and edit_group == id_ %}
                             <option selected value="{{ id_ }}">{{ name }}</option>
@@ -102,8 +116,9 @@
                 <input class="form-control datepicker"
                        name="date_from_valid"
                        id="id_date_from_valid"
-                       value='{{ edit_date_from_valid|date:"m/d/Y" }}'
+                       value='{{ edit_date_from_valid|date:"d.m.Y" }}'
                        required
+                       data-provide="datepicker"
                 >
             </div>
             {% if create_lessons or edit_lessons %}
@@ -120,29 +135,25 @@
                 <input class="form-control datepicker"
                        name="date_until_valid"
                        id="id_date_util_valid"
-                       value='{{ edit_date_until_valid|date:"m/d/Y" }}'
+                       value='{{ edit_date_until_valid|date:"d.m.Y" }}'
                 >
             </div>
             <div>
                 <label>Дні тижня коли повторюється</label>
-                {% for id_, name in weekdays %}
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            {% if edit_weekdays_for_repeating and id_ in edit_weekdays_for_repeating %}
-                                <input type="checkbox"
-                                       class="form-check-input"
-                                       value="{{ id_ }}"
-                                       name="weekdays_for_repeating" checked>
-                            {% else %}
-                                <input type="checkbox"
-                                       class="form-check-input"
-                                       value="{{ id_ }}"
-                                       name="weekdays_for_repeating">
-                            {% endif %}
-                            {{ name }}
-                        </label>
-                    </div>
-                {% endfor %}
+                <select class="selectpicker form-control"
+                        data-live-search="true"
+                        multiple
+                        title="Виберіть дні тижня, якщо потрібно..."
+                        id="id_weekdays"
+                        name="weekdays_for_repeating">
+                    {% for id_, name in weekdays %}
+                        {% if edit_weekdays_for_repeating and id_ in edit_weekdays_for_repeating %}
+                            <option selected value="{{ id_ }}">{{ name }}</option>
+                        {% else %}
+                            <option value="{{ id_ }}">{{ name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
             </div>
         </div>
     </div>

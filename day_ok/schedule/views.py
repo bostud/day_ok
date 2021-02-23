@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
 # Create your views here.
 from .middleware import authenticated
 from datetime import datetime, timedelta
+from django.utils.timezone import now
 
 from .forms import (
     LessonsByClassRoomForm, EventsForm,
@@ -47,6 +48,7 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
         'form': landing_form(),
         'show_type': show_type,
     }
+    dt_now = now()
 
     def _fill_context_by_form_data_for_classroom(dt, cls_room):
         weekly_schedule = get_weekly_class_room_lessons_by_classroom(
@@ -86,20 +88,17 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
                 _fill_context_by_form_data_for_date(date_from)
             elif show_type == 'classroom':
                 class_room = int(form['class_room'].value())
-                date_from = datetime.strptime(
-                    form['date_from'].value(),
-                    '%m/%d/%Y'
-                ).date()
+                date_from = form.cleaned_data['date_from']
                 _fill_context_by_form_data_for_classroom(date_from, class_room)
             else:
                 date_from = form.cleaned_data['date_from']
                 _fill_context_by_form_filter(form)
             context['lessons_date_from'] = date_from.strftime('%d.%m.%Y')
         elif show_type == 'day':
-            _fill_context_by_form_data_for_date(datetime.today())
-            context['lessons_date_from'] = datetime.today().strftime('%d.%m.%Y')
+            _fill_context_by_form_data_for_date(dt_now)
+            context['lessons_date_from'] = dt_now.strftime('%d.%m.%Y')
         elif show_type == 'filter':
-            form = FilterLessonsForm(data={'date_from': datetime.today()})
+            form = FilterLessonsForm(data={'date_from': dt_now})
             form.is_valid()
             _fill_context_by_form_filter(form)
 
@@ -138,11 +137,8 @@ def events_view(request: HttpRequest, *args, **kwargs):
     if request.method == 'GET':
         form = EventsForm(request.GET)
         if form.is_valid():
-            class_room = int(form['class_room'].value())
-            date_from = datetime.strptime(
-                form['date_from'].value(),
-                '%m/%d/%Y'
-            ).date()
+            class_room = form.cleaned_data['class_room']
+            date_from = form.cleaned_data['date_from']
             _fill_context_by_form_data(date_from, class_room)
 
     return render(request, 'schedule/events.html', context)
