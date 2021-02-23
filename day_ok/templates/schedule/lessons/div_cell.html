@@ -22,6 +22,7 @@
                 {% if lessons.condition_individual %}
                     Учень: {{ lessons.student }}
                 {% else %}
+                    Група: {{ lessons.group }}
                     Пристуність: {{ lessons.presence_count }}/{{ lessons.students_count }}
                 {% endif %}
               </p>
