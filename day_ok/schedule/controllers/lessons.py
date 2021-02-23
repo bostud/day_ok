@@ -276,6 +276,9 @@ def get_lessons_data_by_filter_form(form: FilterLessonsForm):
             form.cleaned_data['groups']
         ]
         query_filter.update(group__in=objs)
+    if form.cleaned_data['types']:
+        ids = [int(v) for v in form.cleaned_data['types']]
+        query_filter.update(lessons_type__in=ids)
 
     for dt in dt_list:
         query_filter.update(date=dt)
