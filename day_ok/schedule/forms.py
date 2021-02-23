@@ -211,29 +211,35 @@ class FilterLessonsForm(forms.Form):
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',
+        'data-selected-text-format': 'count',
     })
     teachers.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',
+        'data-selected-text-format': 'count',
     })
     students.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',
+        'data-selected-text-format': 'count',
     })
     groups.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',
+        'data-selected-text-format': 'count',
     })
     additional_days.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',
+        'data-selected-text-format': 'count',
     })
     types.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',
+        'data-selected-text-format': 'count',
     })
