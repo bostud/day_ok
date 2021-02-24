@@ -153,6 +153,10 @@ class Student(ContactMixin):
     parent_last_name = models.CharField(
         'Прізвище одного з батьків', max_length=100, blank=True, null=True)
 
+    @property
+    def full_name(self):
+        return f"{self.last_name} {self.first_name}"
+
 
 class ClassRoom(models.Model):
     class Meta:

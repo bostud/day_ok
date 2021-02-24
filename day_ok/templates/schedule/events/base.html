@@ -1,0 +1,89 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block head %}
+    {% load static %}
+    {% include 'date_select_picker.html' %}
+  <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons.css' %}">
+{% endblock %}
+{% block body %}
+    <div class="row text-center" style="background-color: lightgrey">
+        <div>
+            <h3>Графік заходів</h3>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-sm-2">
+            <div class="row">
+                <a class="btn btn-secondary btn-sm form-control" role="button" href="{% url 'add_class_room' %}">
+                    + Додати аудиторію
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-2">
+            <div class="row">
+                <a class="btn btn-secondary btn-sm form-control" role="button" href="{% url 'add_event' %}">
+                    + Додати захід
+                </a>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        {% include 'schedule/events/filter_form.html' with form=form %}
+    </div>
+    <div class="row">
+        <div class="сol">
+            Результат по фільтру:<br> {{ filter_by_text }}
+        </div>
+    </div>
+    <br />
+    {% if total_schedule %}
+        {% for date, date_str, data in total_schedule %}
+        <div class="row">
+            <div id='accordion-{{ date.day }}'>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="container-fluid">
+                            <div class="row" style="background-color: #ffefef">
+                              <a class="card-link"
+                                 data-toggle="collapse"
+                                 href="#collapse-{{ date.day }}"
+                                 aria-expanded="false"
+                              >
+                                  <span><strong>{{ date_str }} {{ date|date:"d.m.Y" }}</strong></span>
+                              </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id='collapse-{{ date.day }}' class="collapse show" data-parent='#accordion-{{ date.day }}'>
+                        <div class="card-body">
+                        {% for classroom, events_info in data %}
+                            <div class="row">
+                                <div class="divRow">
+                                    <div class="horizontalHeadCell">
+                                        <div class="col">
+                                            <b>{{ classroom.name }}</b>
+                                        </div>
+                                    </div>
+                                    {% for event in events_info %}
+                                    <div class="divCell">
+                                        {% include 'schedule/events/div_cell.html' with event=event %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr />
+        {% endfor %}
+    {% else %}
+        <div class="row">
+            <p>Заходів немає</p>
+        </div>
+    {% endif %}
+{% endblock %}

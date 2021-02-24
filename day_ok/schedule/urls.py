@@ -26,8 +26,8 @@ urlpatterns = [
         name='lessons_action',
     ),
     path(
-        'event/<str:action>/<int:lessons_id>/',
+        'event/<str:action>/<int:event_id>/',
         event_actions,
-        name='event_action',
+        name='events_action',
     ),
 ]

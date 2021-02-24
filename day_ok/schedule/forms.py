@@ -89,10 +89,6 @@ class LessonsByClassRoomForm(forms.Form):
     class_room.widget.attrs.update({'class': 'form-control'})
 
 
-class EventsForm(LessonsByClassRoomForm):
-    pass
-
-
 class LessonsByDayForm(forms.Form):
     date = forms.DateField(
         label='Виберіть дату для показу занять',
@@ -238,6 +234,52 @@ class FilterLessonsForm(forms.Form):
         'data-selected-text-format': 'count',
     })
     types.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'multiply': 'multiply',
+        'data-selected-text-format': 'count',
+    })
+
+
+class FilterEventsForm(forms.Form):
+    date_from = forms.DateField(
+        label='Дата',
+        help_text='',
+        widget=DateInput(),
+        input_formats=['%d.%m.%Y'],
+        initial=now,
+    )
+    class_rooms = forms.MultipleChoiceField(
+        label='Аудиторія:',
+        choices=get_class_rooms,
+        required=False,
+    )
+    students = forms.MultipleChoiceField(
+        label='Учень:',
+        choices=get_students,
+        required=False,
+    )
+    additional_days = forms.IntegerField(
+        label='Період',
+        required=False,
+        initial=7,
+        min_value=0,
+        max_value=7,
+    )
+
+    class_rooms.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'multiply': 'multiply',
+        'data-selected-text-format': 'count',
+    })
+    students.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'multiply': 'multiply',
+        'data-selected-text-format': 'count',
+    })
+    additional_days.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',

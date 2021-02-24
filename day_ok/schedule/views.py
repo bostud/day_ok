@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from django.utils.timezone import now
 
 from .forms import (
-    LessonsByClassRoomForm, EventsForm,
+    LessonsByClassRoomForm, FilterEventsForm,
     AddLessonsForm, LessonsByDayForm,
     EditLessonsForm, FilterLessonsForm,
 )
@@ -24,7 +24,8 @@ from .controllers.lessons import (
     get_lessons_data_by_filter_form,
 )
 from .controllers.events import (
-    get_weekly_class_room_events_by_day,
+    get_events_data_by_filter_form,
+    get_filter_by_description
 )
 from .utils import get_weekday_number, get_weekday_name
 
@@ -108,40 +109,22 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
 @authenticated
 def events_view(request: HttpRequest, *args, **kwargs):
     context: Dict[Any, Any] = {
-        'form': EventsForm(),
+        'form': FilterEventsForm(),
     }
 
-    def _fill_context_by_form_data(dt, cls_room):
-        weekly_schedule = get_weekly_class_room_events_by_day(
-            cls_room,
-            dt
-        )
-        context['events_date_from'] = dt.strftime('%d.%m.%Y')
-        context['events_date_to'] = (
-                dt + timedelta(days=6)
-        ).strftime('%d.%m.%Y')
-        context['selected_class_room_name'] = (
-            ClassRoom.objects.get(id=cls_room).name
-        )
-        week_days_names = ([
-            get_weekday_name(get_weekday_number(
-                datetime.strptime(dt, '%d.%m.%Y')))
-            for dt in weekly_schedule
-        ])
-        context['total_schedule'] = list(zip(
-            week_days_names,
-            weekly_schedule.values(),
-            weekly_schedule.keys(),
-        ))
+    def _fill_context_by_form_data(fr: FilterEventsForm):
+        events_data, is_empty = get_events_data_by_filter_form(fr)
+        desc = get_filter_by_description(fr)
+        context['filter_by_text'] = desc
+        if not is_empty:
+            context['total_schedule'] = events_data
 
     if request.method == 'GET':
-        form = EventsForm(request.GET)
+        form = FilterEventsForm(request.GET)
         if form.is_valid():
-            class_room = form.cleaned_data['class_room']
-            date_from = form.cleaned_data['date_from']
-            _fill_context_by_form_data(date_from, class_room)
+            _fill_context_by_form_data(form)
 
-    return render(request, 'schedule/events.html', context)
+    return render(request, 'schedule/events/base.html', context)
 
 
 @authenticated
