@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from .utils import datetime_now_tz as now
+from .utils import datetime_now_tz as now, datetime_localize
 
 # Create your models here.
 INDIVIDUAL = '1'
@@ -344,9 +344,9 @@ class Group(models.Model):
             group=self,
             date__gte=dt_now.date(),
         ).order_by('id').all()
-        for lsn in lsns:
+        for lsn in lsns.iterator():
             dt = datetime.combine(lsn.date, lsn.time_start)
-            if dt >= dt_now:
+            if datetime_localize(dt) >= dt_now:
                 return lsn
         return None
 

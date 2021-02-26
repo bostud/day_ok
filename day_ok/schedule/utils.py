@@ -66,6 +66,10 @@ def datetime_now_tz() -> datetime:
     return datetime.now(tz=pytz.timezone('Europe/Kiev'))
 
 
+def datetime_localize(dt: datetime) -> datetime:
+    return pytz.timezone('Europe/Kiev').localize(dt)
+
+
 def get_year_month_periods() -> List[str]:
     dt_now = datetime_now_tz()
     dt_start = DATE_START_PERIODS
