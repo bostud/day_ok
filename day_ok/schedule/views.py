@@ -27,8 +27,14 @@ from .bl.events import (
     get_events_data_by_filter_form,
     get_filter_by_description
 )
-from .bl.groups import groups_objects, get_group
-from .utils import get_weekday_number, get_weekday_name
+from .bl.groups import (
+    groups_objects, get_group, get_group_info_by_period
+)
+from .utils import (
+    get_weekday_number, get_weekday_name,
+    is_valid_period_format, create_datetime_start_from_period,
+    create_datetime_end_period, get_year_month_periods
+)
 
 
 @authenticated
@@ -274,7 +280,10 @@ def groups(request: HttpRequest, *args, **kwargs):
 
 @authenticated
 def groups_actions(request: HttpRequest, action: str, group_id: int):
-    ctx = {}
+    ctx: Dict[Any, Any] = {
+        'periods': get_year_month_periods(),
+        'selected_period': None
+    }
     template_name = 'schedule/groups/view.html'
 
     def _edit():
@@ -284,7 +293,17 @@ def groups_actions(request: HttpRequest, action: str, group_id: int):
         pass
 
     def _view():
-        ctx.update(group=get_group(group_id))
+        if request.method == 'GET':
+            period = request.GET.get('period')
+            if period and is_valid_period_format(period):
+                dt_start = create_datetime_start_from_period(period)
+                dt_end = create_datetime_end_period(dt_start)
+                ctx.update(selected_period=period)
+                ctx.update(
+                    group=get_group_info_by_period(group_id, dt_start, dt_end)
+                )
+            else:
+                ctx.update(group=get_group(group_id))
 
     actions_func = {
         'view': _view,

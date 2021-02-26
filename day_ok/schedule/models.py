@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from .utils import datetime_now_tz as now
@@ -179,23 +180,71 @@ class Student(ContactMixin):
 
     @property
     def total_groups_services(self):
+        first_invoice = (
+            Invoice.objects.filter().annotate(
+                models.Min('date_created')
+            ).order_by(
+                'date_created'
+            ).first()
+        )
+        if first_invoice:
+            dt_gte = first_invoice.date_created
+        else:
+            dt_gte = now()
+        return self.get_total_groups_services(dt_gte, now())
+
+    def get_total_groups_services(self, dt_gte, dt_lte):
         return Invoice.objects.filter(
             student=self,
+            date_created__gte=dt_gte,
+            date_created__lte=dt_lte,
             service__type_of=GROUP,
         ).count()
 
     @property
     def paid_groups_services(self):
+        first_invoice = (
+            Invoice.objects.filter().annotate(
+                models.Min('date_created')
+            ).order_by(
+                'date_created'
+            ).first()
+        )
+        if first_invoice:
+            dt_gte = first_invoice.date_created
+        else:
+            dt_gte = now()
+        return self.get_paid_groups_services(dt_gte, now())
+
+    def get_paid_groups_services(self, dt_gte, dt_lte):
         return Invoice.objects.filter(
             student=self,
             service__type_of=GROUP,
+            date_created__gte=dt_gte,
+            date_created__lte=dt_lte,
             status=INVOICE_PAID_STATUS,
         ).count()
 
     @property
     def group_lessons_paid(self):
+        first_invoice = (
+            Invoice.objects.filter().annotate(
+                models.Min('date_created')
+            ).order_by(
+                'date_created'
+            ).first()
+        )
+        if first_invoice:
+            dt_gte = first_invoice.date_created
+        else:
+            dt_gte = now()
+        return self.get_group_lessons_paid(dt_gte, now())
+
+    def get_group_lessons_paid(self, dt_gte, dt_lte):
         q = Invoice.objects.filter(
             student=self,
+            date_created__gte=dt_gte,
+            date_created__lte=dt_lte,
             service__type_of=GROUP,
             status=INVOICE_PAID_STATUS,
         )
@@ -203,8 +252,28 @@ class Student(ContactMixin):
 
     @property
     def group_lessons_present(self):
+        first_presence = (
+            StudentPresence.objects.filter().annotate(
+                models.Min('date_created')
+            ).order_by(
+                'date_created'
+            ).first()
+        )
+        if first_presence:
+            dt_gte = first_presence.date_created
+        else:
+            dt_gte = now()
+        return self.get_group_lessons_present(dt_gte, now())
+
+    def get_group_lessons_present(
+            self,
+            dt_gte: datetime,
+            dt_lte: datetime,
+    ):
         return StudentPresence.objects.filter(
             student=self,
+            lessons__date__gte=dt_gte.date(),
+            lessons__date__lte=dt_lte.date(),
             lessons__lessons_type=GROUP,
         ).count()
 
