@@ -16,11 +16,15 @@ LESSONS_TYPES = [
     (GROUP, _('групове'))
 ]
 
+INVOICE_PAID_STATUS = '1'
+INVOICE_PENDING_STATUS = '2'
+INVOICE_CLOSED_STATUS = '3'
+INVOICE_TEST_LESSONS_STATUS = '4'
 INVOICE_STATUSES = [
-    ('1', _('оплачено')),
-    ('2', _('очікуємо оплати')),
-    ('3', _('закрито')),
-    ('4', _('тестове заняття')),
+    (INVOICE_PAID_STATUS, _('оплачено')),
+    (INVOICE_PENDING_STATUS, _('очікуємо оплати')),
+    (INVOICE_CLOSED_STATUS, _('закрито')),
+    (INVOICE_TEST_LESSONS_STATUS, _('тестове заняття')),
 ]
 
 STATUS_TEACHER_ACTIVE = '1'
@@ -40,9 +44,11 @@ STUDENT_STATUSES = [
     (STATUS_STUDENT_INACTIVE, _('неактивний')),
 ]
 
+INVOICE_RECEIVER_SCHOOL = '1'
+INVOICE_RECEIVER_TEACHER = '2'
 INVOICE_RECEIVERS = [
-    ('1', 'Школа'),
-    ('2', 'Вчитель'),
+    (INVOICE_RECEIVER_SCHOOL, 'Школа'),
+    (INVOICE_RECEIVER_TEACHER, 'Вчитель'),
 ]
 
 
@@ -156,6 +162,52 @@ class Student(ContactMixin):
     def full_name(self):
         return f"{self.last_name} {self.first_name}"
 
+    @property
+    def years_old(self):
+        dt_birth = self.date_of_birth
+        if dt_birth:
+            dt_now = now()
+            years = dt_now.year - dt_birth.year
+            if (
+                dt_now.month >= dt_birth.month and
+                dt_now.day >= dt_birth.day
+            ):
+                return years
+            else:
+                return years - 1
+        return None
+
+    @property
+    def total_groups_services(self):
+        return Invoice.objects.filter(
+            student=self,
+            service__type_of=GROUP,
+        ).count()
+
+    @property
+    def paid_groups_services(self):
+        return Invoice.objects.filter(
+            student=self,
+            service__type_of=GROUP,
+            status=INVOICE_PAID_STATUS,
+        ).count()
+
+    @property
+    def group_lessons_paid(self):
+        q = Invoice.objects.filter(
+            student=self,
+            service__type_of=GROUP,
+            status=INVOICE_PAID_STATUS,
+        )
+        return sum([i.service.lessons_count for i in q])
+
+    @property
+    def group_lessons_present(self):
+        return StudentPresence.objects.filter(
+            student=self,
+            lessons__lessons_type=GROUP,
+        ).count()
+
 
 class ClassRoom(models.Model):
     class Meta:
@@ -237,6 +289,11 @@ class Group(models.Model):
             time_end__gte=dt_now.time(),
         ).order_by('id').first()
         return lsn
+
+    @property
+    def next_student(self):
+        for s in self.students.all().iterator():
+            yield s
 
 
 class LessonsParent(models.Model):
@@ -354,6 +411,14 @@ class Lessons(models.Model):
         else:
             return self.group.students.count()
 
+    @property
+    def is_live_now(self):
+        dt_now = now()
+        return (
+            self.date == now().date() and
+            (self.time_start <= dt_now.time() <= self.time_end)
+        )
+
 
 class Service(models.Model):
     class Meta:
@@ -361,8 +426,14 @@ class Service(models.Model):
         verbose_name_plural = 'Послуги'
 
     name = models.CharField('Назва послуги', max_length=50)
+    type_of = models.CharField(
+        'Тип',
+        max_length=2,
+        choices=LESSONS_TYPES,
+        null=True,
+    )
     price = models.IntegerField('Ціна',)
-    lessons_count = models.IntegerField('К-сть занять', blank=True, null=True)
+    lessons_count = models.IntegerField('К-сть занять')
     currency = models.CharField('Валюта', max_length=3, default='UAH')
 
     def __str__(self):

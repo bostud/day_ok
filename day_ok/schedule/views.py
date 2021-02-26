@@ -27,7 +27,7 @@ from .bl.events import (
     get_events_data_by_filter_form,
     get_filter_by_description
 )
-from .bl.groups import groups_objects
+from .bl.groups import groups_objects, get_group
 from .utils import get_weekday_number, get_weekday_name
 
 
@@ -200,6 +200,7 @@ def lessons_actions(request: HttpRequest, action: str, lessons_id: int):
             edit_form = EditLessonsForm(request.POST)
             edit_form.is_valid()
             delete_lessons(lessons_id, edit_form.cleaned_data['change_all'])
+            return redirect('lessons', show_type='filter')
 
     def _view():
         ctx.update(view_lessons=True)
@@ -213,7 +214,9 @@ def lessons_actions(request: HttpRequest, action: str, lessons_id: int):
     }
 
     if actions_func.get(action):
-        actions_func[action]()
+        res = actions_func[action]()
+        if res:
+            return res
 
     return render(request, template_name, ctx)
 
@@ -271,7 +274,28 @@ def groups(request: HttpRequest, *args, **kwargs):
 
 @authenticated
 def groups_actions(request: HttpRequest, action: str, group_id: int):
-    return HttpResponseRedirect('/schedule')
+    ctx = {}
+    template_name = 'schedule/groups/view.html'
+
+    def _edit():
+        pass
+
+    def _delete():
+        pass
+
+    def _view():
+        ctx.update(group=get_group(group_id))
+
+    actions_func = {
+        'view': _view,
+    }
+
+    if actions_func.get(action):
+        actions_func[action]()
+    else:
+        return redirect('lessons')
+
+    return render(request, template_name, ctx)
 
 
 @authenticated

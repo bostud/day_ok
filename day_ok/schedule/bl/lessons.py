@@ -17,7 +17,7 @@ from ..forms import (
     convert_cleaned_data_to_objects, FilterLessonsForm,
 )
 from ..data_classes.lessons import AddLessonsDC, EditLessonsDC
-from django.utils.timezone import now
+from ..utils import datetime_now_tz as now
 
 log = logging.getLogger(__name__)
 
@@ -144,7 +144,7 @@ def add_lessons_from_form(form: AddLessonsForm) -> int:
         # add function - check if it free to create lessons
         parent_lessons.save()
         ls = Lessons(
-            class_room=classroom,
+            classroom=classroom,
             date=date_on,
             time_start=time_start,
             time_end=time_end,
@@ -184,6 +184,7 @@ def delete_lessons(lessons_id: int, delete_all: bool):
     if delete_all:
         parent = lessons.parent
         Lessons.objects.filter(parent=parent).delete()
+        parent.delete()
     else:
         lessons.delete()
 
@@ -191,6 +192,7 @@ def delete_lessons(lessons_id: int, delete_all: bool):
 def edit_lessons_from_form(form: EditLessonsForm, lessons_id: int):
     data = convert_cleaned_data_to_objects(form.cleaned_data)
     lessons = Lessons.objects.filter(id=lessons_id).first()
+    parent = lessons.parent
 
     def _lessons_filter_fields() -> dict:
         available_fields = [
@@ -212,20 +214,25 @@ def edit_lessons_from_form(form: EditLessonsForm, lessons_id: int):
         return {
             k: v for k, v in data.items() if k in available_fields
         }
-    if lessons.parent.count_of_children == 1:
+    if lessons.parent and lessons.parent.count_of_children == 1:
         data['change_all'] = True
 
     if data.get('change_all'):
-        q = Lessons.objects.filter(parent=lessons.parent)
-        LessonsParent.objects.filter(lessons=lessons).update(
-            **_parent_filter_fields()
-        )
+        Lessons.objects.filter(
+            parent=lessons.parent,
+            date__gt=now().date(),
+        ).delete()
+        parent.delete()
+        add_lessons_from_form(form)
     else:
-        q = Lessons.objects.filter(id=lessons_id)
+        old_parent = LessonsParent.objects.get(lessons=lessons)
         parent = LessonsParent(**_parent_filter_fields())
         parent.save()
-        q.update(parent=parent)
-    q.update(**_lessons_filter_fields())
+        lessons.update(parent=parent)
+        lessons.update(**_lessons_filter_fields())
+
+        if old_parent.count_of_children == 0:
+            old_parent.delete()
 
 
 def _group_lessons_by_classrooms(

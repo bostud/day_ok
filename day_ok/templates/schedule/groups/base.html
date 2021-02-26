@@ -11,18 +11,12 @@
         </div>
     </div>
     <br >
-    <div class="row">
-        <div class="col-2">
-            <div>
-                <a class="btn btn-secondary btn-sm form-control" role="button" href="/admin/schedule/group/add/">
-                    + Додати групу
-                </a>
-            </div>
-        </div>
+    <div class="row justify-content-center">
+        {% include 'schedule/groups/_header.html' %}
     </div>
     <br />
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-4">
             <p>Вкажіть групу для пошуку</p>
             <input class="form-control" id="id_group_name" type="text" placeholder="Пошук..">
             <br>
@@ -30,10 +24,11 @@
     </div>
     <div class="row">
         <div class="col">
-            <table class="table table-bordered">
+            <table class="table table-striped">
                 <thead>
                     <th>Назва групи</th>
                     <th>Кількість учнів</th>
+                    <th>Вік</th>
                     <th>Предмет</th>
                     <th>Викладач</th>
                     <th>Поточне заняття</th>
@@ -42,8 +37,11 @@
                 <tbody id="group_table">
                     {% for group in groups %}
                         <tr>
-                            <td>{{ group.name }}</td>
+                            <td>
+                                <a href="{% url 'groups_actions' 'view' group.id %}">{{ group.name }}</a>
+                            </td>
                             <td>{{ group.students_count }}</td>
+                            <td>{{ group.age_from }}+</td>
                             <td>
                                 {% if group.subject %}
                                     {{ group.subject }}
@@ -60,9 +58,7 @@
                             </td>
                             <td>
                                 {% if group.current_lessons %}
-                                    <a href="{% url 'lessons_action' 'view' group.current_lessons.id %}">
-                                        {{ group.current_lessons }}
-                                    </a>
+                                    {% include 'schedule/lessons/div_cell.html' with lessons=group.current_lessons show_type='groups' %}
                                 {% else %}
                                     ----(
                                     <a href="{% url 'add_lessons' %}">
@@ -73,9 +69,7 @@
                             </td>
                             <td>
                                 {% if group.next_lessons %}
-                                    <a href="{% url 'lessons_action' 'view' group.next_lessons.id %}">
-                                        {{ group.next_lessons }}
-                                    </a>
+                                    {% include 'schedule/lessons/div_cell.html' with lessons=group.next_lessons show_type='groups' show_date='true' %}
                                 {% else %}
                                     ----(
                                     <a href="{% url 'add_lessons' %}">
@@ -99,5 +93,23 @@
                 });
             });
         });
+    </script>
+    <script type="text/javascript">
+        let span = document.getElementById('spanTime');
+
+        function reload() {
+            location.reload();
+        }
+
+        function time() {
+            let d = new Date();
+            let s = d.getSeconds();
+            let m = d.getMinutes();
+            let h = d.getHours();
+            span.textContent = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2) + ":" + ("0" + s).substr(-2);
+        }
+
+        setInterval(time, 1000);
+        setInterval(reload, 1000 * 60);
     </script>
 {% endblock %}

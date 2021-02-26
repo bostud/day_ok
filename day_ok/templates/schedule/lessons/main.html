@@ -50,26 +50,30 @@
     </div>
     <br />
     <div class="row">
-        {% if show_type == 'classroom' and form %}
-            <form class="form-inline" method="GET" action="{% url 'lessons' 'classroom' %}">
-                {{ form }}
-                <br /><span>&nbsp;&nbsp;&nbsp;</span>
-                <input type="submit" class="btn btn-secondary" value="Показати">
-            </form>
-        {% elif show_type == 'day' and form %}
-            <form class="form-inline" method="GET" action="{% url 'lessons' 'day' %}">
-                {{ form }}
-                <br /><span>&nbsp;&nbsp;&nbsp;</span>
-                <input type="submit" class="btn btn-secondary" value="Показати">
-            </form>
-        {% elif show_type == 'filter' and form %}
-           {% include 'schedule/lessons/filter_form.html' with form=form %}
-        {% endif %}
+        <div class="col">
+            {% if show_type == 'classroom' and form %}
+                <form class="form-inline" method="GET" action="{% url 'lessons' 'classroom' %}">
+                    {{ form }}
+                    <br /><span>&nbsp;&nbsp;&nbsp;</span>
+                    <input type="submit" class="btn btn-secondary" value="Показати">
+                </form>
+            {% elif show_type == 'day' and form %}
+                <form class="form-inline" method="GET" action="{% url 'lessons' 'day' %}">
+                    {{ form }}
+                    <br /><span>&nbsp;&nbsp;&nbsp;</span>
+                    <input type="submit" class="btn btn-secondary" value="Показати">
+                </form>
+            {% elif show_type == 'filter' and form %}
+               {% include 'schedule/lessons/filter_form.html' with form=form %}
+            {% endif %}
+        </div>
     </div>
     <br />
     {% if show_type == 'classroom' and total_schedule %}
         <div class="row">
-            <p>Розклад занять з {{ lessons_date_from }} по {{ lessons_date_to }} для {{ selected_classroom }}</p>
+            <div class="col">
+                <p>Розклад занять з {{ lessons_date_from }} по {{ lessons_date_to }} для {{ selected_classroom }}</p>
+            </div>
         </div>
         <div class="row">
             {% for day_name, data, date in total_schedule %}
@@ -92,7 +96,9 @@
     {% endif %}
     {% if show_type == 'day' and total_schedule %}
     <div class="row">
-        <p>Розклад занять на {{ lessons_date_from }}</p>
+        <div class="col">
+            <p>Розклад занять на {{ lessons_date_from }}</p>
+        </div>
     </div>
         {% for classroom, data in total_schedule %}
         <div class="row">
@@ -113,37 +119,37 @@
         {% if total_schedule %}
             {% for date, date_str, data in total_schedule %}
             <div class="row">
-                <div id='accordion-{{ date.day }}'>
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="container-fluid">
-                                <div class="row" style="background-color: #ffefef">
-                                  <a class="card-link"
-                                     data-toggle="collapse"
-                                     href="#collapse-{{ date.day }}"
-                                     aria-expanded="false"
-                                  >
-                                      <span><strong>{{ date_str }} {{ date|date:"d.m.Y" }}</strong></span>
-                                  </a>
+                <div class="col">
+                    <div id='accordion-{{ date.day }}'>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="container-fluid">
+                                    <div class="row" style="background-color: #ffefef">
+                                      <a class="card-link"
+                                         data-toggle="collapse"
+                                         href="#collapse-{{ date.day }}"
+                                         aria-expanded="false"
+                                      >
+                                          <span><strong>{{ date_str }} {{ date|date:"d.m.Y" }}</strong></span>
+                                      </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div id='collapse-{{ date.day }}' class="collapse show" data-parent='#accordion-{{ date.day }}'>
-                            <div class="card-body">
-                            {% for classroom, lessons_info in data %}
-                                <div class="row">
-                                    <div class="divRow">
-                                        <div class="horizontalHeadCell">
+                            <div id='collapse-{{ date.day }}' class="collapse show" data-parent='#accordion-{{ date.day }}'>
+                                <div class="card-body">
+                                {% for classroom, lessons_info in data %}
+                                    <div class="row">
+                                        <div class="col-1">
                                             <b>{{ classroom }}</b>
                                         </div>
                                         {% for lessons in lessons_info %}
-                                        <div class="divCell">
+                                        <div class="col">
                                             {% include 'schedule/lessons/div_cell.html' with show_name=show_type lessons=lessons %}
                                         </div>
                                         {% endfor %}
                                     </div>
+                                {% endfor %}
                                 </div>
-                            {% endfor %}
                             </div>
                         </div>
                     </div>

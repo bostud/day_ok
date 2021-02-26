@@ -1,0 +1,103 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block head %}
+    {% load static %}
+{% endblock %}
+{% block body %}
+    <div class="row text-center" style="background-color: lightgrey">
+        <div class="col">
+            <h3>
+                {{ group.name }}
+            </h3>
+        </div>
+    </div>
+    <br />
+    <div class="row justify-content-center">
+        <div class="col-2">
+            <div>
+                <a class="btn btn-secondary btn-sm form-control" role="button" href="/admin/schedule/group/add/">
+                    + Додати групу
+                </a>
+            </div>
+        </div>
+        <div class="col-2">
+            <div>
+                <a class="btn btn-secondary btn-sm form-control" role="button" href="/admin/schedule/group/{{ group.id }}/change">
+                    Редагувати групу
+                </a>
+            </div>
+        </div>
+        <div class="col-1 offset-7">
+            <div class="text-muted form-control d-inline-flex p-2 justify-content-center">
+                <span class="far fa-clock">
+                    &nbsp;
+                    <span id="spanTime"><small class="spinner-grow spinner-grow-sm"></small></span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <p>Вкажіть студента для пошуку</p>
+            <input class="form-control" id="id_student_name" type="text" placeholder="Пошук..">
+            <br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table table-striped">
+                <thead>
+                    <th>Прізвище</th>
+                    <th>Ім'я</th>
+                    <th>Вік</th>
+                    <th>Виставлених рахунків</th>
+                    <th>Оплачених рахунків</th>
+                    <th>Занять оплачено</th>
+                    <th>Занять відвідано</th>
+                </thead>
+                <tbody id="students_table">
+                    {% for student in group.next_student %}
+                        <tr>
+                            <td>
+                                {{ student.last_name }}
+                            </td>
+                            <td>{{ student.first_name }}</td>
+                            <td>
+                                {% if student.years_old %}
+                                    {{ student.years_old }}
+                                {% else %}
+                                    ----
+                                {% endif %}
+                            </td>
+                            <td>{{ student.total_groups_services }}</td>
+                            <td>{{ student.paid_groups_services }}</td>
+                            <td>{{ student.group_lessons_paid }}</td>
+                            <td>{{ student.group_lessons_present }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            $("#id_student_name").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#students_table tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+        let span = document.getElementById('spanTime');
+
+        function time() {
+            let d = new Date();
+            let s = d.getSeconds();
+            let m = d.getMinutes();
+            let h = d.getHours();
+            span.textContent = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2) + ":" + ("0" + s).substr(-2);
+        }
+
+        setInterval(time, 1000);
+    </script>
+
+{% endblock %}
