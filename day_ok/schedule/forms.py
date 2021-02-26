@@ -7,10 +7,13 @@ from django import forms
 from functools import partial
 from .utils import get_weekdays_tuple
 from django.utils.timezone import now
-DateInput = partial(forms.DateInput, {'class': 'datepicker form-control'})
+DateInput = partial(
+    forms.DateInput,
+    {'class': 'datepicker datepicker_now form-control'}
+)
 
 
-def get_class_rooms() -> list:
+def get_classrooms() -> list:
     cl_r = ClassRoom.objects.all()
     res = []
     for room in cl_r:
@@ -55,7 +58,7 @@ def get_groups() -> list:
 def convert_cleaned_data_to_objects(form_cleaned_data: dict) -> dict:
     fcd = form_cleaned_data
     _converting_settings = (
-        ('class_room', ClassRoom, int, None),
+        ('classroom', ClassRoom, int, None),
         ('subject', Subject, int, None),
         ('teacher', Teacher, int, None),
         ('student', Student, int, None),
@@ -75,9 +78,9 @@ def convert_cleaned_data_to_objects(form_cleaned_data: dict) -> dict:
 
 
 class LessonsByClassRoomForm(forms.Form):
-    class_room = forms.ChoiceField(
+    classroom = forms.ChoiceField(
         label='Виберіть аудиторію',
-        choices=get_class_rooms,
+        choices=get_classrooms,
     )
 
     date_from = forms.DateField(
@@ -86,7 +89,7 @@ class LessonsByClassRoomForm(forms.Form):
         help_text='* Буде показано 7 днів після вибраної дати',
         input_formats=['%d.%m.%Y'],
     )
-    class_room.widget.attrs.update({'class': 'form-control'})
+    classroom.widget.attrs.update({'class': 'form-control'})
 
 
 class LessonsByDayForm(forms.Form):
@@ -98,9 +101,9 @@ class LessonsByDayForm(forms.Form):
 
 
 class AddLessonsForm(forms.Form):
-    class_room = forms.ChoiceField(
+    classroom = forms.ChoiceField(
         label='Аудиторія',
-        choices=get_class_rooms,
+        choices=get_classrooms,
     )
     time_start = forms.TimeField(
         label='Початок заняття',
@@ -170,9 +173,9 @@ class FilterLessonsForm(forms.Form):
         input_formats=['%d.%m.%Y'],
         initial=now,
     )
-    class_rooms = forms.MultipleChoiceField(
+    classrooms = forms.MultipleChoiceField(
         label='Аудиторія:',
-        choices=get_class_rooms,
+        choices=get_classrooms,
         required=False,
     )
     teachers = forms.MultipleChoiceField(
@@ -203,7 +206,7 @@ class FilterLessonsForm(forms.Form):
         max_value=7,
     )
 
-    class_rooms.widget.attrs.update({
+    classrooms.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',
@@ -249,9 +252,9 @@ class FilterEventsForm(forms.Form):
         input_formats=['%d.%m.%Y'],
         initial=now,
     )
-    class_rooms = forms.MultipleChoiceField(
+    classrooms = forms.MultipleChoiceField(
         label='Аудиторія:',
-        choices=get_class_rooms,
+        choices=get_classrooms,
         required=False,
     )
     students = forms.MultipleChoiceField(
@@ -267,7 +270,7 @@ class FilterEventsForm(forms.Form):
         max_value=7,
     )
 
-    class_rooms.widget.attrs.update({
+    classrooms.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',

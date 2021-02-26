@@ -1,5 +1,7 @@
+import pytz
 from typing import Union, Optional, List, Tuple
 from datetime import datetime, date, timedelta
+
 
 WEEK_DAYS_NAMES_UA = {
     1: 'Понеділок',
@@ -43,3 +45,7 @@ def get_days_from_date(
 
 def get_weekdays_tuple() -> Tuple[Tuple[int, str]]:
     return tuple((id_, name) for id_, name in WEEK_DAYS_NAMES_UA.items())
+
+
+def datetime_now_tz() -> datetime:
+    return datetime.now(tz=pytz.timezone('Europe/Kiev'))

@@ -12,21 +12,22 @@ from .forms import (
     EditLessonsForm, FilterLessonsForm,
 )
 from .models import ClassRoom
-from .controllers.lessons import (
-    get_weekly_class_room_lessons_by_classroom,
+from .bl.lessons import (
+    get_weekly_classroom_lessons_by_classroom,
     all_presence,
     prepare_add_lessons_form_data,
     add_lessons_from_form,
-    get_weekly_class_room_lessons_by_day,
+    get_weekly_classroom_lessons_by_day,
     prepare_edit_lessons_form_data,
     delete_lessons,
     edit_lessons_from_form,
     get_lessons_data_by_filter_form,
 )
-from .controllers.events import (
+from .bl.events import (
     get_events_data_by_filter_form,
     get_filter_by_description
 )
+from .bl.groups import groups_objects
 from .utils import get_weekday_number, get_weekday_name
 
 
@@ -52,14 +53,14 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
     dt_now = now()
 
     def _fill_context_by_form_data_for_classroom(dt, cls_room):
-        weekly_schedule = get_weekly_class_room_lessons_by_classroom(
+        weekly_schedule = get_weekly_classroom_lessons_by_classroom(
             cls_room,
             dt
         )
         context['lessons_date_to'] = (
                 dt + timedelta(days=6)
         ).strftime('%d.%m.%Y')
-        context['selected_class_room'] = (
+        context['selected_classroom'] = (
             ClassRoom.objects.get(id=cls_room).name
         )
         week_days_names = ([
@@ -74,7 +75,7 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
         ))
 
     def _fill_context_by_form_data_for_date(dt: datetime):
-        day_schedule = get_weekly_class_room_lessons_by_day(dt)
+        day_schedule = get_weekly_classroom_lessons_by_day(dt)
         context['total_schedule'] = day_schedule.items()
 
     def _fill_context_by_form_filter(frm: FilterLessonsForm):
@@ -88,9 +89,9 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
                 date_from = form.cleaned_data['date']
                 _fill_context_by_form_data_for_date(date_from)
             elif show_type == 'classroom':
-                class_room = int(form['class_room'].value())
+                classroom = int(form['classroom'].value())
                 date_from = form.cleaned_data['date_from']
-                _fill_context_by_form_data_for_classroom(date_from, class_room)
+                _fill_context_by_form_data_for_classroom(date_from, classroom)
             else:
                 date_from = form.cleaned_data['date_from']
                 _fill_context_by_form_filter(form)
@@ -218,13 +219,13 @@ def lessons_actions(request: HttpRequest, action: str, lessons_id: int):
 
 
 @authenticated
-def add_class_room(request: HttpRequest, *args, **kwargs):
+def classrooms(request: HttpRequest, *args, **kwargs):
     return HttpResponseRedirect('/schedule')
 
 
 @authenticated
-def add_event(request: HttpRequest, *args, **kwargs):
-    return HttpResponseRedirect('/schedule/events')
+def classrooms_actions(request: HttpRequest, action: str, classroom_id: int):
+    return HttpResponseRedirect('/schedule')
 
 
 @authenticated
@@ -258,3 +259,61 @@ def event_actions(request: HttpRequest, action: str, event_id: int):
         return redirect('lessons')
 
     return render(request, template_name, ctx)
+
+
+@authenticated
+def groups(request: HttpRequest, *args, **kwargs):
+    context = {
+        'groups': groups_objects(),
+    }
+    return render(request, 'schedule/groups/base.html', context)
+
+
+@authenticated
+def groups_actions(request: HttpRequest, action: str, group_id: int):
+    return HttpResponseRedirect('/schedule')
+
+
+@authenticated
+def students(request: HttpRequest, *args, **kwargs):
+    return HttpResponseRedirect('/schedule')
+
+
+@authenticated
+def students_actions(request: HttpRequest, action: str, student_id: int):
+    return HttpResponseRedirect('/schedule')
+
+
+@authenticated
+def about(request: HttpRequest, *args, **kwargs):
+    return HttpResponseRedirect('/schedule')
+
+
+@authenticated
+def contacts(request: HttpRequest, *args, **kwargs):
+    return HttpResponseRedirect('/schedule')
+
+
+@authenticated
+def logout(request: HttpRequest, *args, **kwargs):
+    return HttpResponseRedirect('/schedule')
+
+
+@authenticated
+def teachers(request: HttpRequest, *args, **kwargs):
+    return HttpResponseRedirect('/schedule')
+
+
+@authenticated
+def teachers_actions(request: HttpRequest, action: str, teacher_id: int):
+    return HttpResponseRedirect('/schedule')
+
+
+@authenticated
+def invoices(request: HttpRequest, *args, **kwargs):
+    return HttpResponseRedirect('/schedule')
+
+
+@authenticated
+def invoices_actions(request: HttpRequest, action: str, invoice_id: int):
+    return HttpResponseRedirect('/schedule')

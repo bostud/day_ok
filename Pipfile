@@ -10,6 +10,7 @@ gunicorn = "*"
 uvloop = "*"
 httptools = "*"
 asgiref = "*"
+coverage = "*"
 
 [dev-packages]
 

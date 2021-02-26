@@ -1,13 +1,12 @@
 import json
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.utils.timezone import now
-
+from .utils import datetime_now_tz as now
 
 # Create your models here.
 INDIVIDUAL = '1'
 GROUP = '2'
-CLASS_ROOM_TYPES = [
+CLASSROOM_TYPES = [
     (INDIVIDUAL, _('індивідуальний')),
     (GROUP, _('груповий'))
 ]
@@ -169,7 +168,7 @@ class ClassRoom(models.Model):
     room_type = models.CharField(
         'Тип аудиторії',
         max_length=2,
-        choices=CLASS_ROOM_TYPES,
+        choices=CLASSROOM_TYPES,
         default=GROUP,
     )
     description = models.TextField('Додатково', max_length=500, blank=True)
@@ -180,7 +179,7 @@ class ClassRoom(models.Model):
 
     @property
     def get_room_type_name(self):
-        for k, v in CLASS_ROOM_TYPES:
+        for k, v in CLASSROOM_TYPES:
             if self.room_type == k:
                 return v
 
@@ -213,10 +212,31 @@ class Group(models.Model):
     def __str__(self):
         return f"{self.name}, Вік: {self.age_from}+"
 
+    @property
     def students_count(self):
         return self.students.count()
 
-    students_count.short_description = 'К-сть учнів'
+    @property
+    def next_lessons(self):
+        dt_now = now()
+        lsn = Lessons.objects.filter(
+            group=self,
+            date__gte=dt_now.date(),
+            time_start__gte=dt_now.time(),
+        ).order_by('id').first()
+        return lsn
+
+    @property
+    def current_lessons(self):
+        dt_now = now()
+        lsn = Lessons.objects.filter(
+            group=self,
+            date__gte=dt_now.date(),
+            date__lte=dt_now.date(),
+            time_start__lte=dt_now.time(),
+            time_end__gte=dt_now.time(),
+        ).order_by('id').first()
+        return lsn
 
 
 class LessonsParent(models.Model):
@@ -246,7 +266,7 @@ class Lessons(models.Model):
         verbose_name = 'Заняття'
         verbose_name_plural = 'Заняття'
 
-    class_room = models.ForeignKey(
+    classroom = models.ForeignKey(
         ClassRoom, on_delete=models.DO_NOTHING, verbose_name='Аудиторія')
     date = models.DateField('Дата заняття')
     time_start = models.TimeField('Час початку')
@@ -282,7 +302,7 @@ class Lessons(models.Model):
     )
 
     def __str__(self):
-        return f"{self.class_room.name}/{self.get_lessons_type_name}"
+        return f"{self.classroom.name}/{self.get_lessons_type_name}"
 
     def format_date(self):
         return self.date.strftime('%d.%m.%Y')
@@ -449,7 +469,7 @@ class Event(models.Model):
         null=True,
         default=None,
     )
-    class_room = models.ForeignKey(
+    classroom = models.ForeignKey(
         ClassRoom,
         on_delete=models.DO_NOTHING,
         verbose_name='Аудиторія'

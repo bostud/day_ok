@@ -22,6 +22,6 @@ handler404 = page_not_found
 
 urlpatterns = [
     path('', home_view, name='home'),
-    path('admin/', admin.site.urls),
-    path('schedule/', include('schedule.urls')),
+    path('admin/', admin.site.urls, name='admin'),
+    path('schedule/', include('schedule.urls'), name='schedule'),
 ]

@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-  <a class="navbar-brand">DayOK</a>
+  <a class="navbar-brand" href="">DayOK</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#myNavbar" aria-controls="myNavbar" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -7,19 +7,19 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item mainNavCss">
-          <a class="nav-link" href="/">
+          <a class="nav-link" href="{% url 'home' %}">
             <span class="far fa-star"></span>
             Головна
           </a>
         </li>
         <li class="nav-item aboutNavCss">
-          <a class="nav-link" href="/about">
+          <a class="nav-link" href="{% url 'about' %}">
             <span class="fas fa-info"></span>
             Про проект
           </a>
         </li>
         <li class="nav-item contactsNavCss">
-          <a class="nav-link" href="/contacts">
+          <a class="nav-link" href="{% url 'contacts' %}">
             <span class="fas fa-address-book"></span>
             Контакти
           </a>
@@ -35,7 +35,7 @@
       </ul>
       <ul class="navbar-nav nav my-2 my-lg-0">
         <li class="nav-item logOutNavCss">
-          <a class="nav-link" href="/logout">
+          <a class="nav-link" href="{% url 'logout' %}">
             <span class="fas  fa-sign-out-alt"></span>
             Вихід
           </a>

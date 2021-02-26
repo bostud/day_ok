@@ -41,13 +41,6 @@
             </div>
         </div>
         <div class="col-sm-2">
-            <div >
-                <a class="btn btn-secondary btn-sm form-control" role="button" href="{% url 'add_class_room' %}">
-                    + Додати аудиторію
-                </a>
-            </div>
-        </div>
-        <div class="col-sm-2">
             <div>
                 <a class="btn btn-secondary btn-sm form-control" role="button" href="{% url 'add_lessons' %}">
                     + Додати заняття
@@ -76,7 +69,7 @@
     <br />
     {% if show_type == 'classroom' and total_schedule %}
         <div class="row">
-            <p>Розклад занять з {{ lessons_date_from }} по {{ lessons_date_to }} для {{ selected_class_room }}</p>
+            <p>Розклад занять з {{ lessons_date_from }} по {{ lessons_date_to }} для {{ selected_classroom }}</p>
         </div>
         <div class="row">
             {% for day_name, data, date in total_schedule %}
