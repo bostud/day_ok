@@ -343,7 +343,7 @@ class Group(models.Model):
         lsns = Lessons.objects.filter(
             group=self,
             date__gte=dt_now.date(),
-        ).order_by('id')[:10]
+        ).order_by('id').all()
         for lsn in lsns:
             dt = datetime.combine(lsn.date, lsn.time_start)
             if dt >= dt_now:
