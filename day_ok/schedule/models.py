@@ -340,12 +340,15 @@ class Group(models.Model):
     @property
     def next_lessons(self):
         dt_now = now()
-        lsn = Lessons.objects.filter(
+        lsns = Lessons.objects.filter(
             group=self,
             date__gte=dt_now.date(),
-            time_start__gte=dt_now.time(),
-        ).order_by('id').first()
-        return lsn
+        ).order_by('id')[:10]
+        for lsn in lsns:
+            dt = datetime.combine(lsn.date, lsn.time_start)
+            if dt >= dt_now:
+                return lsn
+        return None
 
     @property
     def current_lessons(self):
