@@ -3,11 +3,11 @@
     <div class="row">
         <div class="col-sm-4">
             <div>
-                <label for="id_class_room">Аудиторія</label>
-                <select class="custom-select" id="id_class_room" name="class_room" required>
+                <label for="id_classroom">Аудиторія</label>
+                <select class="custom-select" id="id_classroom" name="classroom" required>
                     <option selected></option>
-                    {% for room_id, room_name in class_rooms %}
-                        {% if edit_class_room and edit_class_room == room_id %}'
+                    {% for room_id, room_name in classrooms %}
+                        {% if edit_classroom and edit_classroom == room_id %}'
                             <option selected value="{{ room_id }}">{{ room_name }}</option>
                         {% else %}
                             <option value="{{ room_id }}">{{ room_name }}</option>
@@ -113,7 +113,7 @@
             </div>
             <div>
                 <label for="id_date_from_valid">Дата з якої почати заняття</label>
-                <input class="form-control datepicker"
+                <input class="form-control datepicker datepicker_now"
                        name="date_from_valid"
                        id="id_date_from_valid"
                        value='{{ edit_date_from_valid|date:"d.m.Y" }}'

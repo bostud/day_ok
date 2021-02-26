@@ -17,7 +17,7 @@ class Base:
 
 @dataclass
 class AddLessonsDC(Base):
-    class_rooms: list
+    classrooms: list
     lessons_types: list
     subjects: list
     teachers: list
@@ -28,7 +28,7 @@ class AddLessonsDC(Base):
 
 @dataclass
 class EditLessonsDC(Base):
-    class_room: int
+    classroom: int
     date_from_valid: datetime
     time_start: datetime
     lessons_type: int

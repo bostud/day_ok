@@ -115,10 +115,15 @@ class GroupAdmin(admin.ModelAdmin):
 
     list_per_page = 10
 
+    def students_count(self, rec: Group):
+        return rec.students.count()
+
+    students_count.short_description = 'К-сть учнів'
+
 
 class LessonsAdmin(admin.ModelAdmin):
     list_display = (
-        'class_room',
+        'classroom',
         'format_date',
         'format_time_start',
         'format_time_end',
@@ -129,7 +134,7 @@ class LessonsAdmin(admin.ModelAdmin):
     )
 
     fields = (
-        ('class_room',), ('subject',),
+        ('classroom',), ('subject', 'teacher'),
         ('lessons_type', 'student', 'group'),
         ('date', 'time_start', 'time_end'),
     )
@@ -252,13 +257,13 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ()
     list_display = (
         'name',
-        'class_room',
+        'classroom',
         'date_of_event_formated',
         'time_start',
         'time_end',
         'count_of_participants',
     )
-    autocomplete_fields = ['participants', 'class_room']
+    autocomplete_fields = ['participants', 'classroom']
 
     def count_of_participants(self, rec: Event):
         return rec.participants.count()
