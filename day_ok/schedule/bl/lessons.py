@@ -59,7 +59,7 @@ def all_presence(lessons_id: int):
 
 def prepare_add_lessons_form_data() -> dict:
     return AddLessonsDC(
-        class_rooms=get_classrooms(),
+        classrooms=get_classrooms(),
         teachers=get_teachers(),
         students=get_students(),
         groups=get_groups(),
@@ -74,7 +74,7 @@ def prepare_edit_lessons_form_data(lessons_id: int) -> dict:
     if not lessons:
         return {}
     return EditLessonsDC(
-        class_room=lessons.classroom.id,
+        classroom=lessons.classroom.id,
         teacher=lessons.teacher.id,
         subject=lessons.subject.id,
         student=lessons.student.id if lessons.student else None,
