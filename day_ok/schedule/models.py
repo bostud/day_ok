@@ -106,10 +106,48 @@ class Teacher(ContactMixin):
         choices=TEACHER_STATUSES,
         default=TEACHER_STATUSES[0][0],
     )
+    date_start = models.DateField(
+        'Дата старту роботи', null=True,
+    )
     date_release = models.DateTimeField(
         'Дата звільнення', blank=True, null=True)
     subjects = models.ManyToManyField(
         Subject, verbose_name='Предмети', blank=True)
+
+    @property
+    def subjects_list(self):
+        return self.subjects.all()
+
+    @property
+    def next_lessons(self):
+        dt_now = now()
+        lsns = Lessons.objects.filter(
+            teacher=self,
+            date__gte=dt_now.date(),
+        ).order_by('id').all()
+        for lsn in lsns.iterator():
+            dt = datetime.combine(lsn.date, lsn.time_start)
+            if datetime_localize(dt) >= dt_now:
+                return lsn
+        return None
+
+    @property
+    def current_lessons(self):
+        dt_now = now()
+        lsn = Lessons.objects.filter(
+            teacher=self,
+            date__gte=dt_now.date(),
+            date__lte=dt_now.date(),
+            time_start__lte=dt_now.time(),
+            time_end__gte=dt_now.time(),
+        ).order_by('id').first()
+        return lsn
+
+    @property
+    def status_name(self):
+        for id_, name in TEACHER_STATUSES:
+            if self.status == id_:
+                return name
 
 
 class Source(models.Model):
@@ -474,7 +512,7 @@ class Lessons(models.Model):
 
     @property
     def presence_count(self):
-        return StudentPresence.objects.filter(lessons=self).count()
+        return StudentPresence.objects.filter(lessons=self).count() or 0
 
     @property
     def students_count(self):
@@ -489,6 +527,14 @@ class Lessons(models.Model):
         return (
             self.date == now().date() and
             (self.time_start <= dt_now.time() <= self.time_end)
+        )
+
+    @property
+    def is_finished(self):
+        dt_now = now()
+        return (
+            self.date <= now().date() and
+            (self.time_end <= dt_now.time())
         )
 
 

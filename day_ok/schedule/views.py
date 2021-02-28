@@ -30,10 +30,15 @@ from .bl.events import (
 from .bl.groups import (
     groups_objects, get_group, get_group_info_by_period
 )
+
+from .bl.teachers import (
+    teachers_objects, get_teacher, get_teacher_lessons_info
+)
 from .utils import (
     get_weekday_number, get_weekday_name,
     is_valid_period_format, create_datetime_start_from_period,
-    create_datetime_end_period, get_year_month_periods
+    create_datetime_end_period, get_year_month_periods, get_period,
+    datetime_now_tz, create_datetime_start_period,
 )
 
 
@@ -344,12 +349,59 @@ def logout(request: HttpRequest, *args, **kwargs):
 
 @authenticated
 def teachers(request: HttpRequest, *args, **kwargs):
-    return HttpResponseRedirect('/schedule')
+    context = {
+        'teachers': teachers_objects(),
+    }
+    return render(request, 'schedule/teachers/base.html', context)
 
 
 @authenticated
 def teachers_actions(request: HttpRequest, action: str, teacher_id: int):
-    return HttpResponseRedirect('/schedule')
+    dt_now = datetime_now_tz()
+
+    dt_start_period = create_datetime_start_period(dt_now)
+    dt_end_period = create_datetime_end_period(dt_start_period)
+    default_period = get_period(dt_now.year, dt_now.month)
+
+    ctx: Dict[Any, Any] = {
+        'periods': get_year_month_periods(),
+        'teacher': get_teacher(teacher_id),
+        'selected_period': default_period,
+    }
+    template_name = 'schedule/teachers/view.html'
+
+    def _edit():
+        pass
+
+    def _delete():
+        pass
+
+    def _view():
+        if request.method == 'GET':
+            period = request.GET.get('period')
+            dt_start, dt_end = None, None
+            if period and is_valid_period_format(period):
+                dt_start = create_datetime_start_from_period(period)
+                dt_end = create_datetime_end_period(dt_start)
+                ctx.update(selected_period=period)
+            ctx.update(
+                lessons_reports=get_teacher_lessons_info(
+                    teacher_id,
+                    dt_start or dt_start_period,
+                    dt_end or dt_end_period
+                )
+            )
+
+    actions_func = {
+        'view': _view,
+    }
+
+    if actions_func.get(action):
+        actions_func[action]()
+    else:
+        return redirect('lessons')
+
+    return render(request, template_name, ctx)
 
 
 @authenticated

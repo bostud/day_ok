@@ -86,6 +86,31 @@ def get_year_month_periods() -> List[str]:
     return res
 
 
+def get_period_months_start_end(
+    dt_from: datetime,
+    dt_until: Optional[datetime] = None,
+) -> List[Optional[Tuple[datetime, datetime]]]:
+    if not dt_until:
+        dt_until = datetime_now_tz()
+    else:
+        dt_until = datetime_localize(dt_until)
+    dt_from = datetime_localize(dt_from)
+    months = get_month_from_date(dt_from, dt_until)
+    res = []
+    month_counter = 0
+    for y in range(dt_from.year, dt_until.year + 1):
+        for m in range(1, 13):
+            dt_start = datetime(year=y, month=m, day=1)
+            res.append((
+                dt_start,
+                create_datetime_end_period(dt_start) - timedelta(days=1),
+            ))
+            month_counter += 1
+            if month_counter == months:
+                return res
+    return res
+
+
 def get_period(year: int, month: int) -> str:
     assert 1 <= month <= 12
     return f"{year}.{month}"
@@ -107,6 +132,14 @@ def create_datetime_start_from_period(period: str):
             day=1
         )
     return DATE_START_PERIODS
+
+
+def create_datetime_start_period(dt: datetime):
+    return datetime(
+        year=dt.year,
+        month=dt.month,
+        day=1
+    )
 
 
 def create_datetime_end_period(dt_start: datetime):

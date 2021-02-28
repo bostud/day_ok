@@ -1,0 +1,141 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/teachers/view.css' %}">
+{% endblock %}
+{% block body %}
+    <div class="row text-center" style="background-color: lightgrey">
+        <div class="col">
+            <h3>
+                {{ teacher.full_name }}
+            </h3>
+        </div>
+    </div>
+    <br />
+    <div class="row justify-content-center">
+        <div class="col">
+            Телефон: {{teacher.phone_number}}
+        </div>
+    </div>
+    <br />
+    <div class="row justify-content-center">
+        {% include 'schedule/teachers/_header.html' %}
+    </div>
+    <div class="row">
+        <div class="col-2">
+            <form method="GET">
+                <label for="period">Виберіть місяць</label>
+                <select class="form-control" id="period" name="period" onchange="this.form.submit()">
+                    <option selected></option>
+                    {% for period in periods %}
+                        {% if selected_period == period %}
+                            <option selected value="{{period}}">{{period}}</option>
+                        {% else %}
+                            <option value="{{period}}">{{period}}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col table-responsive">
+            {% for lessons_report in lessons_reports %}
+                <div class="colorTarget{{lessons_report.lessons_type_id}}">
+                    <table class="table table-striped table-sm" cellspacing="0" width="100%">
+                        <thead>
+                            <th>Тип</th>
+                            <th>Всього занять</th>
+                        </thead>
+                        <tbody id="report_table{{ lessons_report.lessons_type_id }}">
+                            <tr>
+                                <td>
+                                    <span
+                                            data-toggle="collapse"
+                                            data-target="#lessons_type_{{ lessons_report.lessons_type_id }}"
+                                            class="fas fa-angle-down"
+                                    ></span>
+                                    {{ lessons_report.lessons_type_name }}
+                                </td>
+                                <td>{{ lessons_report.count }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div id="lessons_type_{{ lessons_report.lessons_type_id }}" class="collapse table-responsive">
+                        {% for subject_report in lessons_report.subjects_reports %}
+                            <table class="table table-striped table-sm" cellspacing="0" width="100%">
+                                <thead>
+                                    <th>Предмет</th>
+                                    <th>Всього занять</th>
+                                </thead>
+                                <tbody id="report_table{{ lessons_report.lessons_type_id }}{{subject_report.subject.id}}">
+                                    <tr>
+                                        <td>
+                                            <span
+                                                    data-toggle="collapse"
+                                                    data-target="#subject_{{ lessons_report.lessons_type_id }}_{{ subject_report.subject.id }}"
+                                                    class="fas fa-angle-down"
+                                            ></span>
+                                            {{ subject_report.subject.name }}
+                                        </td>
+                                        <td>{{ subject_report.count }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div id="subject_{{ lessons_report.lessons_type_id }}_{{ subject_report.subject.id }}" class="collapse table-responsive">
+                                <table class="table table-striped table-sm" cellspacing="0" width="100%">
+                                    <thead>
+                                        <th>Учень/Група</th>
+                                        <th>Дата</th>
+                                        <th>Час початку</th>
+                                        <th>Час закінчення</th>
+                                        <th>Присутніх</th>
+                                        <th>Опції</th>
+                                        <th>Статус заняття</th>
+                                    </thead>
+                                    <tbody id="report_table{{ lessons_report.lessons_type_id }}{{subject_report.subject.name}}">
+                                        {% for lessons in subject_report.lessons %}
+                                            <tr>
+                                                <td>
+                                                    {% if lessons.condition_individual %}
+                                                        {{ lessons.student.full_name}}
+                                                    {% else %}
+                                                        {{ lessons.group.name}}
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ lessons.date|date:"d.m.y" }}</td>
+                                                <td>{{ lessons.format_t_start }}</td>
+                                                <td>{{ lessons.format_t_end }}</td>
+                                                <td>{{ lessons.presence_count }}</td>
+                                                <td>
+                                                    Редагувати заняття/Редагувати пристуність/to be ...
+                                                </td>
+                                                <td>Заняття відбулось/не відбулось</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+
+        let span = document.getElementById('spanTime');
+
+        function time() {
+            let d = new Date();
+            let s = d.getSeconds();
+            let m = d.getMinutes();
+            let h = d.getHours();
+            span.textContent = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2) + ":" + ("0" + s).substr(-2);
+        }
+
+        setInterval(time, 1000);
+    </script>
+
+{% endblock %}

@@ -66,7 +66,7 @@ students_urlpatterns = [
 teachers_urlpatterns = [
     path('teachers', teachers, name='teachers'),
     path(
-        'teachers/<str:action>/(<int:teacher_id>/',
+        'teachers/<str:action>/<int:teacher_id>/',
         teachers_actions,
         name='teachers_actions'
     ),
