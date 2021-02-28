@@ -51,7 +51,7 @@ def get_teacher_lessons_info(
                     date__gte=date_start.date(),
                     date__lt=date_end,
                     subject=subject,
-                ).order_by('time_start').order_by('date')
+                ).order_by('date').order_by('time_start')
                 c = lessons.count()
                 count += c
                 subject_res.append(
