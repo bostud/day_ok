@@ -218,20 +218,25 @@ def edit_lessons_from_form(form: EditLessonsForm, lessons_id: int):
         data['change_all'] = True
 
     if data.get('change_all'):
-        Lessons.objects.filter(
-            parent=lessons.parent,
-            date__gt=now().date(),
-        ).delete()
-        parent.delete()
+        if parent:
+            Lessons.objects.filter(
+                parent=lessons.parent,
+                date__gt=now().date(),
+            ).delete()
+            parent.delete()
+        else:
+            lessons.delete()
         add_lessons_from_form(form)
     else:
-        old_parent = LessonsParent.objects.get(lessons=lessons)
+        old_parent = parent
         parent = LessonsParent(**_parent_filter_fields())
         parent.save()
-        lessons.update(parent=parent)
-        lessons.update(**_lessons_filter_fields())
 
-        if old_parent.count_of_children == 0:
+        update_data = dict(parent=parent)
+        update_data.update(**_lessons_filter_fields())
+        Lessons.objects.filter(id=lessons_id).update(**update_data)
+
+        if old_parent and old_parent.count_of_children == 0:
             old_parent.delete()
 
 
