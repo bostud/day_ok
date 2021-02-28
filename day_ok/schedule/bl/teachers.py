@@ -24,7 +24,7 @@ class LessonsReport:
 
 
 def teachers_objects() -> List[Optional[Teacher]]:
-    return Teacher.objects.all()
+    return Teacher.objects.order_by('last_name').order_by('first_name').all()
 
 
 def get_teacher(teacher_id: int) -> Optional[Teacher]:
