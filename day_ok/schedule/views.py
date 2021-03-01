@@ -108,7 +108,6 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
     def _fill_context_for_form_teachers(dt: datetime):
         day_schedule = get_lessons_data_for_teachers(dt)
         res = [teacher for teacher in day_schedule]
-        print(res)
         context['total_schedule'] = res
         context['time_periods'] = get_day_time_periods()
 
@@ -132,6 +131,8 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
         elif show_type == 'day':
             _fill_context_by_form_data_for_date(dt_now)
             context['lessons_date_from'] = dt_now.strftime('%d.%m.%Y')
+        elif show_type == 'teachers':
+            _fill_context_for_form_teachers(now())
         elif show_type == 'filter':
             form = FilterLessonsForm(data={'date_from': dt_now})
             form.is_valid()

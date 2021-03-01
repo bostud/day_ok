@@ -4,13 +4,15 @@
 {% endblock %}
 
 
-<div class="container" style="background-color: lightgrey">
-    <div class="row">
+<div class="container-fluid">
+    <div class="row" style="overflow: scroll; max-height: 600px; overscroll-behavior-y: auto">
         <div class="col-1">
             <div class="row">
-                <div>
-                    <button type="button" class="btn btn-light" disabled>Години</button>
+                <div class="header_n">
+                    <p style="align-content: center">Години</p>
                 </div>
+            </div>
+            <div class="row">
                 <div class="list-group">
                     {% for time in time_periods %}
                         <li class="list-group-item" data-time-start="time_{{time.hour}}_{{time.minute}}">
@@ -20,28 +22,36 @@
                 </div>
             </div>
         </div>
-        <div class="col">
-            <div class="row table-responsible">
-                {% for teacher_lessons in total_schedule %}
-                    <div class="col-2">
-                        <div>
-                            <button type="button" class="btn btn-outline-info">{{teacher_lessons.teacher.full_name}}</button>
-                        </div>
-                        <div>
-                            {% for lessons in teacher_lessons.lessons %}
-                                <div class="time_{{lessons.time_start.hour}}_{{lessons.time_start.minute}}_{{lessons.duration_minute}} border">
-                                    <span>{{ lessons.teacher }}</span><br>
-                                    {% if lessons.condition_individual %}
-                                        <span>{{ lessons.student.full_name }}</span>
-                                    {% else %}
-                                        <span>{{ lessons.group.name }}</span>
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
-                        </div>
+        <div class="row" style="width: 92%;">
+        {% for teacher_lessons in total_schedule %}
+            <div class="col" style="min-width: 160px">
+                <div class="row">
+                    <div class="header">
+                        {{teacher_lessons.teacher.full_name}}
                     </div>
-                {% endfor %}
+                </div>
+                <div class="row">
+                    {% for lessons in teacher_lessons.lessons %}
+                        <div class="lessons_absolute time_{{lessons.time_start.hour}}_{{lessons.time_start.minute}}_{{lessons.duration_minute}} border"
+                             style="{{lessons.teacher_view_style}}"
+                        >
+                            <div>
+                                <span class="small" style="background-color: #eeeeee"><strong>
+                                    {{lessons.subject.name}}, {{ lessons.time_start|time:"H:i"}}-{{ lessons.time_end|time:"H:i"}}
+                                </strong></span><br>
+                                {% if lessons.condition_individual %}
+                                    <span>{{ lessons.student.full_name }}</span>
+                                {% else %}
+                                    <span>{{ lessons.group.name }}</span>
+                                {% endif %}<br />
+                                <span>{{ lessons.classroom.name }}</span>
+                                <a href="{% url 'lessons_action' 'edit'  lessons.id %}">Редагувати</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
+        {% endfor %}
         </div>
     </div>
 </div>

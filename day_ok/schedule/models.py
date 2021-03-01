@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
-from .utils import datetime_now_tz as now, datetime_localize
+from .utils import datetime_now_tz as now, datetime_localize, DAY_TIME_START
 
 
 class Subject(models.Model):
@@ -540,6 +540,19 @@ class Lessons(models.Model):
             self.date <= now().date() and
             (self.time_end <= dt_now.time())
         )
+
+    @property
+    def teacher_view_style(self) -> str:
+        position_top = self.time_start.hour - DAY_TIME_START.hour
+        if position_top:
+            position_top *= 2
+        position_top += 1
+        if self.time_start.minute != 0:
+            position_top += 1
+
+        position_height = int(self.duration_minute / 30)
+        return f"--position_top: {position_top}; " \
+               f"--position_height: {position_height};"
 
 
 def get_new_unique_invoice_number():
