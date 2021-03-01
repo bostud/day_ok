@@ -485,6 +485,12 @@ class Lessons(models.Model):
         return (end_minutes - start_minute) / 60
 
     @property
+    def duration_minute(self):
+        end_minutes = self.time_end.hour * 60 + self.time_end.minute
+        start_minute = self.time_start.hour * 60 + self.time_start.minute
+        return end_minutes - start_minute
+
+    @property
     def get_lessons_type_name(self):
         for _id, name in self.Type.choices:
             if self.lessons_type == _id:

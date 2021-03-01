@@ -1,0 +1,78 @@
+:root {
+    --duration_30_height: 70px;
+    --position: absolute;
+    --time_top: 40px;
+    --background-color: #f1f1f1;
+}
+
+.time_8_0_60 {
+    /* time_16_0_60: 16-time 0-min 60-duration*/
+    top: calc(var(--time_top) * 1);
+    position: var(--position);
+    height: calc(var(--duration_30_height) * 2);
+    background-color: var(--background-color);
+}
+
+.time_8_0_90 {
+    /* time_16_0_60: 16-time 0-min 60-duration*/
+    top: calc(var(--time_top) * 1);
+    position: var(--position);
+    height: calc(var(--duration_30_height) * 3);
+    background-color: var(--background-color);
+}
+
+.time_8_30_90 {
+    /* time_16_0_60: 16-time 0-min 60-duration*/
+    top: calc(var(--time_top) * 2);
+    position: var(--position);
+    height: calc(var(--duration_30_height) * 3);
+    background-color: var(--background-color);
+}
+
+.time_9_0_60 {
+    /* time_16_0_60: 16-time 0-min 60-duration*/
+    top: calc(var(--time_top) * 3);
+    position: var(--position);
+    height: calc(var(--duration_30_height) * 2);
+    background-color: var(--background-color);
+}
+
+.time_9_30_60 {
+    /* time_16_0_60: 16-time 0-min 60-duration*/
+    top: calc(var(--time_top) * 4);
+    position: var(--position);
+    height: calc(var(--duration_30_height) * 2);
+    background-color: var(--background-color);
+}
+
+.time_9_30_90 {
+    /* time_16_0_60: 16-time 0-min 60-duration*/
+    top: calc(var(--time_top) * 4);
+    position: var(--position);
+    height: calc(var(--duration_30_height) * 3);
+    background-color: var(--background-color);
+}
+
+.time_10_0_60 {
+    /* time_16_0_60: 16-time 0-min 60-duration*/
+    top: calc(var(--time_top) * 5);
+    position: var(--position);
+    height: calc(var(--duration_30_height) * 2);
+    background-color: var(--background-color);
+}
+
+.time_16_0_60 {
+    /* time_16_0_60: 16-time 0-min 60-duration*/
+    top: calc(var(--time_top) * 20);
+    position: var(--position);
+    height: calc(var(--duration_30_height) * 2);
+    background-color: var(--background-color);
+}
+
+.time_18_0_60 {
+    /* time_16_0_60: 16-time 0-min 60-duration*/
+    top: calc(var(--time_top) * 25);
+    position: var(--position);
+    height: calc(var(--duration_30_height) * 2);
+    background-color: var(--background-color);
+}

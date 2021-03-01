@@ -26,6 +26,7 @@ from .bl.lessons import (
     delete_lessons,
     edit_lessons_from_form,
     get_lessons_data_by_filter_form,
+    get_lessons_data_for_teachers,
 )
 from .bl.events import (
     get_events_data_by_filter_form,
@@ -47,6 +48,7 @@ from .utils import (
     is_valid_period_format, create_datetime_start_from_period,
     create_datetime_end_period, get_year_month_periods, get_period,
     datetime_now_tz, create_datetime_start_period,
+    get_day_time_periods,
 )
 
 
@@ -62,6 +64,8 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
         landing_form = LessonsByDayForm
     elif show_type == 'classroom':
         landing_form = LessonsByClassRoomForm
+    elif show_type == 'teachers':
+        landing_form = LessonsByDayForm
     else:
         landing_form = FilterLessonsForm
 
@@ -101,6 +105,13 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
         day_schedule = get_lessons_data_by_filter_form(frm)
         context['total_schedule'] = day_schedule
 
+    def _fill_context_for_form_teachers(dt: datetime):
+        day_schedule = get_lessons_data_for_teachers(dt)
+        res = [teacher for teacher in day_schedule]
+        print(res)
+        context['total_schedule'] = res
+        context['time_periods'] = get_day_time_periods()
+
     if request.method == 'GET':
         form = landing_form(request.GET)
         if form.is_valid():
@@ -111,6 +122,9 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
                 classroom = int(form['classroom'].value())
                 date_from = form.cleaned_data['date_from']
                 _fill_context_by_form_data_for_classroom(date_from, classroom)
+            elif show_type == 'teachers':
+                date_from = form.cleaned_data['date']
+                _fill_context_for_form_teachers(date_from)
             else:
                 date_from = form.cleaned_data['date_from']
                 _fill_context_by_form_filter(form)

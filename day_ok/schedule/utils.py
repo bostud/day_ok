@@ -1,7 +1,7 @@
 import pytz
 import re
 from typing import Union, Optional, List, Tuple
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time
 
 
 WEEK_DAYS_NAMES_UA = {
@@ -13,6 +13,9 @@ WEEK_DAYS_NAMES_UA = {
     6: 'Субота',
     7: 'Неділя',
 }
+
+DAY_TIME_START = time(hour=8)
+DAY_TIME_END = time(hour=21)
 
 DATE_START_PERIODS = datetime(year=2021, month=1, day=1)
 PERIOD_REGEXP = re.compile(r'^(\d{4})\.(1|2|3|4|5|6|7|8|9|10|11|12)$')
@@ -159,3 +162,11 @@ def get_next_month_from_date(dt_from: datetime) -> datetime:
             month=dt_from.month + 1,
             day=1,
         )
+
+
+def get_day_time_periods() -> List[time]:
+    res = []
+    for hour in range(DAY_TIME_START.hour, DAY_TIME_END.hour + 1):
+        for minutes in [0, 30]:
+            res.append(time(hour, minutes))
+    return res

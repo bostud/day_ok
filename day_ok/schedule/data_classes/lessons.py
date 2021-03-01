@@ -1,6 +1,7 @@
 from typing import List, Optional
 from dataclasses import dataclass
 from datetime import datetime, date
+from ..models import Teacher, Lessons
 
 
 class Base:
@@ -44,3 +45,10 @@ class EditLessonsDC(Base):
 
     def to_dict(self, **kwargs) -> dict:
         return super().to_dict('edit')
+
+
+@dataclass
+class LessonsScheduleTeachers(Base):
+    teacher: Teacher
+    date: date
+    lessons: List[Lessons]

@@ -1,10 +1,11 @@
 import logging
 import json
-from typing import List
+from typing import List, Generator
 from datetime import date, timedelta, datetime
 from ..models import (
     Lessons, StudentPresence,
     ClassRoom, Subject, Teacher, Student, Group, LessonsParent,
+    STATUS_TEACHER_ACTIVE,
 )
 from ..utils import (
     get_days_from_date,
@@ -21,6 +22,7 @@ from ..forms.lessons import (
 )
 from ..data_classes.lessons import AddLessonsDC, EditLessonsDC
 from ..utils import datetime_now_tz as now, get_weekdays_tuple
+from ..data_classes.lessons import LessonsScheduleTeachers
 
 log = logging.getLogger(__name__)
 
@@ -306,3 +308,17 @@ def get_lessons_data_by_filter_form(form: FilterLessonsForm):
             tuple(zip(cls_rms, data.values()))
         ))
     return result
+
+
+def get_lessons_data_for_teachers(dt: date) -> Generator:
+    for teacher in Teacher.objects.filter(status=STATUS_TEACHER_ACTIVE).all():
+        lessons = Lessons.objects.filter(
+            teacher=teacher,
+            date=dt,
+        ).order_by('time_start').all()
+
+        yield LessonsScheduleTeachers(
+            lessons=lessons,
+            teacher=teacher,
+            date=dt,
+        )
