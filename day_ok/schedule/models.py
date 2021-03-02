@@ -599,6 +599,8 @@ class Invoice(models.Model):
     )
     date_created = models.DateTimeField(auto_now=True)
     date_when_should_pay = models.DateField('Дата до якої здійснити оплату')
+    date_valid_from = models.DateField('Дійсний з', null=True)
+    date_valid_until = models.DateField('Дійсний по', null=True)
     status = models.CharField(
         'Статус рахунку', max_length=2, choices=INVOICE_STATUSES)
 

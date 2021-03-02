@@ -92,7 +92,6 @@
                                         <th>Час закінчення</th>
                                         <th>Присутніх</th>
                                         <th>Опції</th>
-                                        <th>Статус заняття</th>
                                     </thead>
                                     <tbody id="report_table{{ lessons_report.lessons_type_id }}{{subject_report.subject.name}}">
                                         {% for lessons in subject_report.lessons %}
@@ -109,9 +108,21 @@
                                                 <td>{{ lessons.format_t_end }}</td>
                                                 <td>{{ lessons.presence_count }}</td>
                                                 <td>
-                                                    Редагувати заняття/Редагувати пристуність/to be ...
+                                                    <button class="btn btn-info"
+                                                            onClick="editObjectPage(this)"
+                                                            data-url="{% url 'lessons_action' 'edit' lessons.id %}"
+                                                            title="Редагувати заняття"
+                                                    >
+                                                        <span class="fas fa-pencil-ruler"></span>
+                                                    </button>
+                                                    <button class="btn btn-info"
+                                                            onClick="goToUrl(this)"
+                                                            data-url="{% url 'lessons_action' 'edit' lessons.id %}"
+                                                            title="Редагувати присутність"
+                                                    >
+                                                        <span class="fas fa-tasks"></span>
+                                                    </button>
                                                 </td>
-                                                <td>Заняття відбулось/не відбулось</td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>
@@ -136,6 +147,10 @@
         }
 
         setInterval(time, 1000);
+
+        function goToUrl(elem) {
+            location.href = elem.getAttribute('data-url');
+        }
     </script>
 
 {% endblock %}

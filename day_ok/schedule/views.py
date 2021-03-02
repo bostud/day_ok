@@ -410,5 +410,10 @@ def invoices(request: HttpRequest, *args, **kwargs):
 
 
 @authenticated
+def invoices_add(request: HttpRequest, *args, **kwargs):
+    return HttpResponseRedirect('/schedule')
+
+
+@authenticated
 def invoices_actions(request: HttpRequest, action: str, invoice_id: int):
     return HttpResponseRedirect('/schedule')

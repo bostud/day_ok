@@ -73,6 +73,7 @@
                     <th>Оплачених рахунків</th>
                     <th>Занять оплачено</th>
                     <th>Занять відвідано</th>
+                    <th>Рахунки</th>
                 </thead>
                 <tbody id="students_table">
                     {% for student in group.next_student %}
@@ -92,6 +93,24 @@
                             <td>{{ student.paid_groups_services }}</td>
                             <td>{{ student.group_lessons_paid }}</td>
                             <td>{{ student.group_lessons_present }}</td>
+                            <td>
+                                {% if selected_period %}
+                                    <button class="btn btn-info"
+                                            onclick="changeLocation(this)"
+                                            data-url="{% url 'invoices_add' %}"
+                                            title="Додати рахунок"
+                                    >
+                                        <span class="fab fa-bitcoin"></span>
+                                    </button>
+                                {% endif %}
+                                <button class="btn btn-info"
+                                        onclick="changeLocation(this)"
+                                        data-url="{% url 'invoices' %}"
+                                        title="Рахунки учня"
+                                >
+                                    <span class="fas fa-receipt"></span>
+                                </button>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -118,6 +137,10 @@
         }
 
         setInterval(time, 1000);
+
+        function changeLocation(elem) {
+            location.href = elem.getAttribute('data-url');
+        }
     </script>
 
 {% endblock %}
