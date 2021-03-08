@@ -24,22 +24,22 @@
     </div>
     <div class="row">
         <div class="col table-responsive">
-            <table class="table table-striped table-sm" cellspacing="0" width="100%">
+            <table class="table table-striped table-sm" cellspacing="0" style="max-width: 75%">
                 <thead>
                     <th>Прізвище Імʼя</th>
                     <th>Телефон</th>
                     <th>Предмети</th>
-                    <th>Поточне заняття</th>
-                    <th>Наступне заняття</th>
+                    <th style="text-align: justify">Поточне заняття</th>
+                    <th style="text-align: justify">Наступне заняття</th>
                 </thead>
                 <tbody id="teacher">
                     {% for teacher in teachers %}
                         <tr>
-                            <td>
+                            <td style="vertical-align: middle">
                                 <a href="{% url 'teachers_actions' 'view' teacher.id %}">{{ teacher.full_name }}</a>
                             </td>
-                            <td>{{ teacher.phone_number }}</td>
-                            <td>
+                            <td style="vertical-align: middle">{{ teacher.phone_number }}</td>
+                            <td style="vertical-align: middle">
                                 {% if teacher.subjects %}
                                     {% for subject in teacher.subjects_list %}
                                         <button type="button" disabled
@@ -53,27 +53,31 @@
                                     </a>
                                 {% endif %}
                             </td>
-                            <td>
-                                {% if teacher.current_lessons %}
-                                    {% include 'schedule/lessons/div_cell.html' with lessons=teacher.current_lessons show_type='teacher' %}
-                                {% else %}
-                                    ----(
-                                    <a href="{% url 'add_lessons' %}">
-                                        Додати заняття
-                                    </a>
-                                    )
-                                {% endif %}
+                            <td style="vertical-align: middle; text-align: justify">
+                                <div style="max-width: 25vh">
+                                    {% if teacher.current_lessons %}
+                                        {% include 'schedule/lessons/div_cell.html' with lessons=teacher.current_lessons show_type='teacher' %}
+                                    {% else %}
+                                        ----(
+                                        <a href="{% url 'add_lessons' %}">
+                                            Додати заняття
+                                        </a>
+                                        )
+                                    {% endif %}
+                                </div>
                             </td>
-                            <td>
-                                {% if teacher.next_lessons %}
-                                    {% include 'schedule/lessons/div_cell.html' with lessons=teacher.next_lessons show_type='teacher' show_date='true' %}
-                                {% else %}
-                                    ----(
-                                    <a href="{% url 'add_lessons' %}">
-                                        Додати заняття
-                                    </a>
-                                    )
-                                {% endif %}
+                            <td style="vertical-align: middle; text-align: justify;">
+                                <div style="max-width: 25vh">
+                                    {% if teacher.next_lessons %}
+                                        {% include 'schedule/lessons/div_cell.html' with lessons=teacher.next_lessons show_type='teacher' show_date='true' %}
+                                    {% else %}
+                                        ----(
+                                        <a href="{% url 'add_lessons' %}">
+                                            Додати заняття
+                                        </a>
+                                        )
+                                    {% endif %}
+                                </div>
                             </td>
                         </tr>
                     {% endfor %}

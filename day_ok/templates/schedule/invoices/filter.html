@@ -1,0 +1,28 @@
+{% block head %}
+{% endblock %}
+<form class="form-inline" method="GET">
+    <div style="float:left;margin-right:20px;">
+        {{ form.students }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        {{ form.services }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        {{ form.statuses }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        {{ form.service_types }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        {{ form.date_valid_from }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        {{ form.date_valid_until }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        <button type="submit" class="btn btn-info">Показати</button>
+    </div>
+    <div style="float:left;margin-right:20px;">
+        <a type="button" class="btn btn-warning" href="{% url 'invoices' %}">Очистити</a>
+    </div>
+</form>

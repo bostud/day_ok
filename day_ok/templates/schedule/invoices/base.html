@@ -1,0 +1,177 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block head %}
+    {% load static %}
+    {% include 'date_select_picker.html' %}
+{% endblock %}
+{% block body %}
+    <div class="row text-center" style="background-color: lightgrey">
+        <div class="col">
+            <h3>
+                Рахунки
+            </h3>
+        </div>
+    </div>
+    <br >
+    <div class="row">
+        {% include 'schedule/invoices/_header.html' with form=create_form %}
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-4">
+            <input class="form-control" id="id_invoice_name" type="text" placeholder="Пошук..">
+            <br>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-10">
+            <div class="card card-body">
+                {% include 'schedule/invoices/filter.html' with form=filter_form %}
+            </div>
+        </div>
+    </div>
+    <br />
+    {% if errors %}
+        <div class="row">
+            <div class="col-10">
+                {% for error in errors %}
+                <div class="alert alert-danger">
+                    <strong>Помилка!</strong>&nbsp;{{ error }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <br />
+    {% endif %}
+    {% if info_posts %}
+        <div class="row">
+            <div class="col-10">
+                {% for info in info_posts %}
+                <div class="alert alert-info alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Інфо!</strong>&nbsp;{{ info }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <br />
+    {% endif %}
+<!--    <div class="row">-->
+<!--        <div class="col">-->
+<!--            <ul class="pagination">-->
+<!--                {% if prev_page > -1 %}-->
+<!--                    <li class="page-item">-->
+<!--                        <a  class="page-link"-->
+<!--                           href="{% url 'invoices' %}?page={{prev_page}}"-->
+<!--                        >-->
+<!--                            &laquo;-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                {% else %}-->
+<!--                    <li class="page-item disabled">-->
+<!--                        <a class="page-link"-->
+<!--                           href="{% url 'invoices' %}?page=0"-->
+<!--                        >-->
+<!--                            &laquo;-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                {% endif %}-->
+<!--                {% for p in pages %}-->
+<!--                    {% if current_page == p %}-->
+<!--                    <li class="page-item active">-->
+<!--                        <a class="page-link" href="{{request.get_full_path}}&page={{p}}">{{p}}</a></li>-->
+<!--                    {% else %}-->
+<!--                    <li class="page-item"><a class="page-link" href="{{request.get_full_path}}&page={{p}}">{{p}}</a></li>-->
+<!--                    {% endif %}-->
+<!--                {% endfor %}-->
+<!--                <li class="page-item">-->
+<!--                    <a class="page-link" href="{{request.get_full_path}}&page={{next_page}}" aria-label="Next">-->
+<!--                        <span aria-hidden="true">&raquo;</span>-->
+<!--                    </a>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="row">
+        <div class="col-10 table-responsive">
+            <table class="table table-striped table-sm">
+                <thead>
+                    <th>Номер</th>
+                    <th>Учень</th>
+                    <th>Послуга</th>
+                    <th>Оплатити до</th>
+                    <th>Дійсний з</th>
+                    <th>Дійсний по</th>
+                    <th>Статус</th>
+                    <th>Опції</th>
+                </thead>
+                <tbody id="invoice_table">
+                    {% for invoice in invoices %}
+                        <tr>
+                            <td>{{ invoice.number }}</td>
+                            <td>{{ invoice.student }}</td>
+                            <td>{{ invoice.service }}</td>
+                            <td>
+                                {% if invoice.is_overdue_payment %}
+                                <span class="badge badge-danger md">{{ invoice.date_paid_until|date:"d.m.y" }}</span>
+                                {% else %}
+                                    {{ invoice.date_paid_until|date:"d.m.y" }}
+                                {% endif %}
+                            </td>
+                            <td>{{ invoice.date_valid_from|date:"d.m.y" }}</td>
+                            <td>{{ invoice.date_valid_until|date:"d.m.y" }}</td>
+                            <td>
+                                {% if invoice.is_paid %}
+                                    <span class="badge badge-success">{{ invoice.status_title }}</span>
+                                {% elif invoice.is_test %}
+                                    <span class="badge badge-secondary">{{ invoice.status_title }}</span>
+                                {% elif invoice.is_closed %}
+                                    <span class="badge badge-dark">{{ invoice.status_title }}</span>
+                                {% elif invoice.is_overdue_payment %}
+                                    <span class="badge badge-danger">{{ invoice.status_title }}</span>
+                                {% elif invoice.is_pending %}
+                                    <span class="badge badge-primary">{{ invoice.status_title }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="row">
+                                    <div class="col">
+                                        <a type="button"
+                                           class="btn btn-outline-primary"
+                                           href="{% url 'invoices_actions' 'view' invoice.id %}"
+                                           title="Переглянути"
+                                        >
+                                            <span class="far fa-eye"></span>
+                                        </a>
+                                    </div>
+                                {% if invoice.is_pending %}
+                                <div class="col">
+                                    <form action="{% url 'invoices_actions' 'paid' invoice.id %}" method="POST" class="form-inline">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                           class="btn btn-outline-primary"
+                                           title="Статус -> Оплачено"
+                                        >
+                                            <span class="fas fa-donate"></span>
+                                        </button>
+                                    </form>
+                                </div>
+                                {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            $("#id_invoice_name").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#invoice_table tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+{% endblock %}

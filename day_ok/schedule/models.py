@@ -1,56 +1,9 @@
 import json
 from datetime import datetime
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from .utils import datetime_now_tz as now, datetime_localize
-
-# Create your models here.
-INDIVIDUAL = '1'
-GROUP = '2'
-CLASSROOM_TYPES = [
-    (INDIVIDUAL, _('індивідуальний')),
-    (GROUP, _('груповий'))
-]
-
-LESSONS_TYPES = [
-    (INDIVIDUAL, _('індивідуальне')),
-    (GROUP, _('групове'))
-]
-
-INVOICE_PAID_STATUS = '1'
-INVOICE_PENDING_STATUS = '2'
-INVOICE_CLOSED_STATUS = '3'
-INVOICE_TEST_LESSONS_STATUS = '4'
-INVOICE_STATUSES = [
-    (INVOICE_PAID_STATUS, _('оплачено')),
-    (INVOICE_PENDING_STATUS, _('очікуємо оплати')),
-    (INVOICE_CLOSED_STATUS, _('закрито')),
-    (INVOICE_TEST_LESSONS_STATUS, _('тестове заняття')),
-]
-
-STATUS_TEACHER_ACTIVE = '1'
-STATUS_TEACHER_VACATION = '2'
-STATUS_TEACHER_INACTIVE = '3'
-TEACHER_STATUSES = [
-    (STATUS_TEACHER_ACTIVE, _('активний')),
-    (STATUS_TEACHER_VACATION, _('відпустка')),
-    (STATUS_TEACHER_INACTIVE, _('неактивний')),
-]
-
-
-STATUS_STUDENT_ACTIVE = '1'
-STATUS_STUDENT_INACTIVE = '2'
-STUDENT_STATUSES = [
-    (STATUS_STUDENT_ACTIVE, _('активний')),
-    (STATUS_STUDENT_INACTIVE, _('неактивний')),
-]
-
-INVOICE_RECEIVER_SCHOOL = '1'
-INVOICE_RECEIVER_TEACHER = '2'
-INVOICE_RECEIVERS = [
-    (INVOICE_RECEIVER_SCHOOL, 'Школа'),
-    (INVOICE_RECEIVER_TEACHER, 'Вчитель'),
-]
 
 
 class Subject(models.Model):
@@ -79,7 +32,7 @@ class ContactMixin(models.Model):
     last_name = models.CharField(
         'Прізвище', max_length=100, blank=False)
     phone_number = models.CharField(
-        'Номер телефону', max_length=13, blank=False)  # +380995588779
+        'Номер телефону', max_length=13, blank=False)
     email = models.CharField(max_length=150, blank=True, null=True)
     date_of_birth = models.DateField('Дата народження', blank=True, null=True)
     date_created = models.DateTimeField(auto_now=True)
@@ -95,16 +48,49 @@ class ContactMixin(models.Model):
         return f"{self.last_name} {self.first_name}"
 
 
+class Service(models.Model):
+    class TypeOf(models.IntegerChoices):
+        INDIVIDUAL = 1, _('Індивідуальний')
+        GROUP = 2, _('Груповий')
+
+    class Meta:
+        verbose_name = 'Послуги'
+        verbose_name_plural = 'Послуги'
+
+    name = models.CharField('Назва послуги', max_length=50)
+    type_of = models.IntegerField(
+        'Тип',
+        choices=TypeOf.choices,
+        null=True,
+    )
+    price = models.IntegerField('Ціна',)
+    lessons_count = models.IntegerField('К-сть занять')
+    currency = models.CharField('Валюта', max_length=3, default='UAH')
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def type_of_title(self):
+        for id_, title in self.TypeOf.choices:
+            if id_ == self.type_of:
+                return title
+
+
 class Teacher(ContactMixin):
     class Meta:
         verbose_name = 'Викладачі'
         verbose_name_plural = 'Викладачі'
 
-    status = models.CharField(
+    class Status(models.IntegerChoices):
+        ACTIVE = 1, _('Активний')
+        VACATION = 2, _('Відпустка')
+        INACTIVE = 3, _('Неактивний')
+
+    status = models.IntegerField(
         'Статус',
-        max_length=2,
-        choices=TEACHER_STATUSES,
-        default=TEACHER_STATUSES[0][0],
+        choices=Status.choices,
+        default=Status.ACTIVE,
     )
     date_start = models.DateField(
         'Дата старту роботи', null=True,
@@ -145,7 +131,7 @@ class Teacher(ContactMixin):
 
     @property
     def status_name(self):
-        for id_, name in TEACHER_STATUSES:
+        for id_, name in self.Status.choices:
             if self.status == id_:
                 return name
 
@@ -171,6 +157,11 @@ class Source(models.Model):
 
 
 class Student(ContactMixin):
+    class Status(models.IntegerChoices):
+        ACTIVE = 1, _('Активний')
+        INACTIVE = 2, _('Неактивний')
+        TEST = 3, _('Тестовий')
+
     class Meta:
         verbose_name = 'Учні'
         verbose_name_plural = 'Учні'
@@ -182,11 +173,10 @@ class Student(ContactMixin):
         blank=True,
         null=True,
     )
-    status = models.CharField(
+    status = models.IntegerField(
         'Статус',
-        max_length=2,
-        choices=STUDENT_STATUSES,
-        default=STUDENT_STATUSES[0][0],
+        choices=Status.choices,
+        default=Status.ACTIVE,
     )
     date_test_lessons = models.DateTimeField(
         'Дата тестового заняття', default=now)
@@ -236,7 +226,7 @@ class Student(ContactMixin):
             student=self,
             date_created__gte=dt_gte,
             date_created__lte=dt_lte,
-            service__type_of=GROUP,
+            service__type_of=Service.TypeOf.GROUP,
         ).count()
 
     @property
@@ -257,10 +247,10 @@ class Student(ContactMixin):
     def get_paid_groups_services(self, dt_gte, dt_lte):
         return Invoice.objects.filter(
             student=self,
-            service__type_of=GROUP,
+            service__type_of=Service.TypeOf.GROUP,
             date_created__gte=dt_gte,
             date_created__lte=dt_lte,
-            status=INVOICE_PAID_STATUS,
+            status=Invoice.Status.PAID,
         ).count()
 
     @property
@@ -283,8 +273,8 @@ class Student(ContactMixin):
             student=self,
             date_created__gte=dt_gte,
             date_created__lte=dt_lte,
-            service__type_of=GROUP,
-            status=INVOICE_PAID_STATUS,
+            service__type_of=Service.TypeOf.GROUP,
+            status=Invoice.Status.PAID,
         )
         return sum([i.service.lessons_count for i in q])
 
@@ -312,11 +302,15 @@ class Student(ContactMixin):
             student=self,
             lessons__date__gte=dt_gte.date(),
             lessons__date__lte=dt_lte.date(),
-            lessons__lessons_type=GROUP,
+            lessons__lessons_type=Lessons.Type.GROUP,
         ).count()
 
 
 class ClassRoom(models.Model):
+    class RoomType(models.IntegerChoices):
+        INDIVIDUAL = 1, _('Індивідуальний')
+        GROUP = 2, _('Груповий')
+
     class Meta:
         verbose_name = 'Аудиторії'
         verbose_name_plural = 'Аудиторії'
@@ -324,11 +318,10 @@ class ClassRoom(models.Model):
     name = models.CharField('Назва аудиторії', max_length=100)
     places_count = models.IntegerField(
         'К-сть місць', blank=True, null=True, default=None)
-    room_type = models.CharField(
+    room_type = models.IntegerField(
         'Тип аудиторії',
-        max_length=2,
-        choices=CLASSROOM_TYPES,
-        default=GROUP,
+        choices=RoomType.choices,
+        default=RoomType.GROUP,
     )
     description = models.TextField('Додатково', max_length=500, blank=True)
 
@@ -338,12 +331,14 @@ class ClassRoom(models.Model):
 
     @property
     def get_room_type_name(self):
-        for k, v in CLASSROOM_TYPES:
+        for k, v in self.RoomType.choices:
             if self.room_type == k:
                 return v
 
 
 class Group(models.Model):
+    SERVICE_TYPE = Service.TypeOf.GROUP
+
     class Meta:
         verbose_name = 'Групи'
         verbose_name_plural = 'Групи'
@@ -429,6 +424,10 @@ class LessonsParent(models.Model):
 
 
 class Lessons(models.Model):
+    class Type(models.IntegerChoices):
+        INDIVIDUAL = 1, _('Індивідуальне')
+        GROUP = 2, _('Групове')
+
     class Meta:
         verbose_name = 'Заняття'
         verbose_name_plural = 'Заняття'
@@ -438,8 +437,7 @@ class Lessons(models.Model):
     date = models.DateField('Дата заняття')
     time_start = models.TimeField('Час початку')
     time_end = models.TimeField('Час закінчення')
-    lessons_type = models.CharField(
-        'Тип заняття', max_length=2, choices=LESSONS_TYPES)
+    lessons_type = models.IntegerField('Тип заняття', choices=Type.choices)
     subject = models.ForeignKey(
         Subject, on_delete=models.DO_NOTHING, verbose_name='Предмет')
     teacher = models.ForeignKey(
@@ -488,7 +486,7 @@ class Lessons(models.Model):
 
     @property
     def get_lessons_type_name(self):
-        for _id, name in LESSONS_TYPES:
+        for _id, name in self.Type.choices:
             if self.lessons_type == _id:
                 return name
         return '(undefined)'
@@ -508,7 +506,7 @@ class Lessons(models.Model):
 
     @property
     def condition_individual(self):
-        return self.lessons_type == INDIVIDUAL
+        return self.lessons_type == self.Type.INDIVIDUAL
 
     @property
     def presence_count(self):
@@ -538,26 +536,6 @@ class Lessons(models.Model):
         )
 
 
-class Service(models.Model):
-    class Meta:
-        verbose_name = 'Послуги'
-        verbose_name_plural = 'Послуги'
-
-    name = models.CharField('Назва послуги', max_length=50)
-    type_of = models.CharField(
-        'Тип',
-        max_length=2,
-        choices=LESSONS_TYPES,
-        null=True,
-    )
-    price = models.IntegerField('Ціна',)
-    lessons_count = models.IntegerField('К-сть занять')
-    currency = models.CharField('Валюта', max_length=3, default='UAH')
-
-    def __str__(self):
-        return self.name
-
-
 def get_new_unique_invoice_number():
     last = Invoice.objects.last()
     if not last:
@@ -569,6 +547,16 @@ def get_new_unique_invoice_number():
 
 
 class Invoice(models.Model):
+    class Status(models.IntegerChoices):
+        PAID = 1, _('оплачено')
+        PENDING = 2, _('очікуємо оплати')
+        CLOSED = 3, _('закрито')
+        TEST_LESSONS = 4, _('тестове заняття')
+
+    class Receivers(models.IntegerChoices):
+        SCHOOL = 1, _('Школа')
+        TEACHER = 2, _('Вчитель')
+
     class Meta:
         verbose_name = 'Рахунки'
         verbose_name_plural = 'Рахунки'
@@ -584,11 +572,10 @@ class Invoice(models.Model):
         Student, on_delete=models.DO_NOTHING, verbose_name='Студент')
     service = models.ForeignKey(
         Service, on_delete=models.DO_NOTHING, verbose_name='Послуга')
-    receiver = models.CharField(
+    receiver = models.IntegerField(
         'Отримувач',
-        max_length=2,
-        choices=INVOICE_RECEIVERS,
-        default=INVOICE_RECEIVERS[0][0],
+        choices=Receivers.choices,
+        null=True,
     )
     receiver_teacher = models.ForeignKey(
         Teacher,
@@ -598,14 +585,70 @@ class Invoice(models.Model):
         verbose_name='Вчитель',
     )
     date_created = models.DateTimeField(auto_now=True)
-    date_when_should_pay = models.DateField('Дата до якої здійснити оплату')
+    date_paid_until = models.DateField('Дата до якої здійснити оплату')
     date_valid_from = models.DateField('Дійсний з', null=True)
     date_valid_until = models.DateField('Дійсний по', null=True)
-    status = models.CharField(
-        'Статус рахунку', max_length=2, choices=INVOICE_STATUSES)
+    status = models.IntegerField(
+        'Статус рахунку', choices=Status.choices)
 
     def __str__(self):
         return f'{self.number}'
+
+    @property
+    def status_title(self):
+        for id_, title in self.Status.choices:
+            if self.status == id_:
+                return title
+
+    @property
+    def is_paid(self):
+        return self.status == self.Status.PAID
+
+    @property
+    def is_test(self):
+        return self.status == self.Status.TEST_LESSONS
+
+    @property
+    def is_pending(self):
+        return self.status == self.Status.PENDING
+
+    @property
+    def is_closed(self):
+        return self.status == self.Status.CLOSED
+
+    @property
+    def is_overdue_payment(self):
+        return (
+            self.is_pending and
+            now().date() > self.date_paid_until
+        )
+
+
+class InvoiceStatusChangeLog(models.Model):
+    invoice = models.ForeignKey(Invoice, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    previous_status = models.IntegerField(
+        choices=Invoice.Status.choices,
+        null=True,
+    )
+    new_status = models.IntegerField(
+        choices=Invoice.Status.choices
+    )
+    datetime_created = models.DateTimeField(auto_now=True)
+
+    @property
+    def previous_status_title(self):
+        for id_, title in Invoice.Status.choices:
+            if id_ == self.previous_status:
+                return title
+
+        return '----'
+
+    @property
+    def new_status_title(self):
+        for id_, title in Invoice.Status.choices:
+            if id_ == self.new_status:
+                return title
 
 
 class StudentPresence(models.Model):

@@ -28,4 +28,6 @@
 .horizontalHeadCell
 {
     float: left;
+    display: block;
+    min-width: 25vh;
 }

@@ -10,7 +10,7 @@ from .views import (
     students_actions, students,
     teachers, teachers_actions,
     invoices, invoices_actions,
-    invoices_add,
+    invoices_add, invoices_change_status,
 )
 
 lessons_urlpatterns = [
@@ -76,11 +76,16 @@ teachers_urlpatterns = [
 invoices_urlpatterns = [
     path('invoices', invoices, name='invoices'),
     path(
-        'invoices/<str:action>/(<int:invoice_id>/',
+        'invoices/<str:action>/<int:invoice_id>/',
         invoices_actions,
         name='invoices_actions'
     ),
     path('invoice/add', invoices_add, name='invoices_add'),
+    path(
+        'invoice/<int:invoice_id>/change_status',
+         invoices_change_status,
+         name='invoices_change_status',
+    ),
 ]
 
 urlpatterns = [

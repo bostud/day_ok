@@ -1,5 +1,5 @@
 from typing import Optional, List
-from ..models import Teacher, Subject, Lessons, LESSONS_TYPES, INDIVIDUAL
+from ..models import Teacher, Subject, Lessons
 from datetime import datetime, timedelta
 from dataclasses import dataclass
 
@@ -20,7 +20,7 @@ class LessonsReport:
 
     @property
     def is_individual(self):
-        return self.lessons_type_id == INDIVIDUAL
+        return self.lessons_type_id == Lessons.Type.INDIVIDUAL
 
 
 def teachers_objects() -> List[Optional[Teacher]]:
@@ -41,7 +41,7 @@ def get_teacher_lessons_info(
     t = Teacher.objects.filter(id=teacher_id).first()
     res = []
     if t:
-        for type_id, type_name in LESSONS_TYPES:
+        for type_id, type_name in Lessons.Type.choices:
             subject_res = []
             count = 0
             for subject in t.subjects.all():
