@@ -544,10 +544,12 @@ class Lessons(models.Model):
     @property
     def is_finished(self):
         dt_now = now()
-        return (
-            self.date <= now().date() and
-            (self.time_end <= dt_now.time())
-        )
+        if (
+            self.date < dt_now.date() or
+            (self.date == dt_now.date() and self.time_end <= dt_now.time())
+        ):
+            return True
+        return False
 
     @property
     def participation_name(self):
