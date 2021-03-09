@@ -3,7 +3,7 @@ from django.utils.timezone import now
 # Register your models here.
 from .models import (
     ClassRoom, Service, Teacher, Group, Student, Subject, Invoice, Lessons,
-    Source, INVOICE_STATUSES, INVOICE_RECEIVERS, StudentPresence, Event,
+    Source, StudentPresence, Event,
 )
 
 
@@ -158,7 +158,7 @@ class InvoiceStatusFilter(admin.SimpleListFilter):
     parameter_name = 'status'
 
     def lookups(self, request, model_admin):
-        return INVOICE_STATUSES
+        return Invoice.Status.choices
 
     def queryset(self, request, queryset):
         if self.value():
@@ -171,7 +171,7 @@ class InvoiceReceiverFilter(admin.SimpleListFilter):
     parameter_name = 'receiver'
 
     def lookups(self, request, model_admin):
-        return INVOICE_RECEIVERS
+        return Invoice.Receivers.choices
 
     def queryset(self, request, queryset):
         if self.value():
@@ -187,7 +187,7 @@ class InvoiceAdmin(admin.ModelAdmin):
         'receiver',
         'receiver_teacher',
         'format_date_created',
-        'format_date_when_should_pay',
+        'format_date_paid_until',
         'status',
         'days_left_for_payment',
         'status_payed',
@@ -212,21 +212,21 @@ class InvoiceAdmin(admin.ModelAdmin):
     def format_date_created(self, rec: Invoice):
         return rec.date_created.strftime('%d.%m.%Y')
 
-    def format_date_when_should_pay(self, rec: Invoice):
-        return rec.date_when_should_pay.strftime('%d.%m.%Y')
+    def format_date_paid_until(self, rec: Invoice):
+        return rec.date_paid_until.strftime('%d.%m.%Y')
 
     def days_left_for_payment(self, rec: Invoice) -> int:
-        if rec.status == '2':
-            return (rec.date_when_should_pay - now().date()).days
+        if rec.status == rec.Status.PENDING:
+            return (rec.date_paid_until - now().date()).days
         return 0
 
     def status_payed(self, res: Invoice) -> bool:
-        return res.status != '2'
+        return res.status != res.Status.PENDING
 
     status_payed.boolean = True
     status_payed.short_description = 'Оплата'
     format_date_created.short_description = 'Дата створення'
-    format_date_when_should_pay.short_description = (
+    format_date_paid_until.short_description = (
         'Дата до якої здійснити оплату'
     )
     days_left_for_payment.short_description = 'Днів до оплати'

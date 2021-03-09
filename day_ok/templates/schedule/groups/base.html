@@ -24,7 +24,7 @@
     </div>
     <div class="row">
         <div class="col table-responsive">
-            <table class="table table-striped table-sm" cellspacing="0" width="100%">
+            <table class="table table-striped table-sm" cellspacing="0" style="max-width: 75%">
                 <thead>
                     <th>Назва групи</th>
                     <th>Кількість учнів</th>
@@ -37,26 +37,26 @@
                 <tbody id="group_table">
                     {% for group in groups %}
                         <tr>
-                            <td>
+                            <td style="vertical-align: middle">
                                 <a href="{% url 'groups_actions' 'view' group.id %}">{{ group.name }}</a>
                             </td>
-                            <td>{{ group.students_count }}</td>
-                            <td>{{ group.age_from }}+</td>
-                            <td>
+                            <td style="vertical-align: middle">{{ group.students_count }}</td>
+                            <td style="vertical-align: middle">{{ group.age_from }}+</td>
+                            <td style="vertical-align: middle">
                                 {% if group.subject %}
                                     {{ group.subject }}
                                 {% else %}
                                     ----
                                 {% endif %}
                             </td>
-                            <td>
+                            <td style="vertical-align: middle">
                                 {% if group.teacher %}
                                     {{ group.teacher }}
                                 {% else %}
                                     ----
                                 {% endif %}
                             </td>
-                            <td>
+                            <td style="vertical-align: middle">
                                 {% if group.current_lessons %}
                                     {% include 'schedule/lessons/div_cell.html' with lessons=group.current_lessons show_type='groups' %}
                                 {% else %}
@@ -67,16 +67,18 @@
                                     )
                                 {% endif %}
                             </td>
-                            <td>
-                                {% if group.next_lessons %}
-                                    {% include 'schedule/lessons/div_cell.html' with lessons=group.next_lessons show_type='groups' show_date='true' %}
-                                {% else %}
-                                    ----(
-                                    <a href="{% url 'add_lessons' %}">
-                                        Додати заняття
-                                    </a>
-                                    )
-                                {% endif %}
+                            <td style="vertical-align: middle;">
+                                <div style="max-width: 25vh">
+                                    {% if group.next_lessons %}
+                                        {% include 'schedule/lessons/div_cell.html' with lessons=group.next_lessons show_type='groups' show_date='true' %}
+                                    {% else %}
+                                        ----(
+                                        <a href="{% url 'add_lessons' %}">
+                                            Додати заняття
+                                        </a>
+                                        )
+                                    {% endif %}
+                                </div>
                             </td>
                         </tr>
                     {% endfor %}

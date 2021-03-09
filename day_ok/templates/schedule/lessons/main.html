@@ -139,11 +139,11 @@
                                 <div class="card-body">
                                 {% for classroom, lessons_info in data %}
                                     <div class="row">
-                                        <div class="col-1">
+                                        <div class="col-1" style="min-width: 15vh">
                                             <b>{{ classroom.name }}</b>
                                         </div>
                                         {% for lessons in lessons_info %}
-                                            <div class="col">
+                                            <div class="horizontalHeadCell">
                                                 {% include 'schedule/lessons/div_cell.html' with show_name=show_type lessons=lessons %}
                                             </div>
                                         {% endfor %}

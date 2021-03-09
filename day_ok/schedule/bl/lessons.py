@@ -3,7 +3,7 @@ import json
 from typing import List
 from datetime import date, timedelta, datetime
 from ..models import (
-    Lessons, StudentPresence, INDIVIDUAL, LESSONS_TYPES,
+    Lessons, StudentPresence,
     ClassRoom, Subject, Teacher, Student, Group, LessonsParent,
 )
 from ..utils import (
@@ -11,13 +11,16 @@ from ..utils import (
     get_weekday_number,
     get_weekday_name_by_date,
 )
-from ..forms import (
-    get_students, get_weekdays_tuple, get_groups, get_subjects, get_teachers,
-    get_classrooms, AddLessonsForm, EditLessonsForm,
+from ..forms.utils import (
+    get_students, get_groups, get_subjects, get_teachers,
+    get_classrooms,
+)
+from ..forms.lessons import (
+    AddLessonsForm, EditLessonsForm,
     convert_cleaned_data_to_objects, FilterLessonsForm,
 )
 from ..data_classes.lessons import AddLessonsDC, EditLessonsDC
-from ..utils import datetime_now_tz as now
+from ..utils import datetime_now_tz as now, get_weekdays_tuple
 
 log = logging.getLogger(__name__)
 
@@ -40,7 +43,7 @@ def get_weekly_classroom_lessons_by_classroom(
 
 def all_presence(lessons_id: int):
     lessons = Lessons.objects.get(id=lessons_id)
-    if lessons.lessons_type == INDIVIDUAL:
+    if lessons.lessons_type == Lessons.Type.INDIVIDUAL:
         students = [lessons.student] if lessons.student else []
     else:
         students = [st for st in lessons.group.students.all()]
@@ -65,7 +68,7 @@ def prepare_add_lessons_form_data() -> dict:
         groups=get_groups(),
         subjects=get_subjects(),
         weekdays=get_weekdays_tuple(),
-        lessons_types=LESSONS_TYPES
+        lessons_types=Lessons.Type.choices
     ).to_dict()
 
 
@@ -117,7 +120,7 @@ def add_lessons_from_form(form: AddLessonsForm) -> int:
 
     teacher = Teacher.objects.get(id=int(form.cleaned_data['teacher']))
     lessons_type = form.cleaned_data['lessons_type']
-    if lessons_type == INDIVIDUAL:
+    if lessons_type == Lessons.Type.INDIVIDUAL:
         student = Student.objects.get(id=int(form.cleaned_data['student']))
         group = None
     else:

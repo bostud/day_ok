@@ -1,58 +1,13 @@
-from .models import (
-    ClassRoom, Subject, LESSONS_TYPES,
-    Teacher, STATUS_TEACHER_ACTIVE,
-    Student, Group, STATUS_STUDENT_ACTIVE,
+from ..models import (
+    ClassRoom, Subject, Lessons,
+    Teacher, Student, Group,
 )
 from django import forms
-from functools import partial
-from .utils import get_weekdays_tuple
-from django.utils.timezone import now
-DateInput = partial(
-    forms.DateInput,
-    {'class': 'datepicker datepicker_now form-control'}
+from ..utils import get_weekdays_tuple, datetime_now_tz as now
+from .utils import (
+    get_groups, get_teachers, get_classrooms,
+    DateInput, get_students, get_subjects
 )
-
-
-def get_classrooms() -> list:
-    cl_r = ClassRoom.objects.all()
-    res = []
-    for room in cl_r:
-        res.append((room.id, str(room)))
-    return res
-
-
-def get_subjects() -> list:
-    iter_ = Subject.objects.all()
-    res = []
-    for i in iter_:
-        res.append((i.id, str(i.name)))
-    return res
-
-
-def get_teachers() -> list:
-    iter_ = Teacher.objects.filter(status=STATUS_TEACHER_ACTIVE).all()
-    res = []
-    for i in iter_:
-        if i.subjects:
-            res.append((i.id, str(i)))
-    return res
-
-
-def get_students() -> list:
-    iter_ = Student.objects.filter(status=STATUS_STUDENT_ACTIVE).all()
-    res = []
-    for i in iter_:
-        res.append((i.id, str(i)))
-    return res
-
-
-def get_groups() -> list:
-    iter_ = Group.objects.all()
-    res = []
-    for i in iter_:
-        if i.students:
-            res.append((i.id, str(i)))
-    return res
 
 
 def convert_cleaned_data_to_objects(form_cleaned_data: dict) -> dict:
@@ -114,8 +69,8 @@ class AddLessonsForm(forms.Form):
     )
     lessons_type = forms.ChoiceField(
         label='Тип заняття',
-        choices=LESSONS_TYPES,
-        initial=LESSONS_TYPES[0][0],
+        choices=Lessons.Type.choices,
+        initial=Lessons.Type.INDIVIDUAL,
     )
     teacher = forms.ChoiceField(
         label='Викладач',
@@ -195,7 +150,7 @@ class FilterLessonsForm(forms.Form):
     )
     types = forms.MultipleChoiceField(
         label='Типи',
-        choices=LESSONS_TYPES,
+        choices=Lessons.Type.choices,
         required=False,
     )
     additional_days = forms.IntegerField(
@@ -237,52 +192,6 @@ class FilterLessonsForm(forms.Form):
         'data-selected-text-format': 'count',
     })
     types.widget.attrs.update({
-        'class': 'form-control selectpicker',
-        'data-live-search': 'true',
-        'multiply': 'multiply',
-        'data-selected-text-format': 'count',
-    })
-
-
-class FilterEventsForm(forms.Form):
-    date_from = forms.DateField(
-        label='Дата',
-        help_text='',
-        widget=DateInput(),
-        input_formats=['%d.%m.%Y'],
-        initial=now,
-    )
-    classrooms = forms.MultipleChoiceField(
-        label='Аудиторія:',
-        choices=get_classrooms,
-        required=False,
-    )
-    students = forms.MultipleChoiceField(
-        label='Учень:',
-        choices=get_students,
-        required=False,
-    )
-    additional_days = forms.IntegerField(
-        label='Період',
-        required=False,
-        initial=7,
-        min_value=0,
-        max_value=7,
-    )
-
-    classrooms.widget.attrs.update({
-        'class': 'form-control selectpicker',
-        'data-live-search': 'true',
-        'multiply': 'multiply',
-        'data-selected-text-format': 'count',
-    })
-    students.widget.attrs.update({
-        'class': 'form-control selectpicker',
-        'data-live-search': 'true',
-        'multiply': 'multiply',
-        'data-selected-text-format': 'count',
-    })
-    additional_days.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',

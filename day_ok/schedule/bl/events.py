@@ -1,6 +1,6 @@
 from typing import List
 from ..utils import get_days_from_date, get_weekday_name_by_date
-from ..forms import FilterEventsForm
+from ..forms.events import FilterEventsForm
 from ..models import (
     ClassRoom, Student, Event
 )

@@ -1,0 +1,75 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block head %}
+    {% load static %}
+    {% include 'date_select_picker.html' %}
+{% endblock %}
+{% block body %}
+    <div class="row text-center" style="background-color: lightgrey">
+        <div class="col">
+            <h3>
+                {{ invoice.number }}
+            </h3>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col">
+            <div>
+                {{ invoice.student.full_name }}
+            </div>
+            <div>
+                {{ invoice.service.name }}
+            </div>
+            <div>
+                {{ invoice.service.type_of_title }}
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                {{ invoice.date_paid_until|date:"d.m.y" }}
+            </div>
+            <div class="row">
+                {{ invoice.date_valid_from|date:"d.m.y" }}
+            </div>
+            <div class="row">
+                {{ invoice.date_valid_until|date:"d.m.y" }}
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="col-6">
+                    <form method="POST" action="{% url 'invoices_change_status' invoice.id %}">
+                        {% csrf_token %}
+                        <label for="status">Статус: {{ invoice.status_title }}</label>
+                        {{ change_status_form.status }}
+                        <button type="submit" class="btn btn-outline-primary form-control">Змінити</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-2">
+            <h6>Історія змін</h6>
+        </div>
+        <div class="col">
+            {% for record in history_records %}
+                <div class="row">
+                    <div class="col-3">
+                        Користувач: {{ record.user.username }}
+                    </div>
+                    <div class="col-3">
+                        Статус до: {{ record.previous_status_title }}
+                    </div>
+                    <div class="col-3">
+                        Статус після: {{ record.new_status_title }}
+                    </div>
+                    <div class="col-3">
+                        Дата час дії: {{ record.datetime_created|date:"d.m.y" }} {{ record.datetime_created|time:"H:i" }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
