@@ -1,35 +1,51 @@
 <div class="schedule">
-    <div class="day time table-responsible">
-        <div class="day_title">Time</div>
-        {% for time in time_periods %}
-            {% if time.minute == 0 %}
-                <div class="hour half">{{time.hour}}:{{time.minute}}0</div>
+    <div class="teacher time table-responsible">
+        <div class="teacher_title">Time</div>
+        {% for t in time_periods %}
+            {% if live_period == t %}
+                <div class="hour half now">{{t|time:'H:i'}}</div>
             {% else %}
-                <div class="hour half">{{time.hour}}:{{time.minute}}</div>
+                <div class="hour half">{{t|time:'H:i'}}</div>
             {% endif %}
         {% endfor %}
     </div>
     <div style="overflow: hidden; width: 96%">
         {% for teacher_lessons in total_schedule %}
-            <div class="day">
-                <div class="day_title">{{teacher_lessons.teacher.full_name}}</div>
+            <div class="teacher">
+                <div class="teacher_title">{{teacher_lessons.teacher.full_name}}</div>
                 {% for lessons in teacher_lessons.lessons %}
                     {% if lessons.is_empty %}
-                        <div class="class b30">&nbsp;</div>
+                        <div class="lessons b30">&nbsp;</div>
                     {% else %}
                         {% if lessons.duration_minute > 60 %}
-                            <div class="class" data-tooltip="{{lessons.subject.name}} - {{lessons.get_lessons_type_name}}"
+                            <div class="lessons border border-success"
+                                 data-tooltip="{{lessons.classroom.name}} / {{lessons.subject.name}} / {{lessons.get_lessons_type_name}} / {{lessons.time_start|time:'H:i'}}-{{lessons.time_end|time:'H:i'}}"
                                  style="background-color: {{ lessons.teacher.lessons_color }}"
+                                 data-is-live="{{lessons.is_live}}"
+                                 data-is-finished="{{lessons.is_finished}}"
                             >
-                                {{lessons.classroom.name}}<br>
                                 {{lessons.participation_name}}
+                                {% if lessons.is_live_now %}
+                                    <span class="badge badge-danger">Live!</span>
+                                {% endif %}
+                                {% if lessons.is_finished %}
+                                    <span class="badge badge-secondary">Finished</span>
+                                {% endif %}
                             </div>
                         {% else %}
-                            <div class="class hour" data-tooltip="{{lessons.subject.name}} - {{lessons.get_lessons_type_name}}"
+                            <div class="lessons hour"
+                                 data-tooltip="{{lessons.classroom.name}} / {{lessons.subject.name}} / {{lessons.get_lessons_type_name}} / {{lessons.time_start|time:'H:i'}}-{{lessons.time_end|time:'H:i'}}"
                                  style="background-color: {{ lessons.teacher.lessons_color }}"
+                                 data-is-live="{{lessons.is_live}}"
+                                 data-is-finished="{{lessons.is_finished}}"
                             >
-                                {{lessons.classroom.name}}<br>
                                 {{lessons.participation_name}}
+                                {% if lessons.is_live_now %}
+                                    <span class="badge badge-danger">Live!</span>
+                                {% endif %}
+                                {% if lessons.is_finished %}
+                                    <span class="badge badge-secondary">Finished</span>
+                                {% endif %}
                             </div>
                         {% endif %}
                     {% endif %}

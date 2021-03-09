@@ -6,7 +6,7 @@ from django import forms
 from ..utils import get_weekdays_tuple, datetime_now_tz as now
 from .utils import (
     get_groups, get_teachers, get_classrooms,
-    DateInput, get_students, get_subjects
+    DateInput, get_students, get_subjects, DateInputEmpty
 )
 
 
@@ -50,7 +50,7 @@ class LessonsByClassRoomForm(forms.Form):
 class LessonsByDayForm(forms.Form):
     date = forms.DateField(
         label='Виберіть дату для показу занять',
-        widget=DateInput(),
+        widget=DateInputEmpty(),
         input_formats=['%d.%m.%Y'],
     )
 

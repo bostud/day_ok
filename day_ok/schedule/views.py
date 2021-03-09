@@ -50,7 +50,7 @@ from .utils import (
     is_valid_period_format, create_datetime_start_from_period,
     create_datetime_end_period, get_year_month_periods, get_period,
     datetime_now_tz, create_datetime_start_period,
-    get_day_time_periods,
+    get_day_time_periods, get_live_time_period
 )
 
 
@@ -110,7 +110,9 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
     def _fill_context_for_form_teachers(dt: datetime):
         day_schedule = get_lessons_data_for_teachers(dt)
         res = [teacher for teacher in day_schedule]
+        context.update(form=LessonsByDayForm({'date': dt.strftime('%d.%m.%Y')}))
         context['total_schedule'] = res
+        context['live_period'] = get_live_time_period()
         context['time_periods'] = get_day_time_periods()
 
     if request.method == 'GET':

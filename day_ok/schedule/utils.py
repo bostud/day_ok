@@ -170,3 +170,14 @@ def get_day_time_periods() -> List[time]:
         for minutes in [0, 30]:
             res.append(time(hour, minutes))
     return res
+
+
+def get_live_time_period() -> time:
+    time_ = datetime_now_tz().time()
+    return (
+        time(
+            time_.hour,
+            0 if time_.minute < 30 else 30,
+            0,
+        )
+    )
