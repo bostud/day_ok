@@ -166,7 +166,7 @@ def get_next_month_from_date(dt_from: datetime) -> datetime:
 
 def get_day_time_periods() -> List[time]:
     res = []
-    for hour in range(DAY_TIME_START.hour, DAY_TIME_END.hour + 1):
+    for hour in range(DAY_TIME_START.hour, DAY_TIME_END.hour):
         for minutes in [0, 30]:
             res.append(time(hour, minutes))
     return res

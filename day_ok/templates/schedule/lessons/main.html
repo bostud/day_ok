@@ -3,6 +3,7 @@
     {% load static %}
     {% include 'date_select_picker.html' %}
     <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons/timetable.css' %}">
 {% endblock %}
 {% block body %}
     <div class="row text-center" style="background-color: lightgrey">
@@ -173,6 +174,6 @@
         {% endif %}
     {% endif %}
     {% if show_type == 'teachers' %}
-        {% include 'schedule/lessons/show_type_teachers.html' with time_periods=time_periods total_schedule=total_schedule %}
+        {% include 'schedule/lessons/timetable.html' with time_periods=time_periods total_schedule=total_schedule %}
     {% endif %}
 {% endblock %}

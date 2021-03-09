@@ -11,6 +11,7 @@ from ..utils import (
     get_days_from_date,
     get_weekday_number,
     get_weekday_name_by_date,
+    get_day_time_periods,
 )
 from ..forms.utils import (
     get_students, get_groups, get_subjects, get_teachers,
@@ -20,7 +21,7 @@ from ..forms.lessons import (
     AddLessonsForm, EditLessonsForm,
     convert_cleaned_data_to_objects, FilterLessonsForm,
 )
-from ..data_classes.lessons import AddLessonsDC, EditLessonsDC
+from ..data_classes.lessons import AddLessonsDC, EditLessonsDC, EmptyLessons
 from ..utils import datetime_now_tz as now, get_weekdays_tuple
 from ..data_classes.lessons import LessonsScheduleTeachers
 
@@ -316,9 +317,31 @@ def get_lessons_data_for_teachers(dt: date) -> Generator:
             teacher=teacher,
             date=dt,
         ).order_by('time_start').all()
-
+        lessons = fill_daily_lessons(lessons)
         yield LessonsScheduleTeachers(
             lessons=lessons,
             teacher=teacher,
             date=dt,
         )
+
+
+def fill_daily_lessons(
+    lessons: list[Lessons],
+) -> list[Lessons]:
+    time_periods = get_day_time_periods()
+    existed_lessons = set()
+    result = []
+    i = 0
+    for t in time_periods:
+        i +=1
+        res = list(filter(lambda l: l.time_start <= t < l.time_end, lessons))
+        if len(res) > 0:
+            r = res[0]
+            print(i, t, r)
+            if r.id not in existed_lessons:
+                existed_lessons.add(r.id)
+                result.append(r)
+        else:
+            result.append(EmptyLessons(t))
+
+    return result

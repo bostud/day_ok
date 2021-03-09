@@ -52,3 +52,10 @@ class LessonsScheduleTeachers(Base):
     teacher: Teacher
     date: date
     lessons: List[Lessons]
+
+
+@dataclass
+class EmptyLessons(Base):
+    time_start: datetime.time
+    is_empty: bool = True
+    duration: int = 30
