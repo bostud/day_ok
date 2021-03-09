@@ -15,7 +15,7 @@
                 <div class="teacher_title">{{teacher_lessons.teacher.full_name}}</div>
                 {% for lessons in teacher_lessons.lessons %}
                     {% if lessons.is_empty %}
-                        <div class="lessons b30">&nbsp;</div>
+                        <div class="lessons b30"></div>
                     {% else %}
                         {% if lessons.duration_minute > 60 %}
                             <div class="lessons d90 border border-success"

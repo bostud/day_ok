@@ -6,6 +6,11 @@
     <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons/timetable.css' %}">
 {% endblock %}
 {% block body %}
+    <script type="text/javascript">
+        function goToUrl(elem) {
+            location.href = elem.getAttribute('data-url');
+        }
+    </script>
     <div class="row text-center" style="background-color: lightgrey">
         <div>
             <h3>
@@ -70,11 +75,47 @@
             {% elif show_type == 'filter' and form %}
                {% include 'schedule/lessons/filter_form.html' with form=form %}
             {% elif show_type == 'teachers' and form %}
-               <form class="form-inline" method="GET" action="{% url 'lessons' 'teachers' %}">
+                <form class="form-inline" method="GET" action="{% url 'lessons' 'teachers' %}">
+                    <button type="button"
+                        class="btn btn-warning"
+                        data-url="{% url 'lessons' 'teachers' %}?date={{yesterday_date|date:'d.m.Y'}}"
+                        onclick="goToUrl(this)"
+                    >Вчора
+                    </button><span>&nbsp;&nbsp;&nbsp;</span>
+                    <button type="button"
+                            class="btn btn-primary"
+                            data-url="{% url 'lessons' 'teachers' %}?date={{today_date|date:'d.m.Y'}}"
+                            onclick="goToUrl(this)"
+                    >Сьогодні
+                    </button><span>&nbsp;&nbsp;&nbsp;</span>
+                    <button type="button"
+                            class="btn btn-info"
+                            data-url="{% url 'lessons' 'teachers' %}?date={{tomorrow_date|date:'d.m.Y'}}"
+                            onclick="goToUrl(this)"
+                    >Завтра
+                    </button><span>&nbsp;&nbsp;&nbsp;</span>
                     <label for="id_date">Дата:&nbsp;</label>
                     {{ form.date }}<span>&nbsp;&nbsp;&nbsp;</span>
-                    <input type="submit" class="btn btn-secondary" value="Показати">
+                    <input type="submit" class="btn btn-secondary" value="Показати"><br>
                 </form>
+<!--                <button type="button"-->
+<!--                        class="btn btn-secondary"-->
+<!--                        data-url="{% url 'lessons' 'teachers' %}?date={{yesterday_date|date:'d.m.Y'}}"-->
+<!--                        onclick="goToUrl(this)"-->
+<!--                >Вчора-->
+<!--                </button>-->
+<!--                <button type="button"-->
+<!--                        class="btn btn-secondary"-->
+<!--                        data-url="{% url 'lessons' 'teachers' %}?date={{today_date|date:'d.m.Y'}}"-->
+<!--                        onclick="goToUrl(this)"-->
+<!--                >Сьогодні-->
+<!--                </button>-->
+<!--                <button type="button"-->
+<!--                        class="btn btn-secondary"-->
+<!--                        data-url="{% url 'lessons' 'teachers' %}?date={{tomorrow_date|date:'d.m.Y'}}"-->
+<!--                        onclick="goToUrl(this)"-->
+<!--                >Завтра-->
+<!--                </button>-->
             {% endif %}
         </div>
     </div>

@@ -112,6 +112,9 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
         res = [teacher for teacher in day_schedule]
         context.update(form=LessonsByDayForm({'date': dt.strftime('%d.%m.%Y')}))
         context['total_schedule'] = res
+        context['tomorrow_date'] = now() + timedelta(days=1)
+        context['yesterday_date'] = now() - timedelta(days=1)
+        context['today_date'] = now()
         context['live_period'] = get_live_time_period()
         context['time_periods'] = get_day_time_periods()
 
