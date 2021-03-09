@@ -18,7 +18,7 @@
                         <div class="lessons b30">&nbsp;</div>
                     {% else %}
                         {% if lessons.duration_minute > 60 %}
-                            <div class="lessons border border-success"
+                            <div class="lessons d90 border border-success"
                                  data-tooltip="{{lessons.classroom.name}} / {{lessons.subject.name}} / {{lessons.get_lessons_type_name}} / {{lessons.time_start|time:'H:i'}}-{{lessons.time_end|time:'H:i'}}"
                                  style="background-color: {{ lessons.teacher.lessons_color }}"
                                  data-is-live="{{lessons.is_live}}"
@@ -31,9 +31,10 @@
                                 {% if lessons.is_finished %}
                                     <span class="badge badge-secondary">Finished</span>
                                 {% endif %}
+
                             </div>
                         {% else %}
-                            <div class="lessons hour border border-success"
+                            <div class="lessons d60 border border-success"
                                  data-tooltip="{{lessons.classroom.name}} / {{lessons.subject.name}} / {{lessons.get_lessons_type_name}} / {{lessons.time_start|time:'H:i'}}-{{lessons.time_end|time:'H:i'}}"
                                  style="background-color: {{ lessons.teacher.lessons_color }}"
                                  data-is-live="{{lessons.is_live}}"

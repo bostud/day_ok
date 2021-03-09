@@ -46,13 +46,13 @@
 
 .lessons {
   width: 100%;
-  height: 9vh;
   background-color: magenta;
   font-size: 1vw;
   font-weight: 200;
   padding-left: 5px;
 }
-
+.lessons.d90 { height: 9vh; }
+.lessons.d60 { height: 6vh; font-size: 15px; }
 .lessons.b30 { height: 3vh; background-color:  transparent;}
 .spacing { background-color: transparent; }
 /* Add this attribute to the element that needs a tooltip */
