@@ -100,6 +100,14 @@ class Teacher(ContactMixin):
     subjects = models.ManyToManyField(
         Subject, verbose_name='Предмети', blank=True)
 
+    lessons_color = models.CharField(
+        'Колір занять',
+        max_length=10,
+        default='#269faf',
+        null=True,
+        blank=True,
+    )
+
     @property
     def subjects_list(self):
         return self.subjects.all()

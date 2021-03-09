@@ -72,3 +72,11 @@ def get_teacher_lessons_info(
 
     return res
 
+
+def set_teacher_lessons_color(color: str, teacher_id: int) -> Optional[Teacher]:
+    teacher = Teacher.objects.filter(id=teacher_id).first()
+    if teacher:
+        teacher.lessons_color = color
+        teacher.save()
+        return teacher
+    return None

@@ -18,12 +18,16 @@
                         <div class="class b30">&nbsp;</div>
                     {% else %}
                         {% if lessons.duration_minute > 60 %}
-                            <div class="class red" data-tooltip="{{lessons.subject.name}} - {{lessons.get_lessons_type_name}}">
+                            <div class="class" data-tooltip="{{lessons.subject.name}} - {{lessons.get_lessons_type_name}}"
+                                 style="background-color: {{ lessons.teacher.lessons_color }}"
+                            >
                                 {{lessons.classroom.name}}<br>
                                 {{lessons.participation_name}}
                             </div>
                         {% else %}
-                            <div class="class hour grey" data-tooltip="{{lessons.subject.name}} - {{lessons.get_lessons_type_name}}">
+                            <div class="class hour" data-tooltip="{{lessons.subject.name}} - {{lessons.get_lessons_type_name}}"
+                                 style="background-color: {{ lessons.teacher.lessons_color }}"
+                            >
                                 {{lessons.classroom.name}}<br>
                                 {{lessons.participation_name}}
                             </div>

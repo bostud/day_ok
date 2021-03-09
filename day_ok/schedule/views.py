@@ -11,6 +11,7 @@ from .forms.lessons import (
     EditLessonsForm, FilterLessonsForm,
 )
 from .forms.events import FilterEventsForm
+from .forms.teachers import TeacherLessonsColorForm
 from .forms.invoices import (
     FilterInvoiceFrom, prepare_cleaned_data_to_form,
     CreateInvoiceForm, ChangeInvoiceStatusForm
@@ -37,7 +38,8 @@ from .bl.groups import (
 )
 
 from .bl.teachers import (
-    teachers_objects, get_teacher, get_teacher_lessons_info
+    teachers_objects, get_teacher, get_teacher_lessons_info,
+    set_teacher_lessons_color,
 )
 from .bl.invoices import (
     total_pages, filter_invoices, create_invoice,
@@ -414,6 +416,22 @@ def teachers_actions(request: HttpRequest, action: str, teacher_id: int):
                     dt_end or dt_end_period
                 )
             )
+        elif request.method == 'POST':
+            form = TeacherLessonsColorForm(request.POST)
+            if form.is_valid():
+                teacher = set_teacher_lessons_color(
+                    color=form.cleaned_data['color'],
+                    teacher_id=teacher_id,
+                )
+                dt_start = create_datetime_start_from_period(default_period)
+                dt_end = create_datetime_end_period(dt_start)
+                if teacher:
+                    ctx.update(teacher=teacher)
+                ctx.update(
+                    lessons_reports=get_teacher_lessons_info(
+                        teacher_id, dt_start, dt_end
+                    )
+                )
 
     actions_func = {
         'view': _view,
