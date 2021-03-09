@@ -331,13 +331,10 @@ def fill_daily_lessons(
     time_periods = get_day_time_periods()
     existed_lessons = set()
     result = []
-    i = 0
     for t in time_periods:
-        i +=1
         res = list(filter(lambda l: l.time_start <= t < l.time_end, lessons))
         if len(res) > 0:
             r = res[0]
-            print(i, t, r)
             if r.id not in existed_lessons:
                 existed_lessons.add(r.id)
                 result.append(r)
