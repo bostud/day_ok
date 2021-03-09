@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>{% block title %}{% endblock %}</title>
+  <title>{% block title %}Головна{% endblock %}</title>
   {% load static %}
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,14 +16,7 @@
 <body>
   {% include 'schedule/base/navbar.html' %}
   <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-1 sidenav text-center">
-        {% include 'schedule/base/left_side_menu.html' %}
-      </div>
-      <div class="col-sm-11">
         {% block body %}{% endblock %}
-      </div>
-    </div>
   </div>
 </body>
 </html>

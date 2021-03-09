@@ -13,15 +13,39 @@
           </a>
         </li>
         <li class="nav-item aboutNavCss">
-          <a class="nav-link" href="{% url 'about' %}">
+          <a class="nav-link" href="{% url 'lessons' 'teachers' %}">
             <span class="fas fa-info"></span>
-            Про проект
+            Заняття
           </a>
         </li>
         <li class="nav-item contactsNavCss">
-          <a class="nav-link" href="{% url 'contacts' %}">
+          <a class="nav-link" href="{% url 'events' %}">
             <span class="fas fa-address-book"></span>
-            Контакти
+            Заходи
+          </a>
+        </li>
+        <li class="nav-item contactsNavCss">
+          <a class="nav-link" href="{% url 'groups' %}">
+            <span class="fas fa-address-book"></span>
+            Групи
+          </a>
+        </li>
+        <li class="nav-item contactsNavCss">
+          <a class="nav-link" href="{% url 'students' %}">
+            <span class="fas fa-address-book"></span>
+            Учні
+          </a>
+        </li>
+        <li class="nav-item contactsNavCss">
+          <a class="nav-link" href="{% url 'teachers' %}">
+            <span class="fas fa-address-book"></span>
+            Викладачі
+          </a>
+        </li>
+        <li class="nav-item contactsNavCss">
+          <a class="nav-link" href="{% url 'invoices' %}">
+            <span class="fas fa-address-book"></span>
+            Рахунки
           </a>
         </li>
       </ul>
