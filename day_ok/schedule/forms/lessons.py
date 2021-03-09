@@ -11,7 +11,7 @@ from .utils import (
 
 
 def convert_cleaned_data_to_objects(form_cleaned_data: dict) -> dict:
-    fcd = form_cleaned_data
+    fcd = form_cleaned_data.copy()
     _converting_settings = (
         ('classroom', ClassRoom, int, None),
         ('subject', Subject, int, None),
