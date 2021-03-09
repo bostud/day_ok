@@ -541,6 +541,13 @@ class Lessons(models.Model):
             (self.time_end <= dt_now.time())
         )
 
+    @property
+    def participation_name(self):
+        if self.lessons_type == Lessons.Type.GROUP:
+            return self.group.name
+        else:
+            return self.student.full_name
+
 
 def get_new_unique_invoice_number():
     last = Invoice.objects.last()
