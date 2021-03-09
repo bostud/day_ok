@@ -33,7 +33,7 @@
                                 {% endif %}
                             </div>
                         {% else %}
-                            <div class="lessons hour"
+                            <div class="lessons hour border border-success"
                                  data-tooltip="{{lessons.classroom.name}} / {{lessons.subject.name}} / {{lessons.get_lessons_type_name}} / {{lessons.time_start|time:'H:i'}}-{{lessons.time_end|time:'H:i'}}"
                                  style="background-color: {{ lessons.teacher.lessons_color }}"
                                  data-is-live="{{lessons.is_live}}"
