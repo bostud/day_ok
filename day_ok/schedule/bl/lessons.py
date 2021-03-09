@@ -4,8 +4,7 @@ from typing import List, Generator
 from datetime import date, timedelta, datetime
 from ..models import (
     Lessons, StudentPresence,
-    ClassRoom, Subject, Teacher, Student, Group, LessonsParent,
-    STATUS_TEACHER_ACTIVE,
+    ClassRoom, Subject, Teacher, Student, Group, LessonsParent
 )
 from ..utils import (
     get_days_from_date,
@@ -312,7 +311,7 @@ def get_lessons_data_by_filter_form(form: FilterLessonsForm):
 
 
 def get_lessons_data_for_teachers(dt: date) -> Generator:
-    for teacher in Teacher.objects.filter(status=STATUS_TEACHER_ACTIVE).all():
+    for teacher in Teacher.objects.filter(status=Teacher.Status.ACTIVE).all():
         lessons = Lessons.objects.filter(
             teacher=teacher,
             date=dt,
