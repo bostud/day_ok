@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
-from .utils import datetime_now_tz as now, datetime_localize
+from .utils import datetime_now_tz as now, datetime_localize, DAY_TIME_START
 
 
 class Subject(models.Model):
@@ -99,6 +99,14 @@ class Teacher(ContactMixin):
         'Дата звільнення', blank=True, null=True)
     subjects = models.ManyToManyField(
         Subject, verbose_name='Предмети', blank=True)
+
+    lessons_color = models.CharField(
+        'Колір занять',
+        max_length=10,
+        default='#269faf',
+        null=True,
+        blank=True,
+    )
 
     @property
     def subjects_list(self):
@@ -368,7 +376,7 @@ class Group(models.Model):
 
     @property
     def students_count(self):
-        return self.students.count()
+        return self.students.count() if self and self.students else 0
 
     @property
     def next_lessons(self):
@@ -485,6 +493,12 @@ class Lessons(models.Model):
         return (end_minutes - start_minute) / 60
 
     @property
+    def duration_minute(self):
+        end_minutes = self.time_end.hour * 60 + self.time_end.minute
+        start_minute = self.time_start.hour * 60 + self.time_start.minute
+        return end_minutes - start_minute
+
+    @property
     def get_lessons_type_name(self):
         for _id, name in self.Type.choices:
             if self.lessons_type == _id:
@@ -534,6 +548,13 @@ class Lessons(models.Model):
             self.date <= now().date() and
             (self.time_end <= dt_now.time())
         )
+
+    @property
+    def participation_name(self):
+        if self.lessons_type == Lessons.Type.GROUP:
+            return self.group.name
+        else:
+            return self.student.full_name
 
 
 def get_new_unique_invoice_number():

@@ -2,6 +2,8 @@
 {% block head %}
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'schedule/teachers/view.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/3.2.0/css/bootstrap-colorpicker.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/3.2.0/js/bootstrap-colorpicker.min.js"></script>
 {% endblock %}
 {% block body %}
     <div class="row text-center" style="background-color: lightgrey">
@@ -12,9 +14,19 @@
         </div>
     </div>
     <br />
-    <div class="row justify-content-center">
-        <div class="col">
+    <div class="row">
+        <div class="col-2">
             Телефон: {{teacher.phone_number}}
+        </div>
+        <div class="col-4">
+            <form method="POST" class="form-inline">
+                {% csrf_token %}
+                <div>
+                    <label for="id_color">Виберіть колір для занять</label>
+                    <input class="form-control color" id="id_color" name="color" type="text" style="width: 15vh; background-color: {{teacher.lessons_color}}">
+                    <button class="btn btn-outline-secondary">Вибрати</button>
+                </div>
+            </form>
         </div>
     </div>
     <br />
@@ -151,6 +163,13 @@
         function goToUrl(elem) {
             location.href = elem.getAttribute('data-url');
         }
+        $(function () {
+            $('#id_color').colorpicker();
+
+            $('#id_color').on('colorpickerChange', function(event) {
+                $('.color').css('background-color', event.color.toString());
+            });
+        });
     </script>
 
 {% endblock %}

@@ -186,10 +186,7 @@ class FilterLessonsForm(forms.Form):
         'data-selected-text-format': 'count',
     })
     additional_days.widget.attrs.update({
-        'class': 'form-control selectpicker',
-        'data-live-search': 'true',
-        'multiply': 'multiply',
-        'data-selected-text-format': 'count',
+        'class': 'form-control',
     })
     types.widget.attrs.update({
         'class': 'form-control selectpicker',
