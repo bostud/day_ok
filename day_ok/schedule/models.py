@@ -313,6 +313,12 @@ class Student(ContactMixin):
             lessons__lessons_type=Lessons.Type.GROUP,
         ).count()
 
+    @property
+    def status_name(self):
+        for id_, title in Student.Status.choices:
+            if id_ == self.status:
+                return title
+
 
 class ClassRoom(models.Model):
     class RoomType(models.IntegerChoices):

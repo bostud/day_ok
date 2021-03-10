@@ -1,7 +1,8 @@
 from typing import Generator
 from ..models import (
     ClassRoom, Subject,
-    Teacher, Student, Group, Service
+    Teacher, Student, Group, Service,
+    Source,
 )
 from django import forms
 from functools import partial
@@ -13,6 +14,11 @@ DateInput = partial(
 
 DateInputEmpty = partial(
     forms.DateInput,
+    {'class': 'datepicker form-control'}
+)
+
+DateTimeInput = partial(
+    forms.DateTimeInput,
     {'class': 'datepicker form-control'}
 )
 
@@ -63,3 +69,9 @@ def get_services() -> Generator:
     res = Service.objects.all().values('id', 'name')
     for row in res:
         yield row['id'], row['name']
+
+
+def get_sources() -> Generator:
+    res = Source.objects.all().values('id', 'name')
+    for r in res:
+        yield r['id'], r['name']
