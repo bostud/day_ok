@@ -1,0 +1,92 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block head %}
+    {% load static %}
+    {% include 'date_select_picker.html' %}
+{% endblock %}
+{% block body %}
+    <div class="row text-center" style="background-color: lightgrey">
+        <div class="col">
+            <h3>
+                Учні
+            </h3>
+        </div>
+    </div>
+    <br >
+    <div class="row">
+        {% include 'schedule/students/_header.html' with form=create_form %}
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-4">
+            <input class="form-control" id="id_students_name" type="text" placeholder="Пошук..">
+            <br>
+        </div>
+    </div>
+<!--    <div class="row">-->
+<!--        <div class="col-10">-->
+<!--            <div class="card card-body">-->
+<!--                {% include 'schedule/students/filter.html' with form=filter_form %}-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+    <br />
+    {% if errors %}
+        <div class="row">
+            <div class="col-10">
+                {% for error in errors %}
+                <div class="alert alert-danger">
+                    <strong>Помилка!</strong>&nbsp;{{ error }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <br />
+    {% endif %}
+    {% if info_posts %}
+        <div class="row">
+            <div class="col-10">
+                {% for info in info_posts %}
+                <div class="alert alert-info alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <strong>Інфо!</strong>&nbsp;{{ info }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <br />
+    {% endif %}
+    <div class="row">
+        <div class="col-10 table-responsive">
+            <table class="table table-striped table-sm">
+                <thead>
+                    <th>Прізвище Імʼя</th>
+                    <th>Номер телефону</th>
+                    <th>Статус</th>
+                    <th>Джерело</th>
+                    <th>Дата тестового заняття</th>
+                </thead>
+                <tbody id="students_table">
+                    {% for student in students %}
+                        <tr>
+                            <td><a href="{% url 'students_actions' student.id %}">{{ student.full_name }}</a></td>
+                            <td>{{ student.phone_number }}</td>
+                            <td>{{ student.status_name }}</td>
+                            <td>{{ student.source.name }}</td>
+                            <td>{{ student.date_test_lessons|date:"d.m.Y" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            $("#id_students_name").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#students_table tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+{% endblock %}

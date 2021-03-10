@@ -58,7 +58,12 @@ groups_urlpatterns = [
 students_urlpatterns = [
     path('students', students, name='students'),
     path(
-        'students/<str:action>/(<int:student_id>/',
+        'students/<int:student_id>',
+        students_actions,
+        name='students_actions'
+    ),
+    path(
+        'students/<int:student_id>/<str:action>/',
         students_actions,
         name='students_actions'
     ),

@@ -121,7 +121,7 @@ def add_lessons_from_form(form: AddLessonsForm) -> int:
     classroom = ClassRoom.objects.get(id=int(form.cleaned_data['classroom']))
 
     teacher = Teacher.objects.get(id=int(form.cleaned_data['teacher']))
-    lessons_type = form.cleaned_data['lessons_type']
+    lessons_type = int(form.cleaned_data['lessons_type'])
     if lessons_type == Lessons.Type.INDIVIDUAL:
         student = Student.objects.get(id=int(form.cleaned_data['student']))
         group = None

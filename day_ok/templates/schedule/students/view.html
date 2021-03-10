@@ -1,0 +1,68 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block head %}
+    {% load static %}
+    {% include 'date_select_picker.html' %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/student/view.css' %}">
+{% endblock %}
+{% block body %}
+    <div class="row text-center" style="background-color: lightgrey">
+        <div class="col">
+            <h3>
+                {{ student.full_name }}
+            </h3>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col">
+            <div>
+                {{ student.phone_number }}
+            </div>
+            <div>
+                {{ student.status_name }}
+            </div>
+            <div>
+                {{ student.date_of_test_lessons|date:"d.m.Y" }} {{ student.date_of_test_lessons|time:"H:i" }}
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                {{ student.date_start_studying|date:"d.m.Y" }}
+            </div>
+            <div class="row">
+                {{ student.date_end_studying|date:"d.m.Y" }}
+            </div>
+            <div class="row">
+                {{ student.parent_last_name }}&nbsp;
+                {{ student.parent_first_name }}&nbsp;
+                {{ student.parent_phone }}
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="col-6">
+                    <form method="POST" action="{% url 'students_actions' student.id 'change_status' %}">
+                        {% csrf_token %}
+                        <label for="id_status">Статус: {{ student.status_name }}</label>
+                        {{ change_status_form.status }}
+                        <button type="submit" class="btn btn-outline-primary form-control">Змінити</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        {% for lsn in next_lessons %}
+            <div class="lessons">
+                {% include 'schedule/lessons/div_cell.html' with show_name='student' lessons=lsn show_date=True %}
+            </div>
+        {% endfor %}
+        <div class="lessons add">
+            <a href="{% url 'add_lessons' %}" style="color: #343a40">
+                Додати заняття<br>
+                <span class="fas fa-plus"></span>
+            </a>
+        </div>
+    </div>
+{% endblock %}
