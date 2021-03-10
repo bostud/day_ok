@@ -1,12 +1,13 @@
 {% extends 'schedule/base/base_cms.html' %}
+{% block title %}Розклад заходів{% endblock %}
 {% block head %}
     {% load static %}
     {% include 'date_select_picker.html' %}
-  <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons.css' %}">
 {% endblock %}
 {% block body %}
     <div class="row text-center" style="background-color: lightgrey">
-        <div>
+        <div class="col">
             <h3>Графік заходів</h3>
         </div>
     </div>
@@ -20,15 +21,18 @@
     </div>
     <br />
     <div class="row">
-        {% include 'schedule/events/filter_form.html' with form=form %}
-    </div>
-    <div class="row">
-        <div class="сol">
-            Результат по фільтру:<br> {{ filter_by_text }}
+        <div class="col">
+            {% include 'schedule/events/filter_form.html' with form=form %}
         </div>
     </div>
-    <br />
     {% if total_schedule %}
+        <div class="row">
+            <div class="сol">
+                <p>
+                    Результат по фільтру: {{ filter_by_text }}
+                </p>
+            </div>
+        </div>
         {% for date, date_str, data in total_schedule %}
         <div class="row">
             <div id='accordion-{{ date.day }}'>
@@ -73,7 +77,9 @@
         {% endfor %}
     {% else %}
         <div class="row">
-            <p>Заходів немає</p>
+            <div class="col">
+                <p>Заходів немає</p>
+            </div>
         </div>
     {% endif %}
 {% endblock %}

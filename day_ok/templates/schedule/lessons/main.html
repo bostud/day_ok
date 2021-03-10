@@ -1,4 +1,5 @@
 {% extends 'schedule/base/base_cms.html' %}
+{% block title %}Розклад занять{% endblock %}
 {% block head %}
     {% load static %}
     {% include 'date_select_picker.html' %}
@@ -12,7 +13,7 @@
         }
     </script>
     <div class="row text-center" style="background-color: lightgrey">
-        <div>
+        <div class="col">
             <h3>
                 Графік занять по
                 {% if show_type == 'day' %}
@@ -29,11 +30,15 @@
     </div>
     <br />
     {% if errors %}
-        {% for error in errors %}
-            <div class="alert alert-warning">
-                <strong>Увага!</strong> {{ error }}
-            </div>
-        {% endfor %}
+    <div class="row">
+        <div class="col">
+            {% for error in errors %}
+                <div class="alert alert-warning">
+                    <strong>Увага!</strong> {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
     {% endif %}
     <div class="row">
         <div class="col-sm-2">
@@ -98,24 +103,6 @@
                     {{ form.date }}<span>&nbsp;&nbsp;&nbsp;</span>
                     <input type="submit" class="btn btn-secondary" value="Показати"><br>
                 </form>
-<!--                <button type="button"-->
-<!--                        class="btn btn-secondary"-->
-<!--                        data-url="{% url 'lessons' 'teachers' %}?date={{yesterday_date|date:'d.m.Y'}}"-->
-<!--                        onclick="goToUrl(this)"-->
-<!--                >Вчора-->
-<!--                </button>-->
-<!--                <button type="button"-->
-<!--                        class="btn btn-secondary"-->
-<!--                        data-url="{% url 'lessons' 'teachers' %}?date={{today_date|date:'d.m.Y'}}"-->
-<!--                        onclick="goToUrl(this)"-->
-<!--                >Сьогодні-->
-<!--                </button>-->
-<!--                <button type="button"-->
-<!--                        class="btn btn-secondary"-->
-<!--                        data-url="{% url 'lessons' 'teachers' %}?date={{tomorrow_date|date:'d.m.Y'}}"-->
-<!--                        onclick="goToUrl(this)"-->
-<!--                >Завтра-->
-<!--                </button>-->
             {% endif %}
         </div>
     </div>
@@ -153,15 +140,17 @@
     </div>
         {% for classroom, data in total_schedule %}
         <div class="row">
-            <div class="divRow">
-                <div class="horizontalHeadCell">
-                    <b>{{ classroom }}</b>
+            <div class="col">
+                <div class="divRow">
+                    <div class="horizontalHeadCell">
+                        <b>{{ classroom }}</b>
+                    </div>
+                    {% for lessons in data %}
+                    <div class="divCell">
+                        {% include 'schedule/lessons/div_cell.html' with show_name=show_type lessons=lessons %}
+                    </div>
+                    {% endfor %}
                 </div>
-                {% for lessons in data %}
-                <div class="divCell">
-                    {% include 'schedule/lessons/div_cell.html' with show_name=show_type lessons=lessons %}
-                </div>
-                {% endfor %}
             </div>
         </div>
         {% endfor %}
@@ -210,7 +199,9 @@
             {% endfor %}
         {% else %}
             <div class="row">
-                <p>Занять немає</p>
+                <div class="col">
+                    <p>Занять немає</p>
+                </div>
             </div>
         {% endif %}
     {% endif %}
