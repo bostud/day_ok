@@ -1,12 +1,15 @@
-from django.shortcuts import loader
-from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
+from django.shortcuts import render
+from django.http import HttpRequest, HttpResponseRedirect
 from ..middleware import authenticated
+
+from ..bl.base import get_source_statistics
 
 
 @authenticated
 def home_view(request: HttpRequest, *args, **kwargs):
-    template = loader.get_template('schedule/base/base_cms.html')
-    return HttpResponse(template.render(request=request))
+    template = 'schedule/dashboard/base.html'
+    context = dict(sources=list(get_source_statistics()))
+    return render(request, template, context)
 
 
 @authenticated
