@@ -9,7 +9,7 @@ def get_source_statistics() -> List[Optional[SourceDataClass]]:
     all_students = Student.objects.count()
     result = []
     max_percent = 0
-    for res in Student.objects.values('source').annotate(count=Count('id')):
+    for res in Student.objects.values('source').annotate(count=Count('id')).order_by('count'):
         s = (
             Source.objects.filter(id=res['source']).first()
             if res['source'] else None
