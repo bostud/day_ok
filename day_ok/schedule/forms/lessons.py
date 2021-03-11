@@ -112,11 +112,49 @@ class AddLessonsForm(forms.Form):
         required=False,
     )
 
+    classroom.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+
+    subject.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+
+    lessons_type.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+
+    student.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+
+    group.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+    teacher.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+
 
 class EditLessonsForm(AddLessonsForm):
+    date_from_valid = forms.DateField(
+        widget=DateInputEmpty(),
+        input_formats=['%d.%m.%Y'],
+    )
+
+    date_until_valid = forms.DateField(
+        widget=DateInputEmpty(),
+        input_formats=['%d.%m.%Y'],
+        required=False,
+    )
     change_all = forms.BooleanField(
         required=False,
-        initial=False,
     )
 
 

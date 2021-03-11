@@ -4,64 +4,68 @@
         <div class="col-sm-4">
             <div>
                 <label for="id_classroom">Аудиторія</label>
-                <select class="custom-select" id="id_classroom" name="classroom" required>
-                    <option selected></option>
-                    {% for room_id, room_name in classrooms %}
-                        {% if edit_classroom and edit_classroom == room_id %}'
-                            <option selected value="{{ room_id }}">{{ room_name }}</option>
-                        {% else %}
-                            <option value="{{ room_id }}">{{ room_name }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+<!--                <select class="custom-select" id="id_classroom" name="classroom" required>-->
+<!--                    <option selected></option>-->
+<!--                    {% for room_id, room_name in classrooms %}-->
+<!--                        {% if edit_classroom and edit_classroom == room_id %}'-->
+<!--                            <option selected value="{{ room_id }}">{{ room_name }}</option>-->
+<!--                        {% else %}-->
+<!--                            <option value="{{ room_id }}">{{ room_name }}</option>-->
+<!--                        {% endif %}-->
+<!--                    {% endfor %}-->
+<!--                </select>-->
+                {{ form.classroom }}
             </div>
             <div>
                 <label for="id_teacher">Викладач</label>
-                <select
-                        class="selectpicker form-control"
-                        data-live-search="true"
-                        title="Виберіть викладача ..."
-                        id="id_teacher"
-                        name="teacher"
-                        required
-                >
-                    {% for id_, name in teachers %}
-                        {% if edit_teacher and edit_teacher == id_ %}
-                            <option selected value="{{ id_ }}">{{ name }}</option>
-                        {% else %}
-                            <option value="{{ id_ }}">{{ name }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+<!--                <select-->
+<!--                        class="selectpicker form-control"-->
+<!--                        data-live-search="true"-->
+<!--                        title="Виберіть викладача ..."-->
+<!--                        id="id_teacher"-->
+<!--                        name="teacher"-->
+<!--                        required-->
+<!--                >-->
+<!--                    {% for id_, name in teachers %}-->
+<!--                        {% if edit_teacher and edit_teacher == id_ %}-->
+<!--                            <option selected value="{{ id_ }}">{{ name }}</option>-->
+<!--                        {% else %}-->
+<!--                            <option value="{{ id_ }}">{{ name }}</option>-->
+<!--                        {% endif %}-->
+<!--                    {% endfor %}-->
+<!--                </select>-->
+                {{ form.teacher }}
             </div>
             <div>
                 <label for="id_subjects">Предмет</label>
-                <select class="selectpicker form-control"
-                        data-live-search="true"
-                        title="Виберіть предмет ..."
-                        id="id_subjects"
-                        name="subject" required>
-                    {% for id_, name in subjects %}
-                        {% if edit_subject and edit_subject == id_ %}
-                            <option selected value="{{ id_ }}">{{ name }}</option>
-                        {% else %}
-                            <option value="{{ id_ }}">{{ name }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+<!--                <select class="selectpicker form-control"-->
+<!--                        data-live-search="true"-->
+<!--                        title="Виберіть предмет ..."-->
+<!--                        id="id_subjects"-->
+<!--                        name="subject" required>-->
+<!--                    {% for id_, name in subjects %}-->
+<!--                        {% if edit_subject and edit_subject == id_ %}-->
+<!--                            <option selected value="{{ id_ }}">{{ name }}</option>-->
+<!--                        {% else %}-->
+<!--                            <option value="{{ id_ }}">{{ name }}</option>-->
+<!--                        {% endif %}}-->
+<!--                    {% endfor %}-->
+<!--                </select>-->
+                {{ form.subject }}
             </div>
             <div>
                 <label for="id_lessons_type">Тип заняття</label>
-                <select class="custom-select" id="id_lessons_type" name="lessons_type" required>
-                    <option selected></option>
-                    {% for id_, name in lessons_types %}
-                        {% if edit_lessons_type and edit_lessons_type == id_ %}
-                            <option selected value="{{ id_ }}">{{ name }}</option>
-                        {% else %}
-                            <option value="{{ id_ }}">{{ name }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+<!--                <select class="custom-select" id="id_lessons_type" name="lessons_type" required>-->
+<!--                    <option selected></option>-->
+<!--                    {% for id_, name in lessons_types %}-->
+<!--                        {% if edit_lessons_type and edit_lessons_type == id_ %}-->
+<!--                            <option selected value="{{ id_ }}">{{ name }}</option>-->
+<!--                        {% else %}-->
+<!--                            <option value="{{ id_ }}">{{ name }}</option>-->
+<!--                        {% endif %}-->
+<!--                    {% endfor %}-->
+<!--                </select>-->
+                {{ form.lessons_type }}
                  {% if create_lessons or edit_lessons %}
                     <span class="small">Зверніть увагу!<br />
                     Якщо тип заняття <mark>груповий</mark> - вказуємо лише <mark>групу</mark><br />
@@ -70,34 +74,36 @@
             </div>
             <div>
                 <label for="id_student">Учень</label>
-                <select class="selectpicker form-control"
-                        data-live-search="true"
-                        title="Виберіть учня ..."
-                        id="id_student" name="student">
-                    {% for id_, name in students %}
-                        {% if edit_student and edit_student == id_ %}
-                            <option value="{{ id_ }}" selected>{{ name }}</option>
-                        {% else %}
-                            <option value="{{ id_ }}">{{ name }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+<!--                <select class="selectpicker form-control"-->
+<!--                        data-live-search="true"-->
+<!--                        title="Виберіть учня ..."-->
+<!--                        id="id_student" name="student">-->
+<!--                    {% for id_, name in students %}-->
+<!--                        {% if edit_student and edit_student == id_ %}-->
+<!--                            <option value="{{ id_ }}" selected>{{ name }}</option>-->
+<!--                        {% else %}-->
+<!--                            <option value="{{ id_ }}">{{ name }}</option>-->
+<!--                        {% endif %}-->
+<!--                    {% endfor %}-->
+<!--                </select>-->
+                {{ form.student }}
             </div>
             <div>
                 <label for="id_group">Група</label>
-                <select class="selectpicker form-control"
-                        data-live-search="true"
-                        title="Виберіть групу..."
-                        id="id_group"
-                        name="group">
-                    {% for id_, name in groups %}
-                        {% if edit_group and edit_group == id_ %}
-                            <option selected value="{{ id_ }}">{{ name }}</option>
-                        {% else %}
-                            <option value="{{ id_ }}">{{ name }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+<!--                <select class="selectpicker form-control"-->
+<!--                        data-live-search="true"-->
+<!--                        title="Виберіть групу..."-->
+<!--                        id="id_group"-->
+<!--                        name="group">-->
+<!--                    {% for id_, name in groups %}-->
+<!--                        {% if edit_group and edit_group == id_ %}-->
+<!--                            <option selected value="{{ id_ }}">{{ name }}</option>-->
+<!--                        {% else %}-->
+<!--                            <option value="{{ id_ }}">{{ name }}</option>-->
+<!--                        {% endif %}-->
+<!--                    {% endfor %}-->
+<!--                </select>-->
+                {{ form.group }}
             </div>
         </div>
         <div class="col-sm-4">
