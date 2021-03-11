@@ -145,9 +145,7 @@ def lessons_actions(request: HttpRequest, action: str, lessons_id: int):
             edit_form = EditLessonsForm(request.POST)
             if edit_form.is_valid():
                 edit_lessons_from_form(form=edit_form, lessons_id=lessons_id)
-                ctx.update(edited_lessons=True)
-                ctx.update(**prepare_edit_lessons_form_data(lessons_id))
-                return redirect('lessons_action', 'edit', lessons_id)
+                return redirect('lessons', show_type='teachers')
 
     def _delete():
         ctx.update(delete_lessons=True)
@@ -157,7 +155,7 @@ def lessons_actions(request: HttpRequest, action: str, lessons_id: int):
             edit_form = EditLessonsForm(request.POST)
             edit_form.is_valid()
             delete_lessons(lessons_id, edit_form.cleaned_data['change_all'])
-            return redirect('lessons', show_type='filter')
+            return redirect('lessons', show_type='teachers')
 
     def _view():
         ctx.update(view_lessons=True)

@@ -6,6 +6,12 @@
   overflow: auto;
 }
 
+.schedule_modal {
+  color: #343a40;
+  font-family: 'Open Sans', sans-serif;
+  overflow: auto;
+}
+
 .teacher {
   width: 9%;
   height: 90vh;
