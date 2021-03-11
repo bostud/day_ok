@@ -8,7 +8,7 @@ from ..bl.base import get_source_statistics
 @authenticated
 def home_view(request: HttpRequest, *args, **kwargs):
     template = 'schedule/dashboard/base.html'
-    context = dict(sources=list(get_source_statistics()))
+    context = dict(sources=get_source_statistics())
     return render(request, template, context)
 
 
