@@ -1,6 +1,6 @@
 .lessons {
     width: 15%;
-    height: 12vh;
+    height: 11vh;
     background-color: #8291ef;
     font-size: 12px;
     font-weight: 400;
@@ -19,3 +19,28 @@
     opacity: 75%;
     line-height: 6vh;
 }
+
+body {
+  --table-width: 100%; /* Or any value, this will change dinamically */
+}
+
+.table_body {
+  display:block;
+  max-height: 43vh;
+  overflow-y:auto;
+}
+
+.table_body.invoices {
+    max-height: 60vh;
+}
+
+.table_head, .table_tr {
+  display:table;
+  width: var(--table-width);
+  table-layout:fixed;
+}
+
+.table_tr.invoices {
+    width: 99.5%;
+}
+

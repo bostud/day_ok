@@ -558,11 +558,21 @@ class Lessons(models.Model):
         return False
 
     @property
+    def is_future(self):
+        dt_now = now()
+        if (
+                self.date > dt_now.date() or
+                (self.date == dt_now.date() and self.time_start > dt_now.time())
+        ):
+            return True
+        return False
+
+    @property
     def participation_name(self):
         if self.lessons_type == Lessons.Type.GROUP:
-            return self.group.name
+            return self.group.name if self.group else '----'
         else:
-            return self.student.full_name
+            return self.student.full_name if self.student else '----'
 
 
 def get_new_unique_invoice_number():

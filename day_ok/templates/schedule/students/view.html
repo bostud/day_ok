@@ -53,16 +53,50 @@
     </div>
     <br>
     <div class="row">
-        {% for lsn in next_lessons %}
-            <div class="lessons">
-                {% include 'schedule/lessons/div_cell.html' with show_name='student' lessons=lsn show_date=True %}
-            </div>
-        {% endfor %}
-        <div class="lessons add">
-            <a href="{% url 'add_lessons' %}" style="color: #343a40">
-                Додати заняття<br>
-                <span class="fas fa-plus"></span>
-            </a>
+        <div class="col">
+            <ul class="nav nav-pills nav-justified">
+                <li class="nav-item active">
+                    {% if view == 'lessons' %}
+                        <a class="nav-lin-link active btn btn-info" role="button"
+                           type="button"
+                           href="{% url 'students_actions' student.id 'lessons' %}"
+                        >
+                            Заняття
+                        </a>
+                    {% else %}
+                        <a class="nav-link" href="{% url 'students_actions' student.id 'lessons' %}">Заняття</a>
+                    {% endif %}
+                </li>
+                <li class="nav-item">
+                    {% if view == 'invoices' %}
+                        <a class="nav-lin-link active btn btn-info" role="button"
+                           href="{% url 'students_actions' student.id 'invoices' %}"
+                        >
+                            Рахунки
+                        </a>
+                    {% else %}
+                        <a class="nav-link" href="{% url 'students_actions' student.id 'invoices' %}">Рахунки</a>
+                    {% endif %}
+                </li>
+                <li class="nav-item">
+                    {% if view == 'groups' %}
+                        <a class="nav-lin-link active btn btn-info" role="button"
+                           href="{% url 'students_actions' student.id 'groups' %}"
+                        >
+                            Групи
+                        </a>
+                    {% else %}
+                        <a class="nav-link" href="{% url 'students_actions' student.id 'groups' %}">Групи</a>
+                    {% endif %}
+                </li>
+            </ul>
         </div>
     </div>
+        {% if view == 'lessons' %}
+            {% include 'schedule/students/views/_lessons.html' with lessons=lessons %}
+        {% elif view == 'groups' %}
+            {% include 'schedule/students/views/_groups.html' with groups=groups %}
+        {% elif view == 'invoices' %}
+            {% include 'schedule/students/views/_invoices.html' with invoices=invoices %}
+        {% endif %}
 {% endblock %}

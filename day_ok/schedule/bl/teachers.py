@@ -14,13 +14,13 @@ class SubjectReport:
 @dataclass
 class LessonsReport:
     lessons_type_name: str
-    lessons_type_id: str
+    lessons_type_id: int
     count: int
     subjects_reports: List[SubjectReport]
 
     @property
     def is_individual(self):
-        return self.lessons_type_id == Lessons.Type.INDIVIDUAL
+        return int(self.lessons_type_id) == Lessons.Type.INDIVIDUAL
 
 
 def teachers_objects() -> List[Optional[Teacher]]:
