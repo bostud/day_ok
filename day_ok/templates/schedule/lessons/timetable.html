@@ -23,6 +23,8 @@
                                  style="background-color: {{ lessons.teacher.lessons_color }}"
                                  data-is-live="{{lessons.is_live}}"
                                  data-is-finished="{{lessons.is_finished}}"
+                                 data-url="{% url 'lessons_action' 'edit' lessons.id %}"
+                                 onclick="goToUrl(this)"
                             >
                                 {{lessons.participation_name}}
                                 {% if lessons.is_live_now %}
@@ -31,6 +33,7 @@
                                 {% if lessons.is_finished %}
                                     <span class="badge badge-secondary">Finished</span>
                                 {% endif %}
+                                <a class="small" href="{% url 'lessons_action' 'edit'  lessons.id %}">Edit</a>
                             </div>
                         {% else %}
                         <div class="lessons d60 border border-success"

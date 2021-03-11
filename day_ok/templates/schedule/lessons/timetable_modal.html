@@ -1,0 +1,44 @@
+<div class="modal fade" id="edit_lessons_{{lessons.id}}">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" class="form" action="{% url 'lessons_action' 'edit' lessons.id %}">
+                {% csrf_token %}
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Заняття</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    ="edit_lessons_{{lessons.id}}">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <form method="POST" class="form" action="{% url 'lessons_action' 'edit' lessons.id %}">
+                                        {% csrf_token %}
+                                        <!-- Modal Header -->
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Заняття</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <!-- Modal body -->
+                                        <div class="modal-body">
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Зберегти</button>
+                                            <button type="button" class="btn btn-warning" data-dismiss="modal">Закрити</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Зберегти</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Закрити</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
