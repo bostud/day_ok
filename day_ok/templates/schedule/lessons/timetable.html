@@ -53,31 +53,26 @@
                                 {% endif %}
                             </div>
                         {% endif %}
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="{% url 'lessons_action' 'edit'  lessons.id %}">Редагувати</a>
-                                <a class="dropdown-item" href="{% url 'lessons_action' 'view'  lessons.id %}">Переглянути</a>
-                                <a class="dropdown-item" href="{% url 'lessons_action' 'delete'  lessons.id %}">Видалити</a>
-                                <div class="dropdown-header">Присутність</div>
-                                {% if lessons.condition_individual %}
-                                    {% if lessons.presence_count < lessons.students_count %}
-                                        <a class="dropdown-item" href="{% url 'lessons_action' 'all'  lessons.id %}">Урок відбувся</a>
-                                    {% endif %}
-                                {% else %}
-                                    {% if lessons.presence_count != lessons.students_count %}
-                                        <a class="dropdown-item" href="{% url 'lessons_action' 'all'  lessons.id %}">Усі є</a>
-                                    {% endif %}
-                                    <a class="dropdown-item" href="{% url 'lessons_action' 'all'  lessons.id %}">Редагувати</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="{% url 'lessons_action' 'edit'  lessons.id %}">Редагувати</a>
+                            <a class="dropdown-item" href="{% url 'lessons_action' 'view'  lessons.id %}">Переглянути</a>
+                            <a class="dropdown-item" href="{% url 'lessons_action' 'delete'  lessons.id %}">Видалити</a>
+                            <div class="dropdown-header">Присутність</div>
+                            {% if lessons.condition_individual %}
+                                {% if lessons.presence_count < lessons.students_count %}
+                                    <a class="dropdown-item" href="{% url 'lessons_action' 'all'  lessons.id %}">Урок відбувся</a>
                                 {% endif %}
-                            </div>
+                            {% else %}
+                                {% if lessons.presence_count != lessons.students_count %}
+                                    <a class="dropdown-item" href="{% url 'lessons_action' 'all'  lessons.id %}">Усі є</a>
+                                {% endif %}
+                                <a class="dropdown-item" href="{% url 'lessons_action' 'all'  lessons.id %}">Редагувати</a>
+                            {% endif %}
                         </div>
+                    </div>
                     {% endif %}
                 {% endfor %}
             </div>
         {% endfor %}
     </div>
 </div>
-<script type="text/javascript">
-    function goToUrl(elem) {
-        location.href = elem.getAttribute('data-url');
-    }
-</script>
