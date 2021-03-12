@@ -11,6 +11,7 @@ from .views import (
     teachers, teachers_actions,
     invoices, invoices_actions,
     invoices_add, invoices_change_status,
+    finance,
 )
 
 lessons_urlpatterns = [
@@ -99,6 +100,7 @@ urlpatterns = [
     path('contacts', home_view, name='contacts'),
     path('logout', home_view, name='logout'),
     path('reports', reports, name='reports'),
+    path('finance', finance, name='finance')
 ]
 
 urlpatterns.extend(lessons_urlpatterns)

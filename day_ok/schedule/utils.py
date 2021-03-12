@@ -181,3 +181,22 @@ def get_live_time_period() -> time:
             0,
         )
     )
+
+
+def get_first_date_of_month(dt: datetime = None, return_str: bool = True) -> str:
+    dt = datetime_now_tz() if not dt else dt
+    dt = date(dt.year, dt.month, 1)
+    if return_str:
+        return dt.strftime('%d.%m.%Y')
+    else:
+        return dt
+
+
+def get_last_date_of_month(dt: datetime = None, return_str: bool = True) -> str:
+    dt = datetime_now_tz() if not dt else dt
+    next_month = get_next_month_from_date(dt)
+    dt = (next_month - timedelta(days=1)).date()
+    if return_str:
+        return dt.strftime('%d.%m.%Y')
+    else:
+        return dt
