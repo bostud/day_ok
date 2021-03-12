@@ -21,18 +21,18 @@
 <div class="row">
     <div class="col-10">
         <table class="table table-bordered table-hover table-sm">
-            <thead>
-                <th>Викладач</th>
-                <th>Предмет</th>
-                <th>К-сть занять індивідуальних</th>
-                <th>Оплата за заняття індивідуальне</th>
-                <th>К-сть занять групових</th>
-                <th>Оплата за заняття групове</th>
-                <th>Сумма до сплати</th>
+            <thead style="background-color: #343a40;">
+                <th style="color: #eeeeee">Викладач</th>
+                <th style="color: #eeeeee">Предмет</th>
+                <th style="color: #eeeeee">К-сть занять індивідуальних</th>
+                <th style="color: #eeeeee">Оплата за заняття індивідуальне</th>
+                <th style="color: #eeeeee">К-сть занять групових</th>
+                <th style="color: #eeeeee">Оплата за заняття групове</th>
+                <th style="color: #eeeeee">Сумма до сплати</th>
             </thead>
             <tbody>
                 {% for record in teachers_month_statistics %}
-                    <tr>
+                    <tr style="background-color: #cccccc">
                         <td style="font-family: 'Open Sans', sans-serif">{{record.teacher.full_name}}</td>
                         <td></td>
                         <td></td>
@@ -42,8 +42,8 @@
                         <td></td>
                     </tr>
                     {% for subject_stat in record.subjects_stat %}
-                        <tr style="text-align: center">
-                            <td></td>
+                        <tr style='text-align: center;'>
+                            <td>-----------></td>
                             <td>{{ subject_stat.subject.name }}</td>
                             <td>{{ subject_stat.individual_count }}</td>
                             <td>
@@ -52,7 +52,7 @@
                                        value="0"
                                        id="individual_{{record.teacher.id}}_{{subject_stat.subject.id}}"
                                        data-sum-location-id="sum_{{record.teacher.id}}_{{subject_stat.subject.id}}"
-                                       class="form-control"
+                                       class="form-control form-control-sm"
                                        data-lessons-count="{{ subject_stat.individual_count }}"
                                        data-friend-id="group_{{record.teacher.id}}_{{subject_stat.subject.id}}"
                                        style="text-align: center"
@@ -66,7 +66,7 @@
                                        value="0"
                                        id="group_{{record.teacher.id}}_{{subject_stat.subject.id}}"
                                        data-sum-location-id="sum_{{record.teacher.id}}_{{subject_stat.subject.id}}"
-                                       class="form-control"
+                                       class="form-control form-control-sm"
                                        data-lessons-count="{{ subject_stat.group_count }}"
                                        data-friend-id="individual_{{record.teacher.id}}_{{subject_stat.subject.id}}"
                                        style="text-align: center"
@@ -79,7 +79,7 @@
                                        min="0"
                                        value="0"
                                        id="sum_{{record.teacher.id}}_{{subject_stat.subject.id}}"
-                                       class="form-control"
+                                       class="form-control form-control-sm"
                                        title="грн"
                                        style="text-align: center">
                             </td>
