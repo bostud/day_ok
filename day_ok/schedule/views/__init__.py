@@ -8,3 +8,4 @@ from .groups import groups, groups_actions
 from .students import students_actions, students
 from .invoices import invoices_actions, invoices_add, invoices_change_status
 from .invoices import invoices
+from .finance import finance

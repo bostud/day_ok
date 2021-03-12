@@ -1,0 +1,16 @@
+{% block head %}
+{% endblock %}
+<form class="form-inline" method="GET">
+    <div style="float:left;margin-right:20px;">
+        {{ form.date_start }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        {{ form.date_end }}
+    </div>
+    <div style="float:left;margin-right:20px;">
+        <button type="submit" class="btn btn-info">Показати</button>
+    </div>
+    <div style="float:left;margin-right:20px;">
+        <a type="button" class="btn btn-warning" href="{% url 'finance' %}">Очистити</a>
+    </div>
+</form>

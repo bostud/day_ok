@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
-from .utils import datetime_now_tz as now, datetime_localize, DAY_TIME_START
+from .utils import datetime_now_tz as now, datetime_localize
 
 
 class Subject(models.Model):

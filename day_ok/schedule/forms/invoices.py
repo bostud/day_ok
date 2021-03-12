@@ -1,19 +1,7 @@
 from django import forms
-from datetime import date, timedelta
 from ..models import Invoice, Service
 from .utils import get_services, get_students, DateInputEmpty
-from ..utils import datetime_now_tz as now, get_next_month_from_date
-
-
-def get_first_date_of_month() -> str:
-    dt = now()
-    return date(dt.year, dt.month, 1).strftime('%d.%m.%Y')
-
-
-def get_last_date_of_month() -> str:
-    dt = now()
-    next_month = get_next_month_from_date(dt)
-    return (next_month - timedelta(days=1)).date().strftime('%d.%m.%Y')
+from ..utils import get_first_date_of_month, get_last_date_of_month
 
 
 def get_invoice_statuses() -> list:
