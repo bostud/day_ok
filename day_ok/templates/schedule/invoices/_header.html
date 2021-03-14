@@ -26,6 +26,10 @@
                                 <div class="row">
                                     {{ form.status }}
                                 </div><br >
+                                <div class="row" id="invoice_payment_type" hidden>
+                                    {{ form.payment_type }}
+                                    <small class="small">По замовчуванню: готівка</small>
+                                </div><br>
                             </div>
                             <div class="col-4 offset-2">
                                 <div class="row">
@@ -46,9 +50,14 @@
                         <button type="submit" class="btn btn-primary">Створити</button>
                         <button type="button" class="btn btn-warning" data-dismiss="modal">Закрити</button>
                     </div>
-
                 </form>
             </div>
         </div>
     </div>
 </div>
+<script>
+    function shouldOpenPaymentType(elem) {
+        console.log(parseInt(elem.value) !== 1, parseInt(elem.value));
+        document.getElementById('invoice_payment_type').hidden = (parseInt(elem.value) !== 1);
+    }
+</script>

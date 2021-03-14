@@ -4,6 +4,36 @@
     {% include 'date_select_picker.html' %}
 {% endblock %}
 {% block body %}
+<!-- Modal -->
+<div class="modal fade" id="addPayment">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" class="form" action="{% url 'invoices_actions' 'add_payment' invoice.id %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h4 class="modal-title">Додати оплату для рахунку: {{invoice.number}}</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col" style="max-width: 200px">
+                        {{ payment_form.payment_type }}
+                        </div>
+                        <div class="col" style="max-width: 200px">
+                            {{ payment_form.amount }}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Створити</button>
+                    <button type="button" class="btn btn-warning" data-dismiss="modal">Закрити</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
     <div class="row text-center" style="background-color: lightgrey">
         <div class="col">
             <h3>
@@ -15,24 +45,24 @@
     <div class="row">
         <div class="col">
             <div>
-                {{ invoice.student.full_name }}
+                Прізвище Ім`я: <strong>{{ invoice.student.full_name }}</strong>
             </div>
             <div>
-                {{ invoice.service.name }}
+                Оплачено послуга: {{ invoice.service.name }}
             </div>
             <div>
-                {{ invoice.service.type_of_title }}
+                Тип послуги: {{ invoice.service.type_of_title }}
             </div>
         </div>
         <div class="col">
             <div class="row">
-                {{ invoice.date_paid_until|date:"d.m.y" }}
+                Дата оплати:&nbsp;<strong>{{ invoice.date_paid_until|date:"d.m.Y" }}</strong>
             </div>
             <div class="row">
-                {{ invoice.date_valid_from|date:"d.m.y" }}
+                Дійсний з: {{ invoice.date_valid_from|date:"d.m.Y" }}
             </div>
             <div class="row">
-                {{ invoice.date_valid_until|date:"d.m.y" }}
+                Дійсний по: {{ invoice.date_valid_until|date:"d.m.Y" }}
             </div>
         </div>
         <div class="col">
@@ -40,9 +70,21 @@
                 <div class="col-6">
                     <form method="POST" action="{% url 'invoices_change_status' invoice.id %}">
                         {% csrf_token %}
-                        <label for="status">Статус: {{ invoice.status_title }}</label>
-                        {{ change_status_form.status }}
-                        <button type="submit" class="btn btn-outline-primary form-control">Змінити</button>
+                        <label for="id_status">Статус: {{ invoice.status_title }}</label>
+                        {% if not invoice.is_paid %}
+                            {{ change_status_form.status }}
+                            <button type="submit" class="btn btn-outline-primary form-control">Змінити</button>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="col-6">
+                    <form method="POST" action="{% url 'invoices_actions' 'delete' invoice.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger form-control">Видалити</button>
                     </form>
                 </div>
             </div>
@@ -50,26 +92,83 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-2">
-            <h6>Історія змін</h6>
+        <div class="col-4">
+            <h5>Оплати</h5>
         </div>
-        <div class="col">
-            {% for record in history_records %}
-                <div class="row">
-                    <div class="col-3">
-                        Користувач: {{ record.user.username }}
-                    </div>
-                    <div class="col-3">
-                        Статус до: {{ record.previous_status_title }}
-                    </div>
-                    <div class="col-3">
-                        Статус після: {{ record.new_status_title }}
-                    </div>
-                    <div class="col-3">
-                        Дата час дії: {{ record.datetime_created|date:"d.m.y" }} {{ record.datetime_created|time:"H:i" }}
-                    </div>
-                </div>
-            {% endfor %}
+        {% if invoice.is_pending %}
+            <div class="col-4">
+                <h5>
+                    <button class="btn btn-info"
+                            data-toggle="modal" data-target="#addPayment"
+                    >
+                        Додати
+                    </button>
+                </h5>
+            </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-6 table-responsive"">
+            <table class="table table-sm table-hover">
+                <thead>
+                    <th>Тип оплати</th>
+                    <th>Сума</th>
+                    <th>Дата час</th>
+                    <th>Опції</th>
+                </thead>
+                <tbody>
+                    {% for payment in invoice.payments %}
+                    <tr>
+                        <td>{{ payment.payment_type_title }}</td>
+                        <td>{{ payment.amount }}грн.</td>
+                        <td>{{ payment.date_created|date:"d.m.Y" }} {{ payment.date_created|time:"H:i" }}</td>
+                        <td>
+                            <form method="post" action="{% url 'invoices_actions' 'delete_payment' invoice.id %}">
+                                {% csrf_token %}
+                                <input name="payment_id" value="{{payment.id}}" hidden>
+                                <button type="submit"
+                                       class="btn"
+                                       title="Видалити"
+                                    >
+                                    <span class="fa fa-minus-square"></span>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
+    <br>
+    <div class="row">
+        <div class="col">
+        <h5>Історія змін</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8 table-responsive" style="max-height: 450px">
+            <table class="table table-sm table-hover">
+                <thead>
+                    <th>Дата час</th>
+                    <th>Користувач</th>
+                    <th>Статус до</th>
+                    <th>Статус після</th>
+                    <th>Коментар</th>
+                </thead>
+                <tbody>
+                    {% for record in history_records %}
+                    <tr>
+                        <td>{{ record.datetime_created|date:"d.m.Y" }} {{ record.datetime_created|time:"H:i" }}</td>
+                        <td>{{ record.user.username }}</td>
+                        <td>{{ record.previous_status_title }}</td>
+                        <td>{{ record.new_status_title }}</td>
+                        <td>{{ record.comment }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 {% endblock %}
