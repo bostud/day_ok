@@ -1,7 +1,12 @@
 from typing import List, Optional
 from django.http import HttpRequest
 from datetime import date
-from ..models import Invoice, Student, Service, InvoiceStatusChangeLog
+from ..models import (
+    Invoice, Student, Service,
+    InvoiceStatusChangeLog,
+    InvoicePayment,
+)
+from django.db import transaction
 
 OFFSET = 15
 
@@ -44,6 +49,7 @@ def filter_invoices(
     return Invoice.objects.filter(**query_filter).order_by('-date_created')
 
 
+@transaction.atomic
 def create_invoice(
     request: HttpRequest,
     student: int,
@@ -52,11 +58,13 @@ def create_invoice(
     date_paid_until: date,
     date_valid_from: date,
     date_valid_until: date,
+    payment_type: int = None,
 ) -> Optional[Invoice]:
     assert int(status) in Invoice.Status.values
+    service = Service.objects.get(id=service)
     invoice = Invoice(
         student=Student.objects.get(id=student),
-        service=Service.objects.get(id=service),
+        service=service,
         status=status,
         date_valid_until=date_valid_until,
         date_valid_from=date_valid_from,
@@ -68,8 +76,55 @@ def create_invoice(
         invoice=invoice,
         request=request,
         new_status=status,
+        comment='Створення рахунку',
     )
+    if int(status) == Invoice.Status.PAID:
+        create_invoice_payment(
+            request, invoice, payment_type, service.price,
+        )
     return invoice
+
+
+@transaction.atomic
+def create_invoice_payment(
+    request: HttpRequest,
+    invoice: Invoice,
+    payment_type: int,
+    amount: int,
+) -> List[InvoicePayment]:
+    if (
+        not payment_type or
+        payment_type not in InvoicePayment.PaymentType.values
+    ):
+        payment_type = InvoicePayment.PaymentType.CASH
+    payment = InvoicePayment.objects.create(
+        invoice=invoice,
+        payment_type=payment_type,
+        amount=amount,
+    )
+
+    create_invoice_change_log(
+        invoice=invoice,
+        request=request,
+        new_status=invoice.status,
+        previous_status=invoice.status,
+        comment=f'Додавання оплати {payment.amount}грн.'
+    )
+
+    if invoice.amount_to_full_payment <= 0:
+        prev_status = invoice.status
+        invoice.status = Invoice.Status.PAID
+        invoice.save()
+
+        create_invoice_change_log(
+            invoice=invoice,
+            request=request,
+            new_status=invoice.status,
+            previous_status=prev_status,
+            comment='Автоматично змінено на Оплачено'
+        )
+
+    return invoice.payments
 
 
 def create_invoice_change_log(
@@ -77,12 +132,14 @@ def create_invoice_change_log(
     request: HttpRequest,
     new_status: int,
     previous_status: Optional[int] = None,
+    comment: Optional[str] = None,
 ):
     change_log = InvoiceStatusChangeLog(
         invoice=invoice,
         user=request.user,
         new_status=new_status,
         previous_status=previous_status,
+        comment=comment,
     )
     change_log.save()
     return change_log
@@ -102,6 +159,7 @@ def get_invoice(id_: int) -> Optional[Invoice]:
     return Invoice.objects.filter(id=id_).first()
 
 
+@transaction.atomic
 def change_invoice_status(
     request: HttpRequest,
     invoice: Invoice,
@@ -113,9 +171,65 @@ def change_invoice_status(
             invoice=invoice,
             request=request,
             new_status=int(new_status),
-            previous_status=invoice.status
+            previous_status=invoice.status,
+            comment='Зміна статусу',
         )
         invoice.status = int(new_status)
         invoice.save()
 
+        if invoice.status == Invoice.Status.PAID:
+            payments_sum = sum([i.amount for i in invoice.payments])
+            if invoice.service.price > payments_sum:
+                create_invoice_payment(
+                    request=request,
+                    invoice=invoice,
+                    payment_type=InvoicePayment.PaymentType.CASH,
+                    amount=invoice.service.price - payments_sum,
+                )
+                create_invoice_change_log(
+                    invoice=invoice,
+                    request=request,
+                    new_status=invoice.status,
+                    previous_status=invoice.status,
+                    comment='Додано повну оплату',
+                )
+
     return invoice
+
+
+@transaction.atomic
+def delete_invoice_payment(
+    request: HttpRequest,
+    payment_id: int
+) -> Optional[Invoice]:
+    payment = InvoicePayment.objects.filter(id=payment_id).first()
+    if payment:
+        invoice_id = payment.invoice.id
+        invoice = Invoice.objects.get(id=invoice_id)
+        create_invoice_change_log(
+            invoice=invoice,
+            request=request,
+            new_status=Invoice.Status.PENDING,
+            previous_status=invoice.status,
+            comment=f'Видалення оплати {payment.amount}грн.'
+        )
+        invoice.status = Invoice.Status.PENDING
+        invoice.save()
+        payment.delete()
+        return invoice
+    return None
+
+
+@transaction.atomic
+def delete_invoice(
+    request: HttpRequest,
+    invoice: Invoice,
+):
+    create_invoice_change_log(
+        invoice,
+        request,
+        invoice.status,
+        invoice.status,
+        'Видалення рахунку'
+    )
+    invoice.delete()

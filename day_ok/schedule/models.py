@@ -61,7 +61,12 @@ class Service(models.Model):
     type_of = models.IntegerField(
         'Тип',
         choices=TypeOf.choices,
-        null=True,
+        null=True,  # temporary
+    )
+    subject = models.ForeignKey(
+        Subject, on_delete=models.DO_NOTHING,
+        verbose_name='Предмет',
+        null=True,  # temporary
     )
     price = models.IntegerField('Ціна',)
     lessons_count = models.IntegerField('К-сть занять')
@@ -662,9 +667,23 @@ class Invoice(models.Model):
             now().date() > self.date_paid_until
         )
 
+    @property
+    def payments(self):
+        return InvoicePayment.objects.filter(
+            invoice=self,
+        ).all()
+
+    @property
+    def amount_to_full_payment(self):
+        return (
+            self.service.price - sum([i.amount for i in self.payments])
+        )
+
 
 class InvoiceStatusChangeLog(models.Model):
-    invoice = models.ForeignKey(Invoice, on_delete=models.DO_NOTHING)
+    invoice = models.ForeignKey(
+        Invoice, on_delete=models.DO_NOTHING, db_constraint=False
+    )
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     previous_status = models.IntegerField(
         choices=Invoice.Status.choices,
@@ -672,6 +691,10 @@ class InvoiceStatusChangeLog(models.Model):
     )
     new_status = models.IntegerField(
         choices=Invoice.Status.choices
+    )
+    comment = models.CharField(
+        max_length=255,
+        null=True,
     )
     datetime_created = models.DateTimeField(auto_now=True)
 
@@ -688,6 +711,30 @@ class InvoiceStatusChangeLog(models.Model):
         for id_, title in Invoice.Status.choices:
             if id_ == self.new_status:
                 return title
+
+
+class InvoicePayment(models.Model):
+
+    class PaymentType(models.IntegerChoices):
+        CARD = 1, _('карта')
+        CASH = 2, _('готівка')
+
+    invoice = models.ForeignKey(
+        Invoice, on_delete=models.CASCADE,
+    )
+    payment_type = models.IntegerField(
+        choices=PaymentType.choices,
+    )
+    amount = models.IntegerField()
+    date_created = models.DateTimeField(auto_now=True)
+
+    @property
+    def payment_type_title(self):
+        return (
+            self.get_payment_type_display()
+            if self.payment_type in self.PaymentType.values
+            else '---'
+        ).title()
 
 
 class StudentPresence(models.Model):

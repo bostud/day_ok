@@ -7,6 +7,7 @@
                 <th>Номер</th>
                 <th>Учень</th>
                 <th>Послуга</th>
+                <th>Предмет</th>
                 <th>Оплатити до</th>
                 <th>Дійсний з</th>
                 <th>Дійсний по</th>
@@ -19,6 +20,7 @@
                         <td>{{ invoice.number }}</td>
                         <td>{{ invoice.student }}</td>
                         <td>{{ invoice.service }}</td>
+                        <td>{{ invoice.service.subject }}</td>
                         <td>
                             {% if invoice.is_overdue_payment %}
                             <span class="badge badge-danger md">{{ invoice.date_paid_until|date:"d.m.Y" }}</span>

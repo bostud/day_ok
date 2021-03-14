@@ -1,5 +1,5 @@
 from django import forms
-from ..models import Invoice, Service
+from ..models import Invoice, Service, InvoicePayment
 from .utils import get_services, get_students, DateInputEmpty
 from ..utils import get_first_date_of_month, get_last_date_of_month
 
@@ -10,6 +10,10 @@ def get_invoice_statuses() -> list:
 
 def get_service_types() -> list:
     return Service.TypeOf.choices
+
+
+def get_invoice_payment_types() -> list:
+    return InvoicePayment.PaymentType.choices
 
 
 def prepare_cleaned_data_to_form(form: 'FilterInvoiceFrom') -> dict:
@@ -129,6 +133,10 @@ class CreateInvoiceForm(forms.Form):
 
     status = forms.ChoiceField(
         choices=get_invoice_statuses,
+    )
+
+    payment_type = forms.ChoiceField(
+        choices=get_invoice_payment_types,
         required=False,
     )
 
@@ -142,6 +150,13 @@ class CreateInvoiceForm(forms.Form):
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'title': 'Статус',
+        'onchange': 'shouldOpenPaymentType(this)'
+    })
+
+    payment_type.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'title': 'Тип оплати',
     })
 
     student.widget.attrs.update({
@@ -174,3 +189,31 @@ class ChangeInvoiceStatusForm(forms.Form):
         'data-live-search': 'true',
         'title': 'Новий статус',
     })
+
+
+class AddPaymentForm(forms.Form):
+    payment_type = forms.ChoiceField(
+        choices=get_invoice_payment_types,
+        required=False,
+    )
+
+    amount = forms.IntegerField(
+        min_value=1,
+    )
+
+    payment_type.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'title': 'Спосіб оплати',
+    })
+
+    amount.widget.attrs.update({
+        'class': 'form-control',
+        'placeholder': 'Сума',
+    })
+
+
+class DeletePaymentForm(forms.Form):
+    payment_id = forms.IntegerField(
+        widget=forms.HiddenInput()
+    )

@@ -6,11 +6,13 @@ from django.utils.timezone import now
 
 from ..forms.invoices import (
     FilterInvoiceFrom, prepare_cleaned_data_to_form,
-    CreateInvoiceForm, ChangeInvoiceStatusForm
+    CreateInvoiceForm, ChangeInvoiceStatusForm,
+    AddPaymentForm, DeletePaymentForm,
 )
 from ..bl.invoices import (
     total_pages, filter_invoices, create_invoice,
-    get_invoice_change_log, get_invoice, change_invoice_status
+    get_invoice_change_log, get_invoice, change_invoice_status,
+    create_invoice_payment, delete_invoice, delete_invoice_payment
 )
 
 
@@ -66,23 +68,27 @@ def invoices_actions(request: HttpRequest, action: str, invoice_id: int):
     def __error_not_found():
         return f'Рахунок не знайдено: {invoice_id}'
 
-    def trow_error(*errors):
+    def trow_errors(*errors):
         context.update(errors=[*errors])
         return render(request, 'schedule/invoices/base.html', context)
 
+    invoice = get_invoice(int(invoice_id))
+    if not invoice:
+        errors.append(__error_not_found())
+        trow_errors()
+
     def _view():
-        invoice = get_invoice(int(invoice_id))
-        if invoice:
-            change_log = get_invoice_change_log(invoice)
-            context.update(invoice=invoice)
-            context.update(history_records=change_log)
-            context.update(change_status_form=ChangeInvoiceStatusForm())
-            return render(request, 'schedule/invoices/view.html', context)
-        else:
-            errors.append(__error_not_found())
+        change_log = get_invoice_change_log(invoice)
+        context.update(invoice=invoice)
+        context.update(history_records=change_log)
+        context.update(change_status_form=ChangeInvoiceStatusForm())
+        context.update(payment_form=AddPaymentForm({
+            'amount': invoice.amount_to_full_payment
+        }))
+        return render(request, 'schedule/invoices/view.html', context)
 
     def _paid():
-        from .models import Invoice
+        from ..models import Invoice
         if request.method == 'POST':
             invoice = get_invoice(int(invoice_id))
             if invoice:
@@ -93,13 +99,35 @@ def invoices_actions(request: HttpRequest, action: str, invoice_id: int):
                 )
         return HttpResponseRedirect('/schedule/invoices')
 
+    def _add_payment():
+        if request.method == 'POST':
+            form = AddPaymentForm(request.POST)
+            if form.is_valid():
+                create_invoice_payment(request, invoice, **form.cleaned_data)
+        return HttpResponseRedirect(f'/schedule/invoices/view/{invoice_id}')
+
+    def _delete_payment():
+        if request.method == 'POST':
+            form = DeletePaymentForm(request.POST)
+            if form.is_valid():
+                delete_invoice_payment(request, **form.cleaned_data)
+        return HttpResponseRedirect(f'/schedule/invoices/view/{invoice_id}')
+
+    def _delete():
+        if request.method == 'POST':
+            delete_invoice(request, invoice)
+        return HttpResponseRedirect(f'/schedule/invoices')
+
     _actions = {
         'view': _view,
         'paid': _paid,
+        'add_payment': _add_payment,
+        'delete_payment': _delete_payment,
+        'delete': _delete,
     }
 
     if action not in _actions:
-        trow_error(__error_wrong_action())
+        trow_errors(__error_wrong_action())
 
     res = _actions[action]()
     if res:
