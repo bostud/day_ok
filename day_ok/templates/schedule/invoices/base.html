@@ -99,6 +99,7 @@
                     <th>Номер</th>
                     <th>Учень</th>
                     <th>Послуга</th>
+                    <th>Предмет</th>
                     <th>Оплатити до</th>
                     <th>Дійсний з</th>
                     <th>Дійсний по</th>
@@ -111,6 +112,7 @@
                             <td>{{ invoice.number }}</td>
                             <td>{{ invoice.student }}</td>
                             <td>{{ invoice.service }}</td>
+                            <td>{{ invoice.service.subject }}</td>
                             <td>
                                 {% if invoice.is_overdue_payment %}
                                 <span class="badge badge-danger md">{{ invoice.date_paid_until|date:"d.m.Y" }}</span>
@@ -135,17 +137,14 @@
                             </td>
                             <td>
                                 <div class="row">
-                                    <div class="col">
-                                        <a type="button"
-                                           class="btn btn-outline-primary"
-                                           href="{% url 'invoices_actions' 'view' invoice.id %}"
-                                           title="Переглянути"
-                                        >
-                                            <span class="far fa-eye"></span>
-                                        </a>
-                                    </div>
+                                    <a type="button"
+                                       class="btn btn-outline-primary"
+                                       href="{% url 'invoices_actions' 'view' invoice.id %}"
+                                       title="Переглянути"
+                                    >
+                                        <span class="far fa-eye"></span>
+                                    </a>&nbsp;&nbsp;
                                 {% if invoice.is_pending %}
-                                <div class="col">
                                     <form action="{% url 'invoices_actions' 'paid' invoice.id %}" method="POST" class="form-inline">
                                         {% csrf_token %}
                                         <button type="submit"
@@ -154,9 +153,14 @@
                                         >
                                             <span class="fas fa-donate"></span>
                                         </button>
-                                    </form>
-                                </div>
+                                    </form>&nbsp;&nbsp;
                                 {% endif %}
+                                    <form method="POST" action="{% url 'invoices_actions' 'delete' invoice.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-danger" title="Видалити">
+                                            <span class="fas fa-archive"></span>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>

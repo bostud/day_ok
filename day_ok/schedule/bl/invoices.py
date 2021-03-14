@@ -76,8 +76,9 @@ def create_invoice(
         invoice=invoice,
         request=request,
         new_status=status,
+        comment='Створення рахунку',
     )
-    if status == Invoice.Status.PAID:
+    if int(status) == Invoice.Status.PAID:
         create_invoice_payment(
             request, invoice, payment_type, service.price,
         )

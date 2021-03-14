@@ -48,7 +48,7 @@
                 Прізвище Ім`я: <strong>{{ invoice.student.full_name }}</strong>
             </div>
             <div>
-                Оплачено послуга: {{ invoice.service.name }}
+                Включена послуга: {{ invoice.service.name }} / {{ invoice.service.price }}грн / {{ invoice.service.subject }}
             </div>
             <div>
                 Тип послуги: {{ invoice.service.type_of_title }}
@@ -108,7 +108,7 @@
         {% endif %}
     </div>
     <div class="row">
-        <div class="col-6 table-responsive"">
+        <div class="col-6 table-responsive">
             <table class="table table-sm table-hover">
                 <thead>
                     <th>Тип оплати</th>
