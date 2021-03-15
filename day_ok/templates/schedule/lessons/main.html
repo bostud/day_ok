@@ -12,22 +12,6 @@
             location.href = elem.getAttribute('data-url');
         }
     </script>
-    <div class="row text-center" style="background-color: lightgrey">
-        <div class="col">
-            <h3>
-                Графік занять по
-                {% if show_type == 'day' %}
-                    днях
-                {% elif show_type == 'classroom' %}
-                    аудиторіях
-                {% elif show_type == 'teachers' %}
-                    викладачах
-                {% else %}
-                    фільтру
-                {% endif %}
-            </h3>
-        </div>
-    </div>
     <br />
     {% if errors %}
     <div class="row">
