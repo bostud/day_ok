@@ -510,6 +510,10 @@ class Lessons(models.Model):
         return end_minutes - start_minute
 
     @property
+    def style_height(self):
+        return self.duration_minute / 10
+
+    @property
     def get_lessons_type_name(self):
         for _id, name in self.Type.choices:
             if self.lessons_type == _id:

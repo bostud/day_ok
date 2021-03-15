@@ -1,5 +1,7 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,600);
-
+:root {
+  --duration-min: var(--duration-min);
+}
 .schedule {
   font-family: 'Open Sans', sans-serif;
   color: #efefef;
@@ -57,6 +59,8 @@
   font-weight: 200;
   padding-left: 5px;
 }
+.lessons.dauto { font-size: 18px; }
+.lessons.d120 { height: 12vh; }
 .lessons.d90 { height: 9vh; }
 .lessons.d60 { height: 6vh; font-size: 15px; }
 .lessons.b30 { height: 3vh; background-color:  transparent;}
