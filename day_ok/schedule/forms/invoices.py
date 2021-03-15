@@ -1,6 +1,6 @@
 from django import forms
 from ..models import Invoice, Service, InvoicePayment
-from .utils import get_services, get_students, DateInputEmpty
+from .utils import get_services, get_students, DateInputEmpty, get_subjects
 from ..utils import get_first_date_of_month, get_last_date_of_month
 
 
@@ -61,12 +61,25 @@ class FilterInvoiceFrom(forms.Form):
         required=False,
     )
 
+    subjects = forms.MultipleChoiceField(
+        choices=get_subjects,
+        required=False,
+    )
+
     services.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',
         'data-selected-text-format': 'count',
         'title': 'Послуги',
+    })
+
+    subjects.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'multiply': 'multiply',
+        'data-selected-text-format': 'count',
+        'title': 'Предмети',
     })
 
     students.widget.attrs.update({
@@ -140,6 +153,16 @@ class CreateInvoiceForm(forms.Form):
         required=False,
     )
 
+    amount = forms.IntegerField(
+        min_value=0,
+        required=False,
+    )
+
+    amount.widget.attrs.update({
+        'class': 'form-control',
+        'placeholder': 'Сума',
+    })
+
     service.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
@@ -199,6 +222,11 @@ class AddPaymentForm(forms.Form):
 
     amount = forms.IntegerField(
         min_value=1,
+    )
+
+    redirect_to = forms.CharField(
+        required=False,
+        initial='invoices',
     )
 
     payment_type.widget.attrs.update({

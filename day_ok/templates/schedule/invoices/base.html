@@ -99,6 +99,7 @@
                     <th>Номер</th>
                     <th>Учень</th>
                     <th>Послуга</th>
+                    <th>Тип</th>
                     <th>Предмет</th>
                     <th>Оплатити до</th>
                     <th>Дійсний з</th>
@@ -110,8 +111,13 @@
                     {% for invoice in invoices %}
                         <tr>
                             <td>{{ invoice.number }}</td>
-                            <td>{{ invoice.student }}</td>
+                            <td>
+                                <a href="{% url 'students_actions' invoice.student.id %}">
+                                {{ invoice.student }}
+                                </a>
+                            </td>
                             <td>{{ invoice.service }}</td>
+                            <td>{{ invoice.service.type_of_title }}</td>
                             <td>{{ invoice.service.subject }}</td>
                             <td>
                                 {% if invoice.is_overdue_payment %}
@@ -145,6 +151,18 @@
                                         <span class="far fa-eye"></span>
                                     </a>&nbsp;&nbsp;
                                 {% if invoice.is_pending %}
+                                    <div class="modal fade" id="addPayment{{invoice.id}}">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                {% include 'schedule/invoices/add_payment_form.html' with invoice=invoice payment_form=payment_form show_amount_to_full_payment=True %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-info" title="Додати оплату" data-toggle="modal" data-target="#addPayment{{invoice.id}}">
+                                        <span class="fas fa-piggy-bank"></span>
+                                    </button>
+                                    &nbsp;
+                                    &nbsp;
                                     <form action="{% url 'invoices_actions' 'paid' invoice.id %}" method="POST" class="form-inline">
                                         {% csrf_token %}
                                         <button type="submit"

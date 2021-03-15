@@ -28,6 +28,7 @@ def get_all_invoices() -> List[Invoice]:
 def filter_invoices(
     students: Optional[List[int]] = None,
     services: Optional[List[int]] = None,
+    subjects: Optional[List[int]] = None,
     statuses: Optional[List[int]] = None,
     service_types: Optional[List[int]] = None,
     date_valid_from: Optional[date] = None,
@@ -46,6 +47,8 @@ def filter_invoices(
         query_filter.update(status__in=statuses)
     if service_types:
         query_filter.update(service__type_of__in=service_types)
+    if subjects:
+        query_filter.update(service__subject__in=subjects)
     return Invoice.objects.filter(**query_filter).order_by('-date_created')
 
 
@@ -59,8 +62,10 @@ def create_invoice(
     date_valid_from: date,
     date_valid_until: date,
     payment_type: int = None,
+    amount: int = None
 ) -> Optional[Invoice]:
     assert int(status) in Invoice.Status.values
+    status = int(status)
     service = Service.objects.get(id=service)
     invoice = Invoice(
         student=Student.objects.get(id=student),
@@ -78,10 +83,20 @@ def create_invoice(
         new_status=status,
         comment='Створення рахунку',
     )
-    if int(status) == Invoice.Status.PAID:
+    if payment_type:
+        payment_type = int(payment_type)
+    if amount:
+        amount = int(amount)
+
+    if status == Invoice.Status.PAID:
         create_invoice_payment(
             request, invoice, payment_type, service.price,
         )
+    elif status == Invoice.Status.PENDING and amount and amount > 0:
+        create_invoice_payment(
+            request, invoice, payment_type, amount,
+        )
+
     return invoice
 
 
@@ -91,6 +106,7 @@ def create_invoice_payment(
     invoice: Invoice,
     payment_type: int,
     amount: int,
+    **kwargs,
 ) -> List[InvoicePayment]:
     if (
         not payment_type or
