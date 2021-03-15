@@ -1,0 +1,29 @@
+
+<form method="POST" class="form" action="{% url 'invoices_actions' 'add_payment' invoice.id %}">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h4 class="modal-title">Додати оплату для рахунку: {{invoice.number}}</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+    </div>
+    <div class="modal-body">
+        {% if show_amount_to_full_payment %}
+            <div class="row">
+                <div class="col">
+                <p>До повної оплати залишилось: {{invoice.amount_to_full_payment}}грн</p>
+                </div>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col" style="max-width: 200px">
+            {{ payment_form.payment_type }}
+            </div>
+            <div class="col" style="max-width: 200px">
+                {{ payment_form.amount }}
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Створити</button>
+        <button type="button" class="btn btn-warning" data-dismiss="modal">Закрити</button>
+    </div>
+</form>

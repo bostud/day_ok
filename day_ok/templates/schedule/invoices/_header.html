@@ -45,7 +45,28 @@
                                 </div><br >
                             </div>
                         </div>
+                        <div class="row" id="addPayment" hidden>
+                            <div class="col-8 offset-2" style="border: 2px groove #34495e; border-radius: 5px;">
+                                <small>Ви можете додати оплату але це не обов`язково</small>
+                                <div class="row" style="text-align: center; padding-top: 10px;">
+                                    <div class="col">
+                                        <p>Оплата:</p>
+                                    </div>
+                                    <div class="col" style="padding-right: 40px;">
+                                        <div class="row">
+                                            {{ form.payment_type }}
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="row">
+                                            {{ form.amount }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Створити</button>
                         <button type="button" class="btn btn-warning" data-dismiss="modal">Закрити</button>
@@ -57,7 +78,7 @@
 </div>
 <script>
     function shouldOpenPaymentType(elem) {
-        console.log(parseInt(elem.value) !== 1, parseInt(elem.value));
         document.getElementById('invoice_payment_type').hidden = (parseInt(elem.value) !== 1);
+        document.getElementById('addPayment').hidden = (parseInt(elem.value) !== 2);
     }
 </script>

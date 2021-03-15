@@ -30,6 +30,7 @@ def invoices(request: HttpRequest, *args, **kwargs):
         'current_page': page,
         'next_page': page + 1 if page + 1 < max(pages) else page,
         'create_form': CreateInvoiceForm(),
+        'payment_form': AddPaymentForm(),
     }
     form = FilterInvoiceFrom(request.GET)
     if form.is_valid():
@@ -83,7 +84,8 @@ def invoices_actions(request: HttpRequest, action: str, invoice_id: int):
         context.update(history_records=change_log)
         context.update(change_status_form=ChangeInvoiceStatusForm())
         context.update(payment_form=AddPaymentForm({
-            'amount': invoice.amount_to_full_payment
+            'amount': invoice.amount_to_full_payment,
+            'redirect_to': '',
         }))
         return render(request, 'schedule/invoices/view.html', context)
 
@@ -104,6 +106,9 @@ def invoices_actions(request: HttpRequest, action: str, invoice_id: int):
             form = AddPaymentForm(request.POST)
             if form.is_valid():
                 create_invoice_payment(request, invoice, **form.cleaned_data)
+
+                if form.cleaned_data['redirect_to'] == 'invoices':
+                    return HttpResponseRedirect(f'/schedule/invoices')
         return HttpResponseRedirect(f'/schedule/invoices/view/{invoice_id}')
 
     def _delete_payment():
