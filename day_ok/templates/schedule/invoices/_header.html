@@ -22,6 +22,13 @@
                                 </div><br >
                                 <div class="row">
                                     {{ form.service }}
+                                </div>
+                                <small>Тип послуги: <span id="id_service_type"></span></small><br>
+                                <small>К-сть занять: <span id="id_service_lessons_count"></span></small><br>
+                                <small>Вартість: <span id="id_service_price"></span>грн</small>
+                                <br >
+                                <div class="row">
+                                    {{ form.subject }}
                                 </div><br >
                                 <div class="row">
                                     {{ form.status }}
@@ -81,4 +88,33 @@
         document.getElementById('invoice_payment_type').hidden = (parseInt(elem.value) !== 1);
         document.getElementById('addPayment').hidden = (parseInt(elem.value) !== 2);
     }
+
+    function getSubjects(elem) {
+        $.ajax({
+            type: "GET",
+            url: "{% url 'get_service_subjects' %}?service=" + elem.value.toString(),
+            success: function (response) {
+                let subjects = document.getElementById('id_subject');
+                subjects.hidden = false;
+                subjects.options.length = 0;
+                for (rec = response['result'].length; rec>=0,rec--;) {
+                    let option = document.createElement('option');
+                    option.text = response['result'][rec][1];
+                    option.value = response['result'][rec][0];
+                    subjects.add(option);
+                }
+                setServiceDescription(response['service']);
+            },
+            error: function (response) {
+                alert(response["status"]);
+            }
+        })
+    }
+
+    function setServiceDescription(service_data) {
+        document.getElementById('id_service_type').innerText = service_data['type_of_title'];
+        document.getElementById('id_service_price').innerText = service_data['price'];
+        document.getElementById('id_service_lessons_count').innerText = service_data['lessons_count'];
+    }
+
 </script>

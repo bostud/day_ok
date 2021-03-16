@@ -20,7 +20,7 @@
                         <td>{{ invoice.number }}</td>
                         <td>{{ invoice.student }}</td>
                         <td>{{ invoice.service }}</td>
-                        <td>{{ invoice.service.subject }}</td>
+                        <td>{{ invoice.subject }}</td>
                         <td>
                             {% if invoice.is_overdue_payment %}
                             <span class="badge badge-danger md">{{ invoice.date_paid_until|date:"d.m.Y" }}</span>
