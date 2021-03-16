@@ -574,21 +574,9 @@ class Invoice(models.Model):
         default=get_new_unique_invoice_number,
     )
     student = models.ForeignKey(
-        Student, on_delete=models.DO_NOTHING, verbose_name='Студент')
+        Student, on_delete=models.CASCADE, verbose_name='Студент')
     service = models.ForeignKey(
-        Service, on_delete=models.DO_NOTHING, verbose_name='Послуга')
-    receiver = models.IntegerField(
-        'Отримувач',
-        choices=Receivers.choices,
-        null=True,
-    )
-    receiver_teacher = models.ForeignKey(
-        Teacher,
-        on_delete=models.DO_NOTHING,
-        blank=True,
-        null=True,
-        verbose_name='Вчитель',
-    )
+        Service, on_delete=models.CASCADE, verbose_name='Послуга')
     date_created = models.DateTimeField(auto_now=True)
     date_paid_until = models.DateField('Дата до якої здійснити оплату')
     date_valid_from = models.DateField('Дійсний з', null=True)

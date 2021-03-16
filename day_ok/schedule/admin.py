@@ -184,8 +184,6 @@ class InvoiceAdmin(admin.ModelAdmin):
         'number',
         'student',
         'service',
-        'receiver',
-        'receiver_teacher',
         'format_date_created',
         'format_date_paid_until',
         'status',
@@ -193,7 +191,7 @@ class InvoiceAdmin(admin.ModelAdmin):
         'status_payed',
     )
 
-    autocomplete_fields = ['student', 'receiver_teacher', ]
+    autocomplete_fields = ['student', ]
 
     search_fields = (
         'student__last_name',
