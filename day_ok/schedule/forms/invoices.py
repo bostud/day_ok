@@ -177,19 +177,22 @@ class CreateInvoiceForm(forms.Form):
         'data-live-search': 'true',
         'title': 'Послуга',
         'onchange': 'getSubjects(this)',
+        'required': True,
     })
 
     subject.widget.attrs.update({
         'class': 'form-control',
         'title': 'Предмет',
         'hidden': True,
+        'required': True,
     })
 
     status.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'title': 'Статус',
-        'onchange': 'shouldOpenPaymentType(this)'
+        'onchange': 'shouldOpenPaymentType(this)',
+        'required': True,
     })
 
     payment_type.widget.attrs.update({
@@ -202,19 +205,23 @@ class CreateInvoiceForm(forms.Form):
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'title': 'Учень',
+        'required': True,
     })
 
     date_valid_until.widget.attrs.update({
         'placeholder': 'Дісний по',
+        'required': True,
     })
 
     date_valid_from.widget.attrs.update({
         'placeholder': 'Дісний з',
+        'required': True,
     })
 
     date_paid_until.widget.attrs.update({
         'placeholder': 'Оплатити до',
         'title': 'Оплатити до',
+        'required': True,
     })
 
 
