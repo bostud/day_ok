@@ -1,3 +1,5 @@
+from typing import List
+
 import json
 from datetime import datetime
 from django.db import models
@@ -219,103 +221,63 @@ class Student(ContactMixin):
                 return years - 1
         return None
 
-    @property
-    def total_groups_services(self):
-        first_invoice = (
-            Invoice.objects.filter().annotate(
-                models.Min('date_created')
-            ).order_by(
-                'date_created'
-            ).first()
-        )
-        if first_invoice:
-            dt_gte = first_invoice.date_created
-        else:
-            dt_gte = now()
-        return self.get_total_groups_services(dt_gte, now())
-
-    def get_total_groups_services(self, dt_gte, dt_lte):
+    def get_total_groups_services(
+        self,
+        dt_gte,
+        dt_lte,
+        subjects: List[Subject],
+    ):
         return Invoice.objects.filter(
             student=self,
             date_created__gte=dt_gte,
             date_created__lte=dt_lte,
             service__type_of=Service.TypeOf.GROUP,
+            service__subject__in=subjects,
         ).count()
 
-    @property
-    def paid_groups_services(self):
-        first_invoice = (
-            Invoice.objects.filter().annotate(
-                models.Min('date_created')
-            ).order_by(
-                'date_created'
-            ).first()
-        )
-        if first_invoice:
-            dt_gte = first_invoice.date_created
-        else:
-            dt_gte = now()
-        return self.get_paid_groups_services(dt_gte, now())
-
-    def get_paid_groups_services(self, dt_gte, dt_lte):
+    def get_paid_groups_services(
+        self,
+        dt_gte,
+        dt_lte,
+        subjects: List[Subject],
+    ):
         return Invoice.objects.filter(
             student=self,
             service__type_of=Service.TypeOf.GROUP,
             date_created__gte=dt_gte,
             date_created__lte=dt_lte,
             status=Invoice.Status.PAID,
+            service__subject__in=subjects,
         ).count()
 
-    @property
-    def group_lessons_paid(self):
-        first_invoice = (
-            Invoice.objects.filter().annotate(
-                models.Min('date_created')
-            ).order_by(
-                'date_created'
-            ).first()
-        )
-        if first_invoice:
-            dt_gte = first_invoice.date_created
-        else:
-            dt_gte = now()
-        return self.get_group_lessons_paid(dt_gte, now())
-
-    def get_group_lessons_paid(self, dt_gte, dt_lte):
+    def get_group_lessons_paid(
+        self,
+        dt_gte,
+        dt_lte,
+        subjects: List[Subject],
+    ):
         q = Invoice.objects.filter(
             student=self,
             date_created__gte=dt_gte,
             date_created__lte=dt_lte,
             service__type_of=Service.TypeOf.GROUP,
             status=Invoice.Status.PAID,
+            service__subject__in=subjects,
         )
         return sum([i.service.lessons_count for i in q])
 
-    @property
-    def group_lessons_present(self):
-        first_presence = (
-            StudentPresence.objects.filter().annotate(
-                models.Min('date_created')
-            ).order_by(
-                'date_created'
-            ).first()
-        )
-        if first_presence:
-            dt_gte = first_presence.date_created
-        else:
-            dt_gte = now()
-        return self.get_group_lessons_present(dt_gte, now())
-
     def get_group_lessons_present(
-            self,
-            dt_gte: datetime,
-            dt_lte: datetime,
+        self,
+        dt_gte: datetime,
+        dt_lte: datetime,
+        subjects: List[Subject],
     ):
         return StudentPresence.objects.filter(
             student=self,
             lessons__date__gte=dt_gte.date(),
             lessons__date__lte=dt_lte.date(),
             lessons__lessons_type=Lessons.Type.GROUP,
+            lessons__subject__in=subjects,
         ).count()
 
     @property
@@ -413,11 +375,6 @@ class Group(models.Model):
             time_end__gte=dt_now.time(),
         ).order_by('id').first()
         return lsn
-
-    @property
-    def next_student(self):
-        for s in self.students.all().iterator():
-            yield s
 
 
 class LessonsParent(models.Model):
@@ -617,21 +574,9 @@ class Invoice(models.Model):
         default=get_new_unique_invoice_number,
     )
     student = models.ForeignKey(
-        Student, on_delete=models.DO_NOTHING, verbose_name='Студент')
+        Student, on_delete=models.CASCADE, verbose_name='Студент')
     service = models.ForeignKey(
-        Service, on_delete=models.DO_NOTHING, verbose_name='Послуга')
-    receiver = models.IntegerField(
-        'Отримувач',
-        choices=Receivers.choices,
-        null=True,
-    )
-    receiver_teacher = models.ForeignKey(
-        Teacher,
-        on_delete=models.DO_NOTHING,
-        blank=True,
-        null=True,
-        verbose_name='Вчитель',
-    )
+        Service, on_delete=models.CASCADE, verbose_name='Послуга')
     date_created = models.DateTimeField(auto_now=True)
     date_paid_until = models.DateField('Дата до якої здійснити оплату')
     date_valid_from = models.DateField('Дійсний з', null=True)
