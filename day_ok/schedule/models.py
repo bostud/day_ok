@@ -65,10 +65,10 @@ class Service(models.Model):
         choices=TypeOf.choices,
         null=True,  # temporary
     )
-    subject = models.ForeignKey(
-        Subject, on_delete=models.DO_NOTHING,
+    subjects = models.ManyToManyField(
+        Subject,
         verbose_name='Предмет',
-        null=True,  # temporary
+        default=None,
     )
     price = models.IntegerField('Ціна',)
     lessons_count = models.IntegerField('К-сть занять')
@@ -232,7 +232,7 @@ class Student(ContactMixin):
             date_created__gte=dt_gte,
             date_created__lte=dt_lte,
             service__type_of=Service.TypeOf.GROUP,
-            service__subject__in=subjects,
+            subject__in=subjects,
         ).count()
 
     def get_paid_groups_services(
@@ -247,7 +247,7 @@ class Student(ContactMixin):
             date_created__gte=dt_gte,
             date_created__lte=dt_lte,
             status=Invoice.Status.PAID,
-            service__subject__in=subjects,
+            subject__in=subjects,
         ).count()
 
     def get_group_lessons_paid(
@@ -262,7 +262,7 @@ class Student(ContactMixin):
             date_created__lte=dt_lte,
             service__type_of=Service.TypeOf.GROUP,
             status=Invoice.Status.PAID,
-            service__subject__in=subjects,
+            subject__in=subjects,
         )
         return sum([i.service.lessons_count for i in q])
 
@@ -577,6 +577,11 @@ class Invoice(models.Model):
         Student, on_delete=models.CASCADE, verbose_name='Студент')
     service = models.ForeignKey(
         Service, on_delete=models.CASCADE, verbose_name='Послуга')
+    subject = models.ForeignKey(
+        Subject, on_delete=models.DO_NOTHING, db_constraint=False,
+        verbose_name='Предмет',
+        null=True,  # temporary
+    )
     date_created = models.DateTimeField(auto_now=True)
     date_paid_until = models.DateField('Дата до якої здійснити оплату')
     date_valid_from = models.DateField('Дійсний з', null=True)

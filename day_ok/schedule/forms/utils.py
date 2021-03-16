@@ -39,6 +39,10 @@ def get_subjects() -> list:
     return res
 
 
+def get_subjects_dummy() -> Generator:
+    yield '', ''
+
+
 def get_teachers() -> list:
     iter_ = Teacher.objects.filter(status=Teacher.Status.ACTIVE).all()
     res = []

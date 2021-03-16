@@ -4,7 +4,7 @@ from datetime import date
 from ..models import (
     Invoice, Student, Service,
     InvoiceStatusChangeLog,
-    InvoicePayment,
+    InvoicePayment, Subject,
 )
 from django.db import transaction
 
@@ -48,7 +48,7 @@ def filter_invoices(
     if service_types:
         query_filter.update(service__type_of__in=service_types)
     if subjects:
-        query_filter.update(service__subject__in=subjects)
+        query_filter.update(subject__in=subjects)
     return Invoice.objects.filter(**query_filter).order_by('-date_created')
 
 
@@ -57,6 +57,7 @@ def create_invoice(
     request: HttpRequest,
     student: int,
     service: int,
+    subject: int,
     status: int,
     date_paid_until: date,
     date_valid_from: date,
@@ -67,10 +68,12 @@ def create_invoice(
     assert int(status) in Invoice.Status.values
     status = int(status)
     service = Service.objects.get(id=service)
+    subject = Subject.objects.get(id=int(subject))
     invoice = Invoice(
         student=Student.objects.get(id=student),
         service=service,
         status=status,
+        subject=subject,
         date_valid_until=date_valid_until,
         date_valid_from=date_valid_from,
         date_paid_until=date_paid_until,

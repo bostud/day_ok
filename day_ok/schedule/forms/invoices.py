@@ -1,6 +1,10 @@
 from django import forms
 from ..models import Invoice, Service, InvoicePayment
-from .utils import get_services, get_students, DateInputEmpty, get_subjects
+from .utils import (
+    get_services, get_students,
+    DateInputEmpty,
+    get_subjects,
+)
 from ..utils import get_first_date_of_month, get_last_date_of_month
 
 
@@ -127,6 +131,11 @@ class CreateInvoiceForm(forms.Form):
         required=True,
     )
 
+    subject = forms.ChoiceField(
+        choices=get_subjects,
+        required=True,
+    )
+
     date_paid_until = forms.DateField(
         widget=DateInputEmpty(),
         input_formats=['%d.%m.%Y'],
@@ -167,6 +176,13 @@ class CreateInvoiceForm(forms.Form):
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'title': 'Послуга',
+        'onchange': 'getSubjects(this)',
+    })
+
+    subject.widget.attrs.update({
+        'class': 'form-control',
+        'title': 'Предмет',
+        'hidden': True,
     })
 
     status.widget.attrs.update({
@@ -238,6 +254,10 @@ class AddPaymentForm(forms.Form):
     amount.widget.attrs.update({
         'class': 'form-control',
         'placeholder': 'Сума',
+    })
+
+    redirect_to.widget.attrs.update({
+        'hidden': True,
     })
 
 

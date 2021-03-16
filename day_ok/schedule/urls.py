@@ -11,7 +11,7 @@ from .views import (
     teachers, teachers_actions,
     invoices, invoices_actions,
     invoices_add, invoices_change_status,
-    finance,
+    finance, get_service_subjects,
 )
 
 lessons_urlpatterns = [
@@ -94,6 +94,14 @@ invoices_urlpatterns = [
     ),
 ]
 
+services_urlpatterns = [
+    path(
+        'services/get_service_subjects',
+        get_service_subjects,
+        name='get_service_subjects'
+    )
+]
+
 urlpatterns = [
     path('', home_view, name='home'),
     path('about', home_view, name='about'),
@@ -110,3 +118,4 @@ urlpatterns.extend(groups_urlpatterns)
 urlpatterns.extend(students_urlpatterns)
 urlpatterns.extend(teachers_urlpatterns)
 urlpatterns.extend(invoices_urlpatterns)
+urlpatterns.extend(services_urlpatterns)
