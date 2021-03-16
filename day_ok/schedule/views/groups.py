@@ -7,7 +7,8 @@ from ..bl.groups import (
 )
 from ..utils import (
     is_valid_period_format, create_datetime_start_from_period,
-    create_datetime_end_period, get_year_month_periods,
+    create_datetime_end_period, get_year_month_periods, DATE_START_PERIODS,
+    datetime_now_tz as now,
 )
 
 
@@ -40,11 +41,13 @@ def groups_actions(request: HttpRequest, action: str, group_id: int):
                 dt_start = create_datetime_start_from_period(period)
                 dt_end = create_datetime_end_period(dt_start)
                 ctx.update(selected_period=period)
-                ctx.update(
-                    group=get_group_info_by_period(group_id, dt_start, dt_end)
-                )
             else:
-                ctx.update(group=get_group(group_id))
+                dt_start = DATE_START_PERIODS
+                dt_end = now()
+            ctx.update(
+                group_data=get_group_info_by_period(group_id, dt_start, dt_end)
+            )
+            ctx.update(group=get_group(group_id))
 
     actions_func = {
         'view': _view,

@@ -6,6 +6,8 @@ from dataclasses import dataclass
 
 @dataclass
 class MyStudent:
+    id: int
+    full_name: str
     last_name: str
     first_name: str
     years_old: Optional[int]
@@ -40,12 +42,18 @@ def get_group_info_by_period(
 
     custom_group = MyGroup(next_student=[], name=g.name, id=g.id)
     for s in g.students.all():
-        total_groups_services = s.get_total_groups_services(dt_start, dt_end)
-        paid_groups_services = s.get_paid_groups_services(dt_start, dt_end)
-        group_lessons_paid = s.get_group_lessons_paid(dt_start, dt_end)
-        group_lessons_present = s.get_group_lessons_present(dt_start, dt_end)
+        total_groups_services = s.get_total_groups_services(
+            dt_start, dt_end, [g.subject])
+        paid_groups_services = s.get_paid_groups_services(
+            dt_start, dt_end, [g.subject])
+        group_lessons_paid = s.get_group_lessons_paid(
+            dt_start, dt_end, [g.subject])
+        group_lessons_present = s.get_group_lessons_present(
+            dt_start, dt_end, [g.subject])
         custom_group.next_student.append(
             MyStudent(
+                id=s.id,
+                full_name=s.full_name,
                 first_name=s.first_name,
                 last_name=s.last_name,
                 years_old=s.years_old,
