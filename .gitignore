@@ -130,3 +130,5 @@ dmypy.json
 
 
 .idea
+
+day_ok/frontend/node_modules/

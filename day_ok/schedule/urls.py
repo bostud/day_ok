@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from .views import (
     home_view,
     reports,
@@ -13,6 +13,11 @@ from .views import (
     invoices_add, invoices_change_status,
     finance, get_service_subjects,
 )
+from rest_framework import routers
+from .api import views as api_views
+
+api_router = routers.DefaultRouter()
+api_router.register(r'services', api_views.ServiceViewSet)
 
 lessons_urlpatterns = [
     path('lessons/add/', add_lessons, name='add_lessons'),
@@ -108,7 +113,8 @@ urlpatterns = [
     path('contacts', home_view, name='contacts'),
     path('logout', home_view, name='logout'),
     path('reports', reports, name='reports'),
-    path('finance', finance, name='finance')
+    path('finance', finance, name='finance'),
+    path('api/', include(api_router.urls)),
 ]
 
 urlpatterns.extend(lessons_urlpatterns)
