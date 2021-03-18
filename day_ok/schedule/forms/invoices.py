@@ -21,9 +21,7 @@ def get_invoice_payment_types() -> list:
 
 
 def prepare_cleaned_data_to_form(form: 'FilterInvoiceFrom') -> dict:
-    res = {}
-    fc = form.cleaned_data
-    res.update(**fc)
+    res = form.cleaned_data.copy()
     if res.get('date_valid_from'):
         res['date_valid_from'] = res['date_valid_from'].strftime('%d.%m.%Y')
 

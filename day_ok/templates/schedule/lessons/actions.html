@@ -21,17 +21,22 @@
         </div>
     </div>
     <br />
-    {% if new_lessons and create_lessons %}
-        <div class="alert alert-success">
-          <strong>Успіх!</strong> Створено {{ new_lessons }} нові(-их) заняття(-ть)
-        </div>
-    {% elif edited_lessons and edit_lessons %}
-        <div class="alert alert-success">
-          <strong>Успіх!</strong> Заняття успішно відредаговано
+    {% if not_found %}
+        <div class="alert alert-warning">
+              <strong>Заняття {{ not_found }} не знайдено</strong>
+            </div>
+    {% else %}
+        {% if new_lessons and create_lessons %}
+            <div class="alert alert-success">
+              <strong>Успіх!</strong> Створено {{ new_lessons }} нові(-их) заняття(-ть)
+            </div>
+        {% elif edited_lessons and edit_lessons %}
+            <div class="alert alert-success">
+              <strong>Успіх!</strong> Заняття успішно відредаговано
+            </div>
+        {% endif %}
+        <div class="container-fluid">
+            {% include 'schedule/lessons/form.html' %}
         </div>
     {% endif %}
-    <div class="container-fluid">
-        {% include 'schedule/lessons/form.html' %}
-    </div>
-    <br />
 {% endblock %}

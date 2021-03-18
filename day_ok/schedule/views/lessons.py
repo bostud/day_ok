@@ -139,13 +139,24 @@ def lessons_actions(request: HttpRequest, action: str, lessons_id: int):
 
     def _edit():
         ctx.update(edit_lessons=True)
+        lsn_data = prepare_edit_lessons_form_data(lessons_id)
+        if not lsn_data:
+            ctx['not_found'] = lessons_id
+            return render(request, template_name, ctx)
         ctx.update(**prepare_edit_lessons_form_data(lessons_id))
         ctx.update(**prepare_add_lessons_form_data())
+        ctx.update(form=EditLessonsForm(
+            prepare_edit_lessons_form_data(lessons_id)
+        ))
         if request.method == 'POST':
             edit_form = EditLessonsForm(request.POST)
             if edit_form.is_valid():
                 edit_lessons_from_form(form=edit_form, lessons_id=lessons_id)
-                return redirect('lessons', show_type='teachers')
+                ctx.update(edited_lessons=True)
+                ctx.update(form=EditLessonsForm(
+                    prepare_edit_lessons_form_data(lessons_id)
+                ))
+                return redirect('lessons_action', 'edit', lessons_id)
 
     def _delete():
         ctx.update(delete_lessons=True)

@@ -75,20 +75,22 @@ def prepare_add_lessons_form_data() -> dict:
 
 
 def prepare_edit_lessons_form_data(lessons_id: int) -> dict:
-    lessons = Lessons.objects.get(id=lessons_id)
+    lessons = Lessons.objects.filter(id=lessons_id).first()
     if not lessons:
         return {}
+    valid_until = (
+        (lessons.parent.date_until_valid or lessons.date)
+        if lessons.parent
+        else lessons.date
+    )
     return EditLessonsDC(
         classroom=lessons.classroom.id,
         teacher=lessons.teacher.id,
         subject=lessons.subject.id,
         student=lessons.student.id if lessons.student else None,
         group=lessons.group.id if lessons.group else None,
-        date_from_valid=lessons.date,
-        date_until_valid=(
-            lessons.parent.date_until_valid
-            if lessons.parent else lessons.date
-        ),
+        date_from_valid=lessons.date.strftime("%d.%m.%Y") if lessons.date else None,
+        date_until_valid=valid_until.strftime("%d.%m.%Y"),
         time_start=lessons.time_start,
         lessons_type=lessons.lessons_type,
         parent=lessons.parent,

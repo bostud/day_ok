@@ -44,7 +44,7 @@ class EditLessonsDC(Base):
     change_all: bool = False
 
     def to_dict(self, **kwargs) -> dict:
-        return super().to_dict('edit')
+        return super().to_dict()
 
 
 @dataclass
