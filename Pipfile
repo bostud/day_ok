@@ -11,6 +11,8 @@ uvloop = "*"
 httptools = "*"
 asgiref = "*"
 coverage = "*"
+djangorestframework = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
