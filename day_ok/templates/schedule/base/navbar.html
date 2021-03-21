@@ -6,11 +6,16 @@
   <div class="container-fluid">
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item mainNavCss">
-          <a class="nav-link" href="{% url 'home' %}">
-            <span class="far fa-star"></span>
-            Головна
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+            <span class="far fa-star"></span>&nbsp;Головна
           </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'home' %}">
+              <span class="fas fa-chart-line"></span>&nbsp;Статистика
+            </a>
+            <a class="dropdown-item" href="{% url 'sources' %}">Джерела</a>
+          </div>
         </li>
         <li class="nav-item aboutNavCss">
           <a class="nav-link" href="{% url 'lessons' 'teachers' %}">

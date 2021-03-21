@@ -1,0 +1,80 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block title %}Джерела{% endblock %}
+{% block head %}
+    {% load static %}
+{% endblock %}
+{% block body %}
+<br >
+<div class="row">
+    <div class="col-6">
+        <form class="form-inline" method="post">
+            {% csrf_token %}
+            <label for="id_name">Додати джерело:</label>
+            {{form.name}}
+            <button type="submit" class="btn btn-success">Додати</button>
+        </form>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-6">
+        <p>Приток учнів з кожного джерела</p>
+        <table class="table table-hover table-responsible">
+            <thead>
+                <th>Джерело</th>
+                <th>К-сть учнів</th>
+                <th>Дата додавання</th>
+                <th>#</th>
+            </thead>
+            <tbody>
+                {% for source in sources %}
+                    <tr>
+                        <td>
+                            <a  type="button"
+                                class="btn btn-warning"
+                                href="{% url 'source_actions' source.id %}"
+                            >
+                                <span class="fas fa-edit"></span>
+                            </a>
+                            {{ source.name }}
+                        </td>
+                        <td>{{ source.students_from_source_total }}</td>
+                        <td>{{ source.date_created|date:'d.m.Y' }}</td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-outline-danger"
+                                    data-toggle="modal"
+                                    data-target="#delete_source_{{source.id}}"
+                            >
+                                <span class="fas fa-archive"></span>
+                            </button>
+                        </td>
+                    </tr>
+                    <div class="modal" id="delete_source_{{source.id}}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Видалити джерело</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    Ви впевнені що хочете видалити джерело "{{source.name}}"?
+                                </div>
+                                <div class="modal-footer">
+                                    <form method="POST" action="{% url 'source_actions' source.id %}">
+                                        {% csrf_token %}
+                                        <input hidden name="source" value="{{source.id}}">
+                                        <input hidden name="method" value="delete">
+                                        <button type="submit" class="btn btn-danger">Видалити</button>
+                                    </form>
+                                    <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

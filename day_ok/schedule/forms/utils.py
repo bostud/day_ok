@@ -23,6 +23,13 @@ DateTimeInput = partial(
 )
 
 
+def _prepare_choices(objects: list) -> list:
+    res = []
+    for o in objects:
+        res.append((o.id, str(o)))
+    return res
+
+
 def get_classrooms() -> list:
     cl_r = ClassRoom.objects.all()
     res = []
@@ -54,10 +61,14 @@ def get_teachers() -> list:
 
 def get_students() -> list:
     iter_ = Student.objects.filter(status=Student.Status.ACTIVE).all()
-    res = []
-    for i in iter_:
-        res.append((i.id, str(i)))
-    return res
+    return _prepare_choices(iter_)
+
+
+def get_free_source_students() -> list:
+    iter_ = Student.objects.filter(
+        source=None,
+    ).all()
+    return _prepare_choices(iter_)
 
 
 def get_groups() -> list:

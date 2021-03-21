@@ -236,6 +236,11 @@ class SourceAdmin(admin.ModelAdmin):
         'students_from_source_total',
     )
 
+    def students_from_source_total(self, rec: Source):
+        return rec.students_from_source_total
+
+    students_from_source_total.short_description = 'К-сть учнів'
+
 
 class StudentPresenceAdmin(admin.ModelAdmin):
     list_display = (

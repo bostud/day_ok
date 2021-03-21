@@ -1,6 +1,7 @@
 from typing import List, Optional
 from ..models import Student, Lessons, Group, Invoice
 from ..utils import datetime_now_tz as now
+from .sources import get_source
 
 from django.db.models import Q
 
@@ -49,3 +50,15 @@ def get_student_invoices(
     ).order_by(
         '-date_created'
     )
+
+
+def add_source(
+    student_id: int,
+    source_id: int,
+) -> Optional[Student]:
+    st = get_student(student_id)
+    sc = get_source(source_id)
+    if st and sc:
+        st.source = sc
+        st.save()
+    return st

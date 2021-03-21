@@ -156,19 +156,37 @@ class Source(models.Model):
         verbose_name = 'Джерела'
         verbose_name_plural = 'Джерела'
 
-    name = models.CharField('Назва', max_length=100)
+    name = models.CharField('Назва', max_length=100, unique=True)
     date_created = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
 
+    @property
     def students_from_source_total(self):
         q = (
             Student.objects.filter(source=self)
         )
         return q.count()
 
-    students_from_source_total.short_description = 'К-сть учнів'
+    @property
+    def connected_students(self):
+        return Student.objects.filter(source=self).all()
+
+    @property
+    def unconnected_students(self):
+        return Student.objects.exclude(source__in=[self]).all()
+
+    @property
+    def free_students(self):
+        return Student.objects.filter(source=None).all()
+
+    @property
+    def percent_from_total(self) -> float:
+        return round(
+            self.students_from_source_total / Student.objects.count() * 100,
+            2
+        )
 
 
 class Student(ContactMixin):
@@ -187,6 +205,7 @@ class Student(ContactMixin):
         verbose_name='Звідки дізнались про нашу школу?',
         blank=True,
         null=True,
+        db_constraint=False,
     )
     status = models.IntegerField(
         'Статус',
