@@ -51,6 +51,32 @@
                 </div>
             </div>
         </div>
+        <div class="col">
+            <div class="row">
+                <div class="col-6">
+                    {% if student.source %}
+                    <form method="post" action="{% url 'source_actions_view' student.source.id 'disconnect_student' %}">
+                        {% csrf_token %}
+                        <label for="id_student">Джерело: {{ student.source.name }}</label>
+                        <input hidden name="student" value="{{student.id}}">
+                        <input hidden name="redirect_to" value="student_view">
+                        <button class="btn btn-outline-warning" title="Відв`язати студента">
+                            <span class="fas fa-archive"></span>
+                        </button>
+                    </form>
+                    {% else %}
+                    <form method="post" action="{% url 'students_actions' student.id 'add_source' %}">
+                        {% csrf_token %}
+                        <label for="id_source">Вкажіть джерело</label>
+                        {{ add_source_form.source }}
+                        <button class="btn btn-outline-info" type="submit">
+                            Додати джерело
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
     <br>
     <div class="row">

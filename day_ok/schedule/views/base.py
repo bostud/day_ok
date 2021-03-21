@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpRequest, HttpResponseRedirect
 from ..middleware import authenticated
 
-from ..bl.base import get_source_statistics
+from ..bl.sources import get_source_statistics
 
 
 @authenticated

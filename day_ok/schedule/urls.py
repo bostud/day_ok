@@ -12,6 +12,7 @@ from .views import (
     invoices, invoices_actions,
     invoices_add, invoices_change_status,
     finance, get_service_subjects,
+    sources, source_actions, source_actions_view
 )
 
 lessons_urlpatterns = [
@@ -102,6 +103,15 @@ services_urlpatterns = [
     )
 ]
 
+sources_urlpatterns = [
+    path('sources', sources, name='sources'),
+    path('sources/<int:source_id>', source_actions,
+         name='source_actions'),
+    path('sources/<int:source_id>/<str:action>', source_actions_view,
+         name='source_actions_view'),
+
+]
+
 urlpatterns = [
     path('', home_view, name='home'),
     path('about', home_view, name='about'),
@@ -119,3 +129,4 @@ urlpatterns.extend(students_urlpatterns)
 urlpatterns.extend(teachers_urlpatterns)
 urlpatterns.extend(invoices_urlpatterns)
 urlpatterns.extend(services_urlpatterns)
+urlpatterns.extend(sources_urlpatterns)

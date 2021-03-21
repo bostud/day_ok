@@ -46,3 +46,15 @@ class ChangeStudentStatusForm(forms.Form):
         'data-live-search': 'true',
         'title': 'Новий статус',
     })
+
+
+class AddSourceForm(forms.Form):
+    source = forms.ChoiceField(
+        choices=get_sources,
+    )
+
+    source.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'title': 'Нове джерело',
+    })
