@@ -98,8 +98,8 @@ def connect_student_to_source(
     source_id: int,
 ) -> List[Optional[Student]]:
     s = Source.objects.filter(id=int(source_id)).first()
-    if s:
-        students = Student.objects.filter(id__in=students).all()
+    students = Student.objects.filter(id__in=students).all()
+    if s and students:
         for st in students:
             st.source = s
             st.save()
