@@ -1,0 +1,107 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block title %}Аудиторії{% endblock %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/classrooms/base.css' %}">
+{% endblock %}
+{% block body %}
+<br >
+{% if errors %}
+<div class="row">
+    <div class="col">
+        {{errors}}
+    </div>
+</div>
+<hr />
+{% endif %}
+<div class="row">
+    <div class="col">
+        <h5>
+            <button class="btn btn-outline-info" data-toggle="collapse" data-target="#add_classroom">
+                <span class="fas fa-plus"></span>
+            </button>
+            Додати аудиторію
+        </h5>
+        <div id="add_classroom" class="collapse add_classroom">
+            <form class="form" method="post">
+                {% csrf_token %}
+                {% include 'schedule/classroom/add_form.html' with form=form %}
+                <button type="submit" class="btn btn-success">Додати</button>
+            </form>
+            <hr />
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col table-responsive">
+        <div class="classrooms_table">
+            <h4>Перелік усіх аудиторій</h4>
+            <table class="table table-sm table-hover table-responsible">
+                <thead>
+                    <th>Назва</th>
+                    <th>К-сть місць</th>
+                    <th>К-сть занять</th>
+                    <th>Тип</th>
+                    <th>Опис</th>
+                    <th>Опції</th>
+                </thead>
+                <tbody>
+                    {% for classroom in classrooms %}
+                        <tr>
+                            <td>
+                                <a  type="button"
+                                    class="btn btn-warning"
+                                    href="{% url 'classroom_actions' classroom.id 'edit'%}"
+                                >
+                                    <span class="fas fa-edit"></span>
+                                </a>
+                                {{ classroom.name }}
+                            </td>
+                            <td>{{ classroom.places_count }}</td>
+                            <td>{{ classroom.all_lessons_count }}</td>
+                            <td>{{ classroom.get_room_type_name }}</td>
+                            <td>{{ classroom.description }}</td>
+                            <td>
+                                <button type="button"
+                                        class="btn btn-outline-danger"
+                                        data-toggle="modal"
+                                        data-target="#delete_classroom_{{classroom.id}}"
+                                >
+                                    <span class="fas fa-archive"></span>
+                                </button>
+                            </td>
+                        </tr>
+                        <div class="modal" id="delete_classroom_{{classroom.id}}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Видалити аудиторію</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Ви впевнені що хочете видалити аудитрію "{{classroom.name}}"?
+                                        <p>За аудиторією закріплено <strong>{{classroom.all_lessons_count}}</strong> занять(-я).</p>
+                                        <p>
+                                            Після видалення аудиторії, <strong>УСІ</strong> заняття - <strong>будуть видалені</strong>
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <form method="POST" action="{% url 'classroom_actions' classroom.id 'delete' %}">
+                                            {% csrf_token %}
+                                            <input hidden name="classroom" value="{{classroom.id}}">
+                                            <input hidden name="method" value="delete">
+                                            <button type="submit" class="btn btn-danger" disabled>Видалити</button>
+                                        </form>
+                                        <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

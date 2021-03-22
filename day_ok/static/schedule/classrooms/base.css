@@ -1,0 +1,70 @@
+body {
+  ...
+}
+
+.add_classroom {
+    max-width: 80vh;
+}
+
+.classrooms_table {
+    max-width: 160vh;
+}
+
+.add_form {}
+.add_form.name {
+    max-width: 40vh;
+}
+.add_form.places_count {
+    max-width: 20vh;
+}
+.add_form.room_type {
+    max-width: 30vh;
+}
+
+
+
+@media screen and (max-width: 1024px) {
+    .add_classroom {
+      max-width: 70vh;
+    }
+    .classrooms_table {
+        max-width: 160vh;
+    }
+
+    .add_form {}
+    .add_form.name {
+        max-width: 50vh;
+    }
+    .add_form.places_count {
+        max-width: 30vh;
+    }
+    .add_form.room_type {
+        max-width: 40vh;
+    }
+}
+
+/* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 720px) {
+    .add_classroom {
+      width: auto;
+    }
+    .classrooms_table {
+        width: 140vh;
+        overflow-x: scroll;
+    }
+
+}
+
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 425px) {
+    .add_classroom {
+      width: auto;
+    }
+    .classrooms_table{
+        width: 100vh;
+        overflow-x: scroll;
+    }
+    .add_form {
+        width: auto;
+    }
+}

@@ -42,7 +42,7 @@ event_urlpatterns = [
 classrooms_urlpatterns = [
     path('classrooms', classrooms, name='classrooms'),
     path(
-        'classroom/<str:action>/<int:classroom_id>/',
+        'classroom/<int:classroom_id>/<str:action>/',
         classrooms_actions,
         name='classroom_actions'
     ),

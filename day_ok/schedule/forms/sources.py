@@ -1,14 +1,7 @@
 from django import forms
-from .utils import get_free_source_students, get_sources
-from ..models import Source
+from .utils import get_free_source_students
+from .validators import validate_delete_method, validate_source_name
 from ..bl.students import get_student
-
-METHOD_DELETE = 'delete'
-METHOD_EDIT = 'edit'
-AVAILABLE_METHODS = [
-   METHOD_DELETE,
-   METHOD_EDIT,
-]
 
 
 class AddSource(forms.Form):
@@ -20,10 +13,6 @@ class AddSource(forms.Form):
     name.widget.attrs.update({
         'class': 'form-control',
     })
-
-
-def validate_delete_method(value: str) -> bool:
-    return value == METHOD_DELETE
 
 
 class DeleteSourceForm(forms.Form):
@@ -42,10 +31,6 @@ class ConnectStudentsForm(forms.Form):
         'multiply': 'multiply',
         'data-selected-text-format': 'count',
     })
-
-
-def validate_source_name(value: str) -> bool:
-    return Source.objects.filter(name=value.strip()).count() == 0
 
 
 class ChangeNameForm(forms.Form):

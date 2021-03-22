@@ -1,0 +1,55 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block title %}Аудиторія{% endblock %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/classrooms/base.css' %}">
+{% endblock %}
+{% block body %}
+<br >
+{% if errors %}
+<div class="row">
+    <div class="col">
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Помилка!</strong> {{errors}}
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="row">
+    <div class="col-6">
+        <h5>
+            <button class="btn btn-outline-info" data-toggle="collapse" data-target="#edit_classroom">
+                <span class="far fa-edit"></span>
+            </button>
+            Редагувати аудиторію
+        </h5>
+        <div id="edit_classroom" class="collapse add_classroom">
+            <form method="POST"
+                  class="form"
+                  action="{% url 'classroom_actions' classroom.id 'edit' %}">
+                {% csrf_token %}
+                {% include 'schedule/classroom/add_form.html' with form=edit_form %}
+                <button class="btn btn-warning" type="submit">Змінити</button>
+            </form>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-2">
+        <b>Кількість занять які відбулись:</b>
+    </div>
+    <div class="col-1">
+        {{classroom.completed_lessons_count}}
+    </div>
+</div>
+<div class="row">
+    <div class="col-2">
+        <b>Кількість майбутніх занять:</b>
+    </div>
+    <div class="col-1">
+        {{classroom.future_lessons_count}}
+    </div>
+</div>
+{% endblock %}
