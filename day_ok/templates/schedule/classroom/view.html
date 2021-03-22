@@ -3,6 +3,7 @@
 {% block head %}
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'schedule/classrooms/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/classrooms/view.css' %}">
 {% endblock %}
 {% block body %}
 <br >
@@ -17,7 +18,7 @@
 </div>
 {% endif %}
 <div class="row">
-    <div class="col-6">
+    <div class="col">
         <h5>
             <button class="btn btn-outline-info" data-toggle="collapse" data-target="#edit_classroom">
                 <span class="far fa-edit"></span>
@@ -37,18 +38,18 @@
 </div>
 <hr />
 <div class="row">
-    <div class="col-2">
+    <div class="record_title">
         <b>Кількість занять які відбулись:</b>
     </div>
-    <div class="col-1">
+    <div class="record_value">
         {{classroom.completed_lessons_count}}
     </div>
 </div>
 <div class="row">
-    <div class="col-2">
+    <div class="record_title">
         <b>Кількість майбутніх занять:</b>
     </div>
-    <div class="col-1">
+    <div class="record_value">
         {{classroom.future_lessons_count}}
     </div>
 </div>
