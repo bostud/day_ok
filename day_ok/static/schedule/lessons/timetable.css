@@ -15,7 +15,7 @@
 }
 
 .teacher {
-  width: 9%;
+  width: 125px;
   height: 90vh;
   float: left;
   background-color: #fff;
@@ -59,7 +59,7 @@
   font-weight: 200;
   padding-left: 5px;
 }
-.lessons.dauto { font-size: 18px; }
+.lessons.dauto { font-size: 15px; }
 .lessons.d120 { height: 12vh; }
 .lessons.d90 { height: 9vh; }
 .lessons.d60 { height: 6vh; font-size: 15px; }
