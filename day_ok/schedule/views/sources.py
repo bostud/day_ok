@@ -14,8 +14,8 @@ from ..forms.sources import (
     AddSource, DeleteSourceForm,
     ConnectStudentsForm, ChangeNameForm,
     DisconnectStudentForm,
-    METHOD_DELETE, METHOD_EDIT
 )
+from ..forms.validators import METHOD_DELETE, METHOD_EDIT
 
 
 @authenticated

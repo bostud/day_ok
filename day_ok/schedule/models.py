@@ -323,7 +323,12 @@ class ClassRoom(models.Model):
         choices=RoomType.choices,
         default=RoomType.GROUP,
     )
-    description = models.TextField('Додатково', max_length=500, blank=True)
+    description = models.TextField(
+        'Додатково',
+        max_length=500,
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return f"Аудиторія: {self.name}, " \

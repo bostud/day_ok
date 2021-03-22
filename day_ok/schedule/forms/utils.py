@@ -22,6 +22,13 @@ DateTimeInput = partial(
     {'class': 'datepicker form-control'}
 )
 
+METHOD_DELETE = 'delete'
+METHOD_EDIT = 'edit'
+AVAILABLE_METHODS = [
+   METHOD_DELETE,
+   METHOD_EDIT,
+]
+
 
 def _prepare_choices(objects: list) -> list:
     res = []
@@ -90,3 +97,7 @@ def get_sources() -> Generator:
     res = Source.objects.all().values('id', 'name')
     for r in res:
         yield r['id'], r['name']
+
+
+def get_classrooms_types() -> list:
+    return ClassRoom.RoomType.choices
