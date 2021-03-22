@@ -25,7 +25,7 @@ body {
 
 @media screen and (max-width: 1024px) {
     .add_classroom {
-      max-width: 80vh;
+      max-width: 70vh;
     }
     .classrooms_table {
         max-width: 160vh;

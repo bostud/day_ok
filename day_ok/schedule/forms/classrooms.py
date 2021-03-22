@@ -45,9 +45,3 @@ class AddClassRoomForm(forms.Form):
 
 class DeleteClassRoomForm(forms.Form):
     classroom = forms.IntegerField()
-    method = forms.CharField(validators=[validate_delete_method])
-
-
-class EditClassRoomForm(AddClassRoomForm):
-    classroom = forms.IntegerField()
-    method = forms.CharField(validators=[validate_edit_method])

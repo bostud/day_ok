@@ -1,86 +1,55 @@
 {% extends 'schedule/base/base_cms.html' %}
-{% block title %}Джерело{% endblock %}
+{% block title %}Аудиторія{% endblock %}
 {% block head %}
     {% load static %}
-    {% include 'date_select_picker.html' %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/classrooms/base.css' %}">
 {% endblock %}
 {% block body %}
 <br >
+{% if errors %}
+<div class="row">
+    <div class="col">
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Помилка!</strong> {{errors}}
+        </div>
+    </div>
+</div>
+{% endif %}
 <div class="row">
     <div class="col-6">
-        <div class="row">
-            <div class="col-3">
-                <b>Назва:</b>
-            </div>
-            <div class="col-6">
-                <form method="POST"
-                      class="form-inline"
-                      action="{% url 'source_actions_view' source.id 'change_name' %}">
-                    {% csrf_token %}
-                    <input class="form-control" value="{{source.name}}" name="name" style="width: 350px;">
-                    <button class="btn btn-warning" type="submit">Змінити</button>
-                </form>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-3">
-                <b>Кількість студентів:</b>
-            </div>
-            <div class="col-3">
-                {{source.students_from_source_total}}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-3">
-                <b>% від загальної кількості:</b>
-            </div>
-            <div class="col-3">
-                {{source.percent_from_total}} %
-            </div>
+        <h5>
+            <button class="btn btn-outline-info" data-toggle="collapse" data-target="#edit_classroom">
+                <span class="far fa-edit"></span>
+            </button>
+            Редагувати аудиторію
+        </h5>
+        <div id="edit_classroom" class="collapse add_classroom">
+            <form method="POST"
+                  class="form"
+                  action="{% url 'classroom_actions' classroom.id 'edit' %}">
+                {% csrf_token %}
+                {% include 'schedule/classroom/add_form.html' with form=edit_form %}
+                <button class="btn btn-warning" type="submit">Змінити</button>
+            </form>
         </div>
     </div>
 </div>
 <hr />
 <div class="row">
-    <div class="col-6">
-        <form method="post"
-              class="form-inline"
-              action="{% url 'source_actions_view' source.id 'connect_students' %}">
-            {% csrf_token %}
-            <label id="id_students"><strong>Додати учнів</strong></label>
-            {{ connect_students_form.students }}
-            <button class="btn btn-outline-primary" type="submit">Додати</button>
-        </form>
+    <div class="col-2">
+        <b>Кількість занять які відбулись:</b>
+    </div>
+    <div class="col-1">
+        {{classroom.completed_lessons_count}}
     </div>
 </div>
-<hr />
 <div class="row">
-    <div class="col-6">
-        Учні які приєднались через джерело
-        <table class="table table-hover table-responsive">
-            <thead>
-                <th>Прізвище</th>
-                <th>Ім`я</th>
-                <th>Опції</th>
-            </thead>
-            <tbody style="height: 450px;">
-            {% for student in source.connected_students %}
-            <tr>
-                <td>{{student.last_name}}</td>
-                <td>{{student.first_name}}</td>
-                <td>
-                    <form method="post" action="{% url 'source_actions_view' source.id 'disconnect_student' %}">
-                        {% csrf_token %}
-                        <input hidden name="student" value="{{student.id}}">
-                        <button class="btn btn-outline-warning" title="Відв`язати студента">
-                            <span class="fas fa-archive"></span>
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <div class="col-2">
+        <b>Кількість майбутніх занять:</b>
+    </div>
+    <div class="col-1">
+        {{classroom.future_lessons_count}}
     </div>
 </div>
 {% endblock %}

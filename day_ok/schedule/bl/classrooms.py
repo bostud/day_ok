@@ -1,5 +1,5 @@
 from typing import List, Optional
-from ..models import ClassRoom
+from ..models import ClassRoom, Lessons
 
 
 class Error(Exception):
@@ -7,11 +7,10 @@ class Error(Exception):
 
 
 class NameAlreadyExistError(Error):
-    pass
-
-
-class InvalidRoomType(Error):
-    pass
+    def __init__(self, name):
+        super().__init__(
+            f'Ім`я аудиторії уже існує: {name}.'
+        )
 
 
 def get_all_classrooms() -> List[Optional[ClassRoom]]:
@@ -56,11 +55,11 @@ def edit_classroom(
     room_type: int,
     places_count: Optional[int] = None,
     description: Optional[str] = None,
-    **kwargs,
 ) -> Optional[ClassRoom]:
     cl = ClassRoom.objects.filter(id=classroom).first()
     if cl:
-        if ClassRoom.objects.filter(name=name).first():
+        cls = ClassRoom.objects.filter(name=name).exclude(id=classroom).all()
+        if len(cls) > 0:
             raise NameAlreadyExistError(name)
         cl.name = name
         cl.places_count = places_count

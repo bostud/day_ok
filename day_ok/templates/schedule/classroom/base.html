@@ -6,6 +6,14 @@
 {% endblock %}
 {% block body %}
 <br >
+{% if errors %}
+<div class="row">
+    <div class="col">
+        {{errors}}
+    </div>
+</div>
+<hr />
+{% endif %}
 <div class="row">
     <div class="col">
         <h5>
@@ -17,24 +25,7 @@
         <div id="add_classroom" class="collapse add_classroom">
             <form class="form" method="post">
                 {% csrf_token %}
-                <div class="form-group">
-                    <div class="add_form name">
-                        <label for="id_name">Назва:</label>
-                        {{form.name}}
-                    </div>
-                    <div class="add_form room_type">
-                        <label for="id_room_type">Тип:</label>
-                        {{form.room_type}}
-                    </div>
-                    <div class="add_form places_count">
-                        <label for="id_places_count">Кількість місць:</label>
-                        {{form.places_count}}
-                    </div>
-                    <div>
-                        <label for="id_description">Коментар</label>
-                        {{form.description}}
-                    </div>
-                </div>
+                {% include 'schedule/classroom/add_form.html' with form=form %}
                 <button type="submit" class="btn btn-success">Додати</button>
             </form>
             <hr />
@@ -50,8 +41,10 @@
                 <thead>
                     <th>Назва</th>
                     <th>К-сть місць</th>
+                    <th>К-сть занять</th>
                     <th>Тип</th>
                     <th>Опис</th>
+                    <th>Опції</th>
                 </thead>
                 <tbody>
                     {% for classroom in classrooms %}
@@ -66,17 +59,18 @@
                                 {{ classroom.name }}
                             </td>
                             <td>{{ classroom.places_count }}</td>
+                            <td>{{ classroom.all_lessons_count }}</td>
                             <td>{{ classroom.get_room_type_name }}</td>
                             <td>{{ classroom.description }}</td>
-    <!--                        <td>-->
-    <!--                            <button type="button"-->
-    <!--                                    class="btn btn-outline-danger"-->
-    <!--                                    data-toggle="modal"-->
-    <!--                                    data-target="#delete_source_{{source.id}}"-->
-    <!--                            >-->
-    <!--                                <span class="fas fa-archive"></span>-->
-    <!--                            </button>-->
-    <!--                        </td>-->
+                            <td>
+                                <button type="button"
+                                        class="btn btn-outline-danger"
+                                        data-toggle="modal"
+                                        data-target="#delete_classroom_{{classroom.id}}"
+                                >
+                                    <span class="fas fa-archive"></span>
+                                </button>
+                            </td>
                         </tr>
                         <div class="modal" id="delete_classroom_{{classroom.id}}">
                             <div class="modal-dialog">
@@ -87,9 +81,9 @@
                                     </div>
                                     <div class="modal-body">
                                         Ви впевнені що хочете видалити аудитрію "{{classroom.name}}"?
-                                        <p>За аудиторією закріплено {{classroom.lessons_count}} занять у майбутньому</p>
+                                        <p>За аудиторією закріплено <strong>{{classroom.all_lessons_count}}</strong> занять(-я).</p>
                                         <p>
-                                            Після видалення аудиторії, заняття які мають відбутись - <strong>будуть видалені</strong>
+                                            Після видалення аудиторії, <strong>УСІ</strong> заняття - <strong>будуть видалені</strong>
                                         </p>
                                     </div>
                                     <div class="modal-footer">
@@ -97,7 +91,7 @@
                                             {% csrf_token %}
                                             <input hidden name="classroom" value="{{classroom.id}}">
                                             <input hidden name="method" value="delete">
-                                            <button type="submit" class="btn btn-danger">Видалити</button>
+                                            <button type="submit" class="btn btn-danger" disabled>Видалити</button>
                                         </form>
                                         <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
                                     </div>

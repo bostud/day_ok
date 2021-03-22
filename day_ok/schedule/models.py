@@ -340,6 +340,44 @@ class ClassRoom(models.Model):
             if self.room_type == k:
                 return v
 
+    @property
+    def completed_lessons_count(self) -> int:
+        return len(self.completed_lessons)
+
+    @property
+    def completed_lessons(self) -> list:
+        dt_now = now()
+        return (
+            Lessons.objects.filter(
+                classroom=self,
+                date__lte=dt_now.date(),
+                time_end__lte=dt_now.time(),
+            ).all()
+        )
+
+    @property
+    def future_lessons_count(self) -> int:
+        return len(self.future_lessons)
+
+    @property
+    def future_lessons(self) -> list:
+        dt_now = now()
+        return (
+            Lessons.objects.filter(
+                classroom=self,
+                date__gte=dt_now.date(),
+                time_start__gte=dt_now.time(),
+            ).all()
+        )
+
+    @property
+    def all_lessons_count(self) -> int:
+        return len(self.all_lessons)
+
+    @property
+    def all_lessons(self) -> list:
+        return Lessons.objects.filter(classroom=self).all()
+
 
 class Group(models.Model):
     SERVICE_TYPE = Service.TypeOf.GROUP
@@ -433,26 +471,26 @@ class Lessons(models.Model):
         verbose_name_plural = 'Заняття'
 
     classroom = models.ForeignKey(
-        ClassRoom, on_delete=models.DO_NOTHING, verbose_name='Аудиторія')
+        ClassRoom, on_delete=models.CASCADE, verbose_name='Аудиторія')
     date = models.DateField('Дата заняття')
     time_start = models.TimeField('Час початку')
     time_end = models.TimeField('Час закінчення')
     lessons_type = models.IntegerField('Тип заняття', choices=Type.choices)
     subject = models.ForeignKey(
-        Subject, on_delete=models.DO_NOTHING, verbose_name='Предмет')
+        Subject, on_delete=models.CASCADE, verbose_name='Предмет')
     teacher = models.ForeignKey(
-        Teacher, on_delete=models.DO_NOTHING, verbose_name='Викладач')
+        Teacher, on_delete=models.CASCADE, verbose_name='Викладач')
 
     student = models.ForeignKey(
         Student,
-        on_delete=models.DO_NOTHING,
+        on_delete=models.CASCADE,
         verbose_name='Учень',
         blank=True,
         null=True,
     )
     group = models.ForeignKey(
         Group,
-        on_delete=models.DO_NOTHING,
+        on_delete=models.CASCADE,
         verbose_name='Група',
         blank=True,
         null=True,
@@ -460,7 +498,7 @@ class Lessons(models.Model):
 
     parent = models.ForeignKey(
         LessonsParent,
-        on_delete=models.DO_NOTHING,
+        on_delete=models.CASCADE,
         blank=True,
         null=True,
         verbose_name='Творець'
