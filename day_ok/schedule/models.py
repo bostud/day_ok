@@ -351,7 +351,6 @@ class ClassRoom(models.Model):
             Lessons.objects.filter(
                 classroom=self,
                 date__lte=dt_now.date(),
-                time_end__lte=dt_now.time(),
             ).all()
         )
 
@@ -365,8 +364,7 @@ class ClassRoom(models.Model):
         return (
             Lessons.objects.filter(
                 classroom=self,
-                date__gte=dt_now.date(),
-                time_start__gte=dt_now.time(),
+                date__gt=dt_now.date(),
             ).all()
         )
 
