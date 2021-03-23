@@ -1,0 +1,74 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block title %}Послуга{% endblock %}
+{% block head %}
+    {% load static %}
+    {% include 'date_select_picker.html' %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/services/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/services/view.css' %}">
+{% endblock %}
+{% block body %}
+<br >
+{% if errors %}
+<div class="row">
+    <div class="col">
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Помилка!</strong> {{errors}}
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="row">
+    <div class="col">
+        <h5>
+            <button class="btn btn-outline-info" data-toggle="collapse" data-target="#edit_service">
+                <span class="far fa-edit"></span>
+            </button>
+            Редагувати послугу
+        </h5>
+        <div id="edit_service" class="collapse add_service">
+            <form method="POST"
+                  class="form"
+                  action="{% url 'services_actions' service.id 'edit' %}">
+                {% csrf_token %}
+                {% include 'schedule/services/add_form.html' with form=edit_form %}
+                <button class="btn btn-warning" type="submit">Змінити</button>
+            </form>
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="record_title">
+        <b>Доступні предмети:</b>
+    </div>
+    <div class="record_value">
+        {% for subject in edit_form.subjects.data %}
+            <form method="post" action="{% url 'services_actions' service.id 'delete_subject' %}">
+                {% csrf_token %}
+                <input hidden name="subject" value="{{subject.id}}">
+                <a class="btn btn-outline-info" disabled>{{subject.name}}</a>
+                <button type="submit" class="btn btn-outline-danger" title="Видалити предмет">
+                    <span class="fas fa-archive"></span>
+                </button>
+            </form>
+        {% endfor %}
+    </div>
+</div>
+<div class="row">
+    <div class="record_title">
+        <b>Кількість виставлених рахунків:</b>
+    </div>
+    <div class="record_value">
+        {{service.total_invoices_count}}
+    </div>
+</div>
+<div class="row">
+    <div class="record_title">
+        <b>Кількість оплачених рахунків:</b>
+    </div>
+    <div class="record_value">
+        {{service.paid_invoices_count}}
+    </div>
+</div>
+{% endblock %}

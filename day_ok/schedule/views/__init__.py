@@ -9,5 +9,5 @@ from .students import students_actions, students
 from .invoices import invoices_actions, invoices_add, invoices_change_status
 from .invoices import invoices
 from .finance import finance
-from .services import get_service_subjects
+from .services import get_service_subjects, services, services_actions
 from .sources import sources, source_actions, source_actions_view

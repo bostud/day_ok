@@ -83,6 +83,27 @@ class Service(models.Model):
             if id_ == self.type_of:
                 return title
 
+    @property
+    def subjects_list(self) -> list:
+        return self.subjects.all()
+
+    @property
+    def available_subjects_to_connect(self):
+        return Subject.objects.exclude(id__in=self.subjects.all()).all()
+
+    @property
+    def total_invoices_count(self):
+        return Invoice.objects.filter(
+            service=self,
+        ).count()
+
+    @property
+    def paid_invoices_count(self):
+        return Invoice.objects.filter(
+            service=self,
+            status=Invoice.Status.PAID,
+        ).count()
+
 
 class Teacher(ContactMixin):
     class Meta:
