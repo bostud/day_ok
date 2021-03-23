@@ -1,0 +1,82 @@
+body {
+  ...
+}
+
+.add_service {
+    max-width: 80vh;
+}
+
+.services_table {
+    max-width: 160vh;
+}
+
+.add_form {}
+.add_form.name {
+    max-width: 40vh;
+}
+.add_form.lessons_count {
+    max-width: 20vh;
+}
+.add_form.price {
+    max-width: 20vh;
+}
+.add_form.type_of {
+    max-width: 30vh;
+}
+.add_form.subjects {
+    max-width: 30vh;
+}
+
+
+
+@media screen and (max-width: 1024px) {
+    .add_service {
+      max-width: 70vh;
+    }
+    .services_table {
+        max-width: 160vh;
+    }
+
+    .add_form {}
+    .add_form.name {
+        max-width: 50vh;
+    }
+    .add_form.lessons_count {
+        max-width: 30vh;
+    }
+    .add_form.price {
+        max-width: 30vh;
+    }
+    .add_form.type_of {
+        max-width: 40vh;
+    }
+    .add_form.subjects {
+        max-width: 40vh;
+    }
+}
+
+/* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 720px) {
+    .add_service {
+      width: auto;
+    }
+    .services_table {
+        width: 140vh;
+        overflow-x: scroll;
+    }
+
+}
+
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 425px) {
+    .add_service {
+      width: auto;
+    }
+    .services_table{
+        width: 100vh;
+        overflow-x: scroll;
+    }
+    .add_form {
+        width: auto;
+    }
+}

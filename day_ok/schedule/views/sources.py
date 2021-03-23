@@ -15,7 +15,7 @@ from ..forms.sources import (
     ConnectStudentsForm, ChangeNameForm,
     DisconnectStudentForm,
 )
-from ..forms.validators import METHOD_DELETE, METHOD_EDIT
+from ..forms.validators import METHOD_DELETE
 
 
 @authenticated

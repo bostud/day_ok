@@ -93,6 +93,10 @@ def get_services() -> Generator:
         yield row['id'], row['name']
 
 
+def get_service_type_of() -> list:
+    return Service.TypeOf.choices
+
+
 def get_sources() -> Generator:
     res = Source.objects.all().values('id', 'name')
     for r in res:

@@ -1,0 +1,59 @@
+.record_title {
+    width: 30vh;
+    padding-left: 15px;
+}
+
+.record_value {
+    width: 30vh;
+}
+
+
+@media screen and (max-width: 1440px) {
+    .record_title {
+        width: 30vh;
+        padding-left: 15px;
+    }
+
+    .record_value {
+        width: 30vh;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .record_title {
+        width: 30vh;
+    }
+
+    .record_value {
+        width: 30vh;
+    }
+
+}
+
+/* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 768px) {
+    .record_title {
+        width: 30vh;
+        padding-left: 15px;
+    }
+
+    .record_value {
+        width: 30vh;
+        padding-left: 15px;
+    }
+
+}
+
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 425px) {
+    .record_title {
+        width: 30vh;
+        padding-left: 15px;
+    }
+
+    .record_value {
+        width: 30vh;
+        padding-left: 15px;
+    }
+
+}

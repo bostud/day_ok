@@ -12,7 +12,8 @@ from .views import (
     invoices, invoices_actions,
     invoices_add, invoices_change_status,
     finance, get_service_subjects,
-    sources, source_actions, source_actions_view
+    sources, source_actions, source_actions_view,
+    services, services_actions,
 )
 
 lessons_urlpatterns = [
@@ -100,7 +101,13 @@ services_urlpatterns = [
         'services/get_service_subjects',
         get_service_subjects,
         name='get_service_subjects'
-    )
+    ),
+    path('services', services, name='services'),
+    path(
+        'services/<int:service_id>/<str:action>/',
+        services_actions,
+        name='services_actions'
+    ),
 ]
 
 sources_urlpatterns = [
