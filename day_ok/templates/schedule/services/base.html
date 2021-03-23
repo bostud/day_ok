@@ -45,6 +45,8 @@
                     <th>Предмети</th>
                     <th>Тип</th>
                     <th>Ціна</th>
+                    <th>К-сть рахунків</th>
+                    <th>Ціна</th>
                     <th>Опції</th>
                 </thead>
                 <tbody>
@@ -59,7 +61,7 @@
                                 </a>
                                 {{ service.name }}
                             </td>
-                            <td>{{ service.lessons }}</td>
+                            <td>{{ service.lessons_count }}</td>
                             <td>
                                 {% for subject in service.subjects_list %}
                                     <button class="btn btn-info">{{subject.name}}</button>
@@ -67,6 +69,7 @@
                             </td>
                             <td>{{ service.type_of_title }}</td>
                             <td>{{ service.price }}</td>
+                            <td>{{ service.total_invoices_count }}</td>
                             <td>
                                 <button type="button"
                                         class="btn btn-outline-danger"
@@ -86,15 +89,11 @@
                                     </div>
                                     <div class="modal-body">
                                         Ви впевнені що хочете видалити послугу "{{service.name}}"?
-                                        <p>За аудиторією закріплено <strong>{{service}}</strong> занять(-я).</p>
-                                        <p>
-                                            Після видалення аудиторії, <strong>УСІ</strong> заняття - <strong>будуть видалені</strong>
-                                        </p>
                                     </div>
                                     <div class="modal-footer">
                                         <form method="POST" action="{% url 'services_actions' service.id 'delete' %}">
                                             {% csrf_token %}
-                                            <input hidden name="classroom" value="{{service.id}}">
+                                            <input hidden name="service" value="{{service.id}}">
                                             <input hidden name="method" value="delete">
                                             <button type="submit" class="btn btn-danger" disabled>Видалити</button>
                                         </form>
