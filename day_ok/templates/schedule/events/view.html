@@ -1,0 +1,70 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block title %}Послуга{% endblock %}
+{% block head %}
+    {% load static %}
+    {% include 'date_select_picker.html' %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/events/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/events/view.css' %}">
+{% endblock %}
+{% block body %}
+<br >
+{% if errors %}
+<div class="row">
+    <div class="col">
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Помилка!</strong> {{errors}}
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="row">
+    <div class="col">
+        <h5>
+            <button class="btn btn-outline-info" data-toggle="collapse" data-target="#edit_service">
+                <span class="far fa-edit"></span>
+            </button>
+            Редагувати захід
+        </h5>
+        <div id="edit_service" class="collapse add_service">
+            <form method="POST"
+                  class="form"
+                  action="{% url 'event_actions' event.id 'edit' %}">
+                {% csrf_token %}
+                {% include 'schedule/events/add_form.html' with form=edit_form %}
+                <button class="btn btn-warning" type="submit">Змінити</button>
+            </form>
+            <hr />
+        </div>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col table-responsive participants_table">
+        <h5>Список учасників</h5>
+        <table class="table table-sm table-hover">
+            <thead>
+                <th>Прізвище Ім`я</th>
+                <th>#</th>
+            </thead>
+            <tbody>
+            {% for student in event.participants_list %}
+                <tr>
+                    <td>{{student.full_name}}</td>
+                    <td>
+                        <form method="post" action="{% url 'event_actions' event.id 'delete_participant' %}">
+                            {% csrf_token %}
+                            <input hidden name="participant" value="{{student.id}}">
+                            <button type="submit" class="btn btn-outline-danger" title="Відкріпити учня">
+                            <span class="fas fa-archive"></span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

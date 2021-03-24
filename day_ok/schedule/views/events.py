@@ -1,58 +1,104 @@
 from typing import Dict, Any
 from django.shortcuts import render, redirect
-from django.http import HttpRequest
+from django.forms.models import model_to_dict
+from django.http import HttpRequest, HttpResponseRedirect
 from ..middleware import authenticated
-from ..forms.events import FilterEventsForm
+from ..forms.events import (
+    FilterEventsForm,
+    EventForm,
+    EventLocationForm,
+    EventParticipantDeleteForm,
+)
+
 from ..bl.events import (
-    get_events_data_by_filter_form,
-    get_filter_by_description
+    add_event,
+    get_events,
+    add_event_location,
+    delete_event,
+    edit_event,
+    get_event,
+    delete_event_participant,
 )
 
 
 @authenticated
-def events_view(request: HttpRequest, *args, **kwargs):
+def events(request: HttpRequest):
     context: Dict[Any, Any] = {
-        'form': FilterEventsForm(),
+        'form': EventForm(),
+        'location_form': EventLocationForm(),
+        'filter_form': FilterEventsForm(),
     }
 
-    def _fill_context_by_form_data(fr: FilterEventsForm):
-        events_data, is_empty = get_events_data_by_filter_form(fr)
-        desc = get_filter_by_description(fr)
-        context['filter_by_text'] = desc
-        if not is_empty:
-            context['total_schedule'] = events_data
+    template_name = 'schedule/events/base.html'
+
+    def _view_all(**kwargs):
+        context['events'] = get_events(**kwargs)
 
     if request.method == 'GET':
         form = FilterEventsForm(request.GET)
         if form.is_valid():
-            _fill_context_by_form_data(form)
-
-    return render(request, 'schedule/events/base.html', context)
+            context.update(events=get_events(**form.cleaned_data))
+            context.update(filter_form=form)
+    else:
+        form = EventForm(request.POST)
+        if form.is_valid():
+            add_event(**form.cleaned_data)
+        _view_all()
+    return render(request, template_name, context)
 
 
 @authenticated
-def event_actions(request: HttpRequest, action: str, event_id: int):
-    ctx = {}
-    template_name = ''
+def event_actions(request: HttpRequest, event_id: int,  action: str):
+    ctx: Dict[Any, Any] = {}
+    template_name = 'schedule/events/view.html'
+    event = get_event(event_id)
 
     def _edit():
-        pass
+        _event = event
+        if request.method == 'POST':
+            form = EventForm(request.POST)
+            if form.is_valid():
+                _event = edit_event(event_id, **form.cleaned_data)
+        return _view(_event)
 
     def _delete():
-        pass
+        delete_event(event_id)
 
-    def _view():
-        pass
+    def _view(_event):
+        data = model_to_dict(_event) if _event else {}
+        if data:
+            data['date_of_event'] = data['date_of_event'].strftime('%d.%m.%Y')
+        ctx.update(edit_form=EventForm(data=data))
+        ctx.update(event=_event)
+        return render(request, template_name, ctx)
+
+    def _delete_participant():
+        _event = event
+        if request.method == 'POST':
+            form = EventParticipantDeleteForm(request.POST)
+            if form.is_valid():
+                _event = delete_event_participant(event_id, **form.cleaned_data)
+        return _view(_event)
 
     actions_func = {
         'edit': _edit,
         'delete': _delete,
         'view': _view,
+        'delete_participant': _delete_participant,
     }
 
     if actions_func.get(action):
-        actions_func[action]()
-    else:
-        return redirect('lessons')
+        res = actions_func[action]()
+        if res:
+            return res
 
-    return render(request, template_name, ctx)
+    return redirect('events')
+
+
+@authenticated
+def event_location(request: HttpRequest):
+    if request.method == 'POST':
+        form = EventLocationForm(request.POST)
+        if form.is_valid():
+            add_event_location(**form.cleaned_data)
+    return HttpResponseRedirect('/schedule/events')

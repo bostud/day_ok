@@ -1,0 +1,73 @@
+
+.add_form {
+    max-width: 80vh;
+}
+.add_form.date_of_event {
+    max-width: 25vh;
+}
+.add_form.time_start {
+    max-width: 20vh;
+}
+.add_form.time_end {
+    max-width: 20vh;
+}
+
+.filter_form {
+    float: left;
+    margin-left: 15px;
+}
+
+#id_date_from {
+    max-width: 12vh;
+}
+#id_date_until {
+    max-width: 12vh;
+}
+
+.button_submit {
+    width: 25vh;
+}
+.events_table {
+    max-width: 160vh;
+}
+
+@media screen and (max-width: 1024px) {
+    .button_submit {
+        width: 15vh;
+    }
+    #id_date_from {
+        max-width: 16vh;
+    }
+    #id_date_until {
+        max-width: 16vh;
+    }
+}
+
+/* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 768px) {
+    .button_submit {
+        width: 15vh;
+    }
+    #id_date_from {
+        max-width: 17vh;
+    }
+    #id_date_until {
+        max-width: 17vh;
+    }
+}
+
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 425px) {
+    .filter_form {
+        padding-top: 15px;
+    }
+    .button_submit {
+        width: 35vh;
+    }
+    #id_date_from {
+        max-width: 25vh;
+    }
+    #id_date_until {
+        max-width: 25vh;
+    }
+}

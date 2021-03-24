@@ -1,6 +1,6 @@
 from .base import reports, home_view, about, contacts
 from .lessons import lessons_view, add_lessons, lessons_actions
-from .events import events_view, event_actions
+from .events import events, event_actions, event_location
 from .teachers import teachers_actions, teachers
 from .classrooms import classrooms_actions, classrooms
 from .present import present_actions

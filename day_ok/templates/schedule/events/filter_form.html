@@ -1,25 +1,21 @@
-{% block head %}
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons/filter_form.css' %}">
-{% endblock %}
 <form class="form-inline">
-    <div style="float:left;margin-right:20px;">
-        <label for="id_classrooms">{{ form.classrooms.label }}</label>
-        {{ form.classrooms }}
+    <div class="filter_form location">
+        <label for="id_location">Локація</label>
+        {{ form.location }}
     </div>
-    <div style="float:left;margin-right:20px;">
-        <label for="id_students">{{ form.students.label }}</label>
-        {{ form.students }}
+    <div class="filter_form student">
+        <label for="id_students">Учасники</label>
+        {{ form.student }}
     </div>
-    <div style="float:left;margin-right:20px;">
-        <label for="id_date_from">{{ form.date_from.label }}</label>
+    <div class="filter_form date_from">
+        <label for="id_date_from">Дата з</label>
         {{ form.date_from }}
     </div>
-    <div style="float:left;margin-right:20px;">
-        <label for="id_additional_days">{{ form.additional_days.label }}(днів)</label>
-        {{ form.additional_days }}
+    <div class="filter_form date_until">
+        <label for="id_date_until">Дата по</label>
+        {{ form.date_until }}
     </div>
-    <div style="float:left; text-align: center;">
-        <input type="submit" class="btn btn-secondary" value="Показати">
+    <div class="filter_form">
+        <input type="submit" class="btn btn-secondary button_submit" value="Показати">
     </div>
 </form>

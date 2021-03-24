@@ -2,7 +2,7 @@ from typing import Generator
 from ..models import (
     ClassRoom, Subject,
     Teacher, Student, Group, Service,
-    Source,
+    Source, EventLocation,
 )
 from django import forms
 from functools import partial
@@ -43,6 +43,11 @@ def get_classrooms() -> list:
     for room in cl_r:
         res.append((room.id, str(room)))
     return res
+
+
+def get_event_locations() -> list:
+    locations = EventLocation.objects.all()
+    return _prepare_choices(locations)
 
 
 def get_subjects() -> list:
