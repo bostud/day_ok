@@ -260,13 +260,13 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ()
     list_display = (
         'name',
-        'classroom',
+        'location',
         'date_of_event_formated',
         'time_start',
         'time_end',
         'count_of_participants',
     )
-    autocomplete_fields = ['participants', 'classroom']
+    autocomplete_fields = ['participants', ]
 
     def count_of_participants(self, rec: Event):
         return rec.participants.count()

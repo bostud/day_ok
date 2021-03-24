@@ -799,6 +799,17 @@ class StudentPresence(models.Model):
         return f"{self.lessons}/{self.student}"
 
 
+class EventLocation(models.Model):
+    location = models.CharField(
+        max_length=250,
+        unique=True,
+    )
+    date_created = models.DateTimeField(auto_created=True, auto_now_add=True)
+
+    def __str__(self) -> str:
+        return str(self.location)
+
+
 class Event(models.Model):
     class Meta:
         verbose_name = 'Заходи'
@@ -824,10 +835,11 @@ class Event(models.Model):
         null=True,
         default=None,
     )
-    classroom = models.ForeignKey(
-        ClassRoom,
+    location = models.ForeignKey(
+        EventLocation,
         on_delete=models.DO_NOTHING,
-        verbose_name='Аудиторія'
+        db_constraint=False,
+        verbose_name='Локація',
     )
     participants = models.ManyToManyField(
         Student,
@@ -861,3 +873,7 @@ class Event(models.Model):
         if self.time_end:
             return self.time_end.strftime("%H:%M")
         return '--:--'
+
+    @property
+    def participants_list(self):
+        return self.participants.all()

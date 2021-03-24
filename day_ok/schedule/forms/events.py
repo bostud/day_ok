@@ -1,51 +1,114 @@
 from django import forms
-from ..utils import datetime_now_tz as now
 from .utils import (
-    DateInput, get_classrooms, get_students
+    DateInputEmpty, get_students,
+    get_event_locations,
 )
+from ..models import EventLocation, Event
 
 
 class FilterEventsForm(forms.Form):
     date_from = forms.DateField(
-        label='Дата',
-        help_text='',
-        widget=DateInput(),
+        widget=DateInputEmpty(),
         input_formats=['%d.%m.%Y'],
-        initial=now,
-    )
-    classrooms = forms.MultipleChoiceField(
-        label='Аудиторія:',
-        choices=get_classrooms,
         required=False,
     )
-    students = forms.MultipleChoiceField(
+    location = forms.MultipleChoiceField(
+        label='Локація:',
+        choices=get_event_locations,
+        required=False,
+    )
+    student = forms.MultipleChoiceField(
         label='Учень:',
         choices=get_students,
         required=False,
     )
-    additional_days = forms.IntegerField(
-        label='Період',
+    date_until = forms.DateField(
+        widget=DateInputEmpty(),
+        input_formats=['%d.%m.%Y'],
         required=False,
-        initial=7,
-        min_value=0,
-        max_value=7,
     )
 
-    classrooms.widget.attrs.update({
+    location.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',
         'data-selected-text-format': 'count',
     })
-    students.widget.attrs.update({
+    student.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',
         'data-selected-text-format': 'count',
     })
-    additional_days.widget.attrs.update({
+
+
+class EventForm(forms.Form):
+    name = forms.CharField(
+        min_length=1
+    )
+    date_of_event = forms.DateField(
+        label='Дата',
+        widget=DateInputEmpty(),
+        input_formats=['%d.%m.%Y'],
+    )
+    time_start = forms.TimeField(
+        required=False,
+    )
+    time_end = forms.TimeField(
+        required=False,
+    )
+    location = forms.ChoiceField(
+        choices=get_event_locations,
+    )
+    participants = forms.MultipleChoiceField(
+        choices=get_students,
+    )
+
+    name.widget.attrs.update({
+        'class': 'form-control',
+    })
+
+    time_start.widget.attrs.update({
+        'class': 'form-control',
+    })
+
+    time_end.widget.attrs.update({
+        'class': 'form-control',
+        'type': 'time'
+    })
+
+    location.widget.attrs.update({
+        'class': 'form-control selectpicker',
+    })
+
+    participants.widget.attrs.update({
         'class': 'form-control selectpicker',
         'data-live-search': 'true',
         'multiply': 'multiply',
         'data-selected-text-format': 'count',
     })
+
+    class Meta:
+        models = Event
+        fields = [
+            'name', 'date_of_event', 'time_start',
+            'time_end', 'location', 'participants'
+        ]
+
+
+class EventLocationForm(forms.Form):
+    location = forms.CharField(
+        min_length=1
+    )
+
+    location.widget.attrs.update({
+        'class': 'form-control',
+    })
+
+    class Meta:
+        model = EventLocation
+        fields = ['location']
+
+
+class EventParticipantDeleteForm(forms.Form):
+    participant = forms.IntegerField()

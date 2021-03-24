@@ -3,7 +3,7 @@ from .views import (
     home_view,
     reports,
     lessons_view, lessons_actions, add_lessons,
-    events_view, event_actions,
+    events, event_actions, event_location,
     classrooms, classrooms_actions,
     present_actions,
     groups, groups_actions,
@@ -32,12 +32,13 @@ lessons_urlpatterns = [
 ]
 
 event_urlpatterns = [
-    path('events', events_view, name='events'),
+    path('events', events, name='events'),
     path(
-        'event/<str:action>/<int:event_id>/',
+        'event/<int:event_id>/<str:action>/',
         event_actions,
-        name='events_action',
+        name='event_actions',
     ),
+    path('event_location', event_location, name='event_location'),
 ]
 
 classrooms_urlpatterns = [
