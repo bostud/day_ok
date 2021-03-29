@@ -28,8 +28,8 @@ class FilterPresenceForm(forms.Form):
         required=False,
     )
 
-    page = forms.IntegerField(initial=1)
-    per_page = forms.IntegerField(initial=10)
+    page = forms.IntegerField(initial=1, required=False)
+    per_page = forms.IntegerField(initial=10, required=False)
 
     students.widget.attrs.update({
         'class': 'form-control selectpicker',
