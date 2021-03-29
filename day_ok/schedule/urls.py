@@ -5,7 +5,6 @@ from .views import (
     lessons_view, lessons_actions, add_lessons,
     events, event_actions, event_location,
     classrooms, classrooms_actions,
-    present_actions,
     groups, groups_actions,
     students_actions, students,
     teachers, teachers_actions,
@@ -14,6 +13,7 @@ from .views import (
     finance, get_service_subjects,
     sources, source_actions, source_actions_view,
     services, services_actions,
+    presence, present_actions,
 )
 
 lessons_urlpatterns = [
@@ -23,11 +23,6 @@ lessons_urlpatterns = [
         'lessons/<str:action>/<int:lessons_id>/',
         lessons_actions,
         name='lessons_action',
-    ),
-    path(
-        'lessons/present/<str:action>/<int:lessons_id>/',
-        present_actions,
-        name='present_actions'
     ),
 ]
 
@@ -120,6 +115,15 @@ sources_urlpatterns = [
 
 ]
 
+presence_urlpatterns = [
+    path('presence', presence, name='presence'),
+    path(
+        'presence/<int:lessons_id>/<str:action>',
+        present_actions,
+        name='presence_actions'
+    ),
+]
+
 urlpatterns = [
     path('', home_view, name='home'),
     path('about', home_view, name='about'),
@@ -138,3 +142,4 @@ urlpatterns.extend(teachers_urlpatterns)
 urlpatterns.extend(invoices_urlpatterns)
 urlpatterns.extend(services_urlpatterns)
 urlpatterns.extend(sources_urlpatterns)
+urlpatterns.extend(presence_urlpatterns)

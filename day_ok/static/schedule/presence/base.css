@@ -1,0 +1,84 @@
+
+.filter_form {
+    float: left;
+    margin-left: 15px;
+    max-width: 80vh;
+}
+
+.filter_form.students {
+    max-width: 45vh;
+}
+.filter_form.groups {
+    max-width: 45vh;
+}
+.filter_form.lessons_types {
+    max-width: 45vh;
+}
+
+#id_date_from {
+    max-width: 12vh;
+}
+#id_date_until {
+    max-width: 12vh;
+}
+
+.button_submit {
+    width: 25vh;
+}
+
+#search {
+    max-width: 80vh;
+}
+
+@media screen and (max-width: 1024px) {
+    .button_submit {
+        width: 15vh;
+    }
+    #id_date_from {
+        max-width: 16vh;
+    }
+    #id_date_until {
+        max-width: 16vh;
+    }
+    #search {
+        max-width: 45vh;
+    }
+}
+
+/* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 768px) {
+    .button_submit {
+        width: 15vh;
+    }
+    #id_date_from {
+        max-width: 17vh;
+    }
+    #id_date_until {
+        max-width: 17vh;
+    }
+
+    #search {
+        max-width: 45vh;
+    }
+}
+
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 425px) {
+    .filter_form {
+        padding-top: 15px;
+    }
+
+    .button_submit {
+        width: 25vh;
+    }
+    #id_date_from {
+        max-width: 25vh;
+    }
+    #id_date_until {
+        max-width: 25vh;
+    }
+
+    #search {
+        max-width: 30vh;
+    }
+}

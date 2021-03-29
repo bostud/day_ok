@@ -118,7 +118,7 @@
                                                 <td>{{ lessons.date|date:"d.m.y" }}</td>
                                                 <td>{{ lessons.format_t_start }}</td>
                                                 <td>{{ lessons.format_t_end }}</td>
-                                                <td>{{ lessons.presence_count }}</td>
+                                                <td>{{ lessons.presence_count }} / {{ lessons.students_count }}</td>
                                                 <td>
                                                     <button class="btn btn-info"
                                                             onClick="editObjectPage(this)"
@@ -129,7 +129,7 @@
                                                     </button>
                                                     <button class="btn btn-info"
                                                             onClick="goToUrl(this)"
-                                                            data-url="{% url 'lessons_action' 'edit' lessons.id %}"
+                                                            data-url="{% url 'presence_actions' lessons.id 'edit' %}"
                                                             title="Редагувати присутність"
                                                     >
                                                         <span class="fas fa-tasks"></span>
@@ -161,7 +161,7 @@
         setInterval(time, 1000);
 
         function goToUrl(elem) {
-            location.href = elem.getAttribute('data-url');
+            window.open(elem.getAttribute('data-url'));
         }
         $(function () {
             $('#id_color').colorpicker();

@@ -1,10 +1,10 @@
 import logging
 import json
-from typing import List, Generator
+from typing import List, Generator, Optional
 from datetime import date, timedelta, datetime
 from ..models import (
-    Lessons, StudentPresence,
-    ClassRoom, Subject, Teacher, Student, Group, LessonsParent
+    Lessons,
+    ClassRoom, Subject, Teacher, Student, Group, LessonsParent, StudentPresence
 )
 from ..utils import (
     get_days_from_date,
@@ -41,25 +41,6 @@ def get_weekly_classroom_lessons_by_classroom(
         result[d.strftime('%d.%m.%Y')] = list(lessons)
 
     return result
-
-
-def all_presence(lessons_id: int):
-    lessons = Lessons.objects.get(id=lessons_id)
-    if lessons.lessons_type == Lessons.Type.INDIVIDUAL:
-        students = [lessons.student] if lessons.student else []
-    else:
-        students = [st for st in lessons.group.students.all()]
-
-    for student in students:
-        _, created = StudentPresence.objects.get_or_create(
-            student=student,
-            lessons=lessons
-        )
-        if created:
-            log.info(
-                f'Create presence for student: {str(student)}/{student.id}. '
-                f'Lessons {str(lessons)}/{lessons_id}'
-            )
 
 
 def prepare_add_lessons_form_data() -> dict:
@@ -161,6 +142,10 @@ def add_lessons_from_form(form: AddLessonsForm) -> int:
             parent=parent_lessons,
         )
         ls.save()
+        presence = StudentPresence(
+            lessons=ls,
+        )
+        presence.save()
         lessons_created += 1
 
     if lessons_created == 0:

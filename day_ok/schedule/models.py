@@ -577,7 +577,8 @@ class Lessons(models.Model):
 
     @property
     def presence_count(self):
-        return StudentPresence.objects.filter(lessons=self).count() or 0
+        pr = StudentPresence.objects.filter(lessons=self).first()
+        return pr.participants.count() if pr else 0
 
     @property
     def students_count(self):
@@ -620,6 +621,13 @@ class Lessons(models.Model):
             return self.group.name if self.group else '----'
         else:
             return self.student.full_name if self.student else '----'
+
+    @property
+    def participants_list(self):
+        if self.lessons_type == Lessons.Type.GROUP:
+            return list(self.group.students.all())
+        else:
+            return [self.student]
 
 
 def get_new_unique_invoice_number():
@@ -776,27 +784,33 @@ class StudentPresence(models.Model):
     class Meta:
         verbose_name = 'Відвідування'
         verbose_name_plural = 'Відвідування'
-        unique_together = [
-            ['lessons', 'student'],
-        ]
 
     lessons = models.ForeignKey(
-        Lessons, on_delete=models.CASCADE,
-        verbose_name='Заняття',
-    )
-    student = models.ForeignKey(
-        Student,
+        Lessons,
         on_delete=models.CASCADE,
-        verbose_name='Учень',
+        verbose_name='Заняття',
+        unique=True,
     )
-    is_presence = models.BooleanField(
-        default=True,
-        verbose_name='Був присутній?',
+    participants = models.ManyToManyField(
+        Student,
+        default=None,
     )
     date_created = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.lessons}/{self.student}"
+        return self.lessons
+
+    @property
+    def participants_count(self):
+        return self.participants.count()
+
+    @property
+    def participants_list(self):
+        return self.participants.all()
+
+    @property
+    def is_all_present(self):
+        return self.participants_count == len(self.lessons.participants_list)
 
 
 class EventLocation(models.Model):

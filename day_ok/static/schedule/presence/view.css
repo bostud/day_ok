@@ -1,0 +1,30 @@
+.participants_table {
+    max-width: 100vh;
+}
+
+@media screen and (max-width: 1440px) {
+    .participants_table {
+        max-width: 100vh;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .participants_table {
+        max-width: 100vh;
+    }
+
+}
+
+/* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 768px) {
+    .participants_table {
+        max-width: 100vh;
+    }
+}
+
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 425px) {
+    .participants_table {
+        max-width: 100vh;
+    }
+}

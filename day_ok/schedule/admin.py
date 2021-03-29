@@ -3,7 +3,7 @@ from django.utils.timezone import now
 # Register your models here.
 from .models import (
     ClassRoom, Service, Teacher, Group, Student, Subject, Invoice, Lessons,
-    Source, StudentPresence, Event,
+    Source, Event,
 )
 
 
@@ -242,20 +242,6 @@ class SourceAdmin(admin.ModelAdmin):
     students_from_source_total.short_description = 'К-сть учнів'
 
 
-class StudentPresenceAdmin(admin.ModelAdmin):
-    list_display = (
-        'lessons',
-        'student',
-        'is_presence',
-        'date',
-    )
-
-    def date(self, rec: StudentPresence):
-        return rec.lessons.date.strftime('%d.%m.%Y')
-
-    date.short_description = 'Дата заняття'
-
-
 class EventAdmin(admin.ModelAdmin):
     list_filter = ()
     list_display = (
@@ -289,5 +275,4 @@ admin.site.register(Subject, SubjectAdmin)
 admin.site.register(Invoice, InvoiceAdmin)
 admin.site.register(Lessons, LessonsAdmin)
 admin.site.register(Source, SourceAdmin)
-admin.site.register(StudentPresence, StudentPresenceAdmin)
 admin.site.register(Event, EventAdmin)

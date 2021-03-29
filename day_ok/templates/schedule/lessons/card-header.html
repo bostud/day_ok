@@ -13,9 +13,9 @@
             {% endif %}
         {% else %}
             {% if lessons.presence_count != lessons.students_count %}
-                <a class="dropdown-item" href="{% url 'lessons_action' 'all'  lessons.id %}">Усі є</a>
+                <a class="dropdown-item" href="{% url 'presence_actions' lessons.id 'all' %}">Усі є</a>
             {% endif %}
-            <a class="dropdown-item" href="{% url 'lessons_action' 'all'  lessons.id %}">Редагувати</a>
         {% endif %}
+        <a class="dropdown-item" href="{% url 'presence_actions' lessons.id 'edit' %}">Редагувати</a>
     </div>
 </div>

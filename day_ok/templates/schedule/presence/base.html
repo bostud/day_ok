@@ -1,0 +1,109 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block title %}Присутність{% endblock %}
+{% block head %}
+    {% load static %}
+    {% include 'date_select_picker.html' %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/presence/base.css' %}">
+{% endblock %}
+{% block body %}
+<br />
+<div class="row">
+    <div class="col">
+        <h5>
+            <button class="btn btn-outline-info"
+                    data-toggle="collapse"
+                    data-target="#add"
+                    onclick="alert('В розробці...')"
+            >
+                <span class="fas fa-plus"></span>
+            </button>
+            Додати заняття
+        </h5>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col" id="search">
+        <input class="form-control" id="id_search" type="text" placeholder="Пошук..">
+        <br>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        {% include 'schedule/presence/filter_form.html' with form=filter_form %}
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col table-responsive">
+        <div class="lessons_table">
+            <table class="table table-sm table-hover table-responsible" id="search_table">
+                <thead>
+                    <th>Тип</th>
+                    <th>Викладач</th>
+                    <th>Предмет</th>
+                    <th>Група/Учень</th>
+                    <th>Присутність</th>
+                    <th>Дата</th>
+                    <th>Час початку</th>
+                    <th>Час кінця</th>
+                    <th>#</th>
+                </thead>
+                <tbody>
+                    {% for presence in presences %}
+                        <tr>
+                            <td>{{ presence.lessons.get_lessons_type_name }}</td>
+                            <td>{{ presence.lessons.teacher }}</td>
+                            <td>{{ presence.lessons.subject }}</td>
+                            <td>{{ presence.lessons.participation_name }}</td>
+                            <td>
+                                {% if presence.is_all_present %}
+                                    <span class="badge badge-success">
+                                {% else %}
+                                    <span class="badge badge-warning">
+                                {% endif %}
+                                    {{ presence.participants_count }}/{{ presence.lessons.students_count}}
+                                </span>
+                            </td>
+                            <td>{{ presence.lessons.date|date:'d.m.Y' }}</td>
+                            <td>{{ presence.lessons.time_start|time:'H:i' }}</td>
+                            <td>{{ presence.lessons.time_end|time:'H:i' }}</td>
+                            <td>
+                                <div class="form-inline">
+                                    <a  type="button"
+                                        class="btn btn-warning"
+                                        href="{% url 'presence_actions' presence.lessons.id 'edit'%}"
+                                        title="Редагувати присутність"
+                                    >
+                                        <span class="fas fa-edit"></span>
+                                    </a>
+                                    {% if not presence.is_all_present %}
+                                        &nbsp;&nbsp;
+                                        <form method="post" action="{% url 'presence_actions' presence.lessons.id 'all' %}">
+                                            {% csrf_token %}
+                                            <input hidden value="presence" name="redirect_to">
+                                            <button class="btn btn-success">
+                                                <span>Усі є</span>
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $("#id_search").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#search_table tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+{% endblock %}
