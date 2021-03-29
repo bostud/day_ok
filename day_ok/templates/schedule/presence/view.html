@@ -1,0 +1,86 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block title %}Відвідування{% endblock %}
+{% block head %}
+    {% load static %}
+    {% include 'date_select_picker.html' %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/presence/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/presence/view.css' %}">
+{% endblock %}
+{% block body %}
+{% if errors %}
+<br >
+<div class="row">
+    <div class="col">
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>Помилка!</strong> {{errors}}
+        </div>
+    </div>
+</div>
+{% endif %}
+<br>
+<div class="row">
+    <div class="col">
+        Додати присутніх
+        <form class="form-inline" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="edit_form students">
+                    <select name="students"
+                            id="id_students"
+                            class="form-control selectpicker"
+                            multiple
+                            data-live-search="True"
+                    >
+                    {% for student in edit_form.students.initial %}
+                        <option value="{{student.id}}">{{student.full_name}}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-outline-success">
+                    Додати
+                </button>
+            </div>
+        </form>
+    </div>
+    {% if not presence.is_all_present %}
+    <div class="col">
+        <form method="post" action="{% url 'presence_actions' presence.lessons.id 'all' %}">
+            {% csrf_token %}
+            <button class="btn btn-success">
+                <span>Усі є</span>
+            </button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+<hr>
+<div class="row">
+    <div class="col table-responsive participants_table">
+        <h5>Список присутніх</h5>
+        <table class="table table-sm table-hover">
+            <thead>
+                <th>Прізвище Ім`я</th>
+                <th>#</th>
+            </thead>
+            <tbody>
+            {% for student in presence.participants_list %}
+                <tr>
+                    <td>{{student.full_name}}</td>
+                    <td>
+                        <form method="post" action="{% url 'presence_actions' presence.lessons.id 'delete_student_presence' %}">
+                            {% csrf_token %}
+                            <input hidden name="student" value="{{student.id}}">
+                            <button type="submit" class="btn btn-outline-danger" title="Прибрати присутність">
+                                <span class="fas fa-archive"></span>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

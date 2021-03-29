@@ -1,0 +1,23 @@
+<form class="form-inline">
+    <div class="filter_form students">
+        {{ form.students }}
+    </div>
+    <div class="filter_form groups">
+        {{ form.groups }}
+    </div>
+    <div class="filter_form lessons_types">
+        {{ form.lessons_types }}
+    </div>
+    <div class="filter_form date_from">
+        <label for="id_date_from">Дата з</label>
+        {{ form.date_from }}
+    </div>
+    <div class="filter_form date_until">
+        <label for="id_date_until">Дата по</label>
+        {{ form.date_until }}
+    </div>
+    <div class="filter_form">
+        <input type="submit" class="btn btn-secondary button_submit" value="Показати">
+    </div>
+
+</form>
