@@ -1,0 +1,42 @@
+
+.add {
+    max-width: 50vh;
+}
+
+.add_form.duration {
+    max-width: 25vh;
+}
+
+
+
+@media screen and (max-width: 1024px) {
+    .add {
+        max-width: 50vh;
+    }
+
+    .add_form.duration {
+        max-width: 25vh;
+    }
+}
+
+/* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 768px) {
+    .add {
+        max-width: 50vh;
+    }
+
+    .add_form.duration {
+        max-width: 25vh;
+    }
+}
+
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 425px) {
+    .add {
+        width: 35vh;
+    }
+
+    .add_form.duration {
+        width: 25vh;
+    }
+}

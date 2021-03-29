@@ -1,0 +1,21 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block title %}Предмети{% endblock %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/subject/view.css' %}">
+{% endblock %}
+{% block body %}
+<br >
+<div class="row">
+    <div class="col-6">
+        <form method="POST"
+              class="form-group add"
+              action="{% url 'subject_view' subject.id %}">
+            {% csrf_token %}
+            {% include 'schedule/subject/add_form.html' with form=form %}
+            <button class="btn btn-warning" type="submit">Редагувати</button>
+        </form>
+    </div>
+</div>
+<hr />
+{% endblock %}

@@ -51,7 +51,7 @@ def get_event_locations() -> list:
 
 
 def get_subjects() -> list:
-    iter_ = Subject.objects.all()
+    iter_ = Subject.objects.filter(status=Subject.Status.ACTIVE).all()
     res = []
     for i in iter_:
         res.append((i.id, str(i.name)))
