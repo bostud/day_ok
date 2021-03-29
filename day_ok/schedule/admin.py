@@ -7,30 +7,6 @@ from .models import (
 )
 
 
-class ServiceAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'lessons_count',
-        'price',
-        'currency',
-        'total_invoices',
-        'payed_invoices',
-    )
-
-    search_fields = ['name']
-
-    list_per_page = 10
-
-    def total_invoices(self, rec: Service):
-        return Invoice.objects.filter(service=rec).count()
-
-    def payed_invoices(self, rec: Service):
-        return Invoice.objects.filter(service=rec, status='1').count()
-
-    total_invoices.short_description = 'Всього рахунків'
-    payed_invoices.short_description = 'Оплачених рахунків'
-
-
 class TeacherAdmin(admin.ModelAdmin):
     search_fields = ['last_name', 'first_name']
     list_display = (
@@ -46,8 +22,6 @@ class TeacherAdmin(admin.ModelAdmin):
     )
 
     list_per_page = 10
-
-    autocomplete_fields = ['subjects', ]
 
     def count_of_subjects(self, rec: Teacher):
         if rec.subjects:
@@ -93,15 +67,6 @@ class StudentAdmin(admin.ModelAdmin):
     years_old.short_description = 'Вік'
 
 
-class ClassRoomAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'places_count',
-        'room_type',
-    )
-    search_fields = ['name', ]
-
-
 class GroupAdmin(admin.ModelAdmin):
     list_display = (
         'name',
@@ -111,7 +76,7 @@ class GroupAdmin(admin.ModelAdmin):
         'students_count',
     )
 
-    autocomplete_fields = ['students', 'teacher', 'subject']
+    autocomplete_fields = ['students', 'teacher']
 
     list_per_page = 10
 
@@ -144,135 +109,7 @@ class LessonsAdmin(admin.ModelAdmin):
     list_per_page = 10
 
 
-class SubjectAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'lessons_duration'
-    )
-
-    search_fields = ['name', ]
-
-
-class InvoiceStatusFilter(admin.SimpleListFilter):
-    title = 'Статус рахунку'
-    parameter_name = 'status'
-
-    def lookups(self, request, model_admin):
-        return Invoice.Status.choices
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(status=self.value())
-        return queryset
-
-
-class InvoiceReceiverFilter(admin.SimpleListFilter):
-    title = 'Отримувач'
-    parameter_name = 'receiver'
-
-    def lookups(self, request, model_admin):
-        return Invoice.Receivers.choices
-
-    def queryset(self, request, queryset):
-        if self.value():
-            return queryset.filter(receiver=self.value())
-        return queryset
-
-
-class InvoiceAdmin(admin.ModelAdmin):
-    list_display = (
-        'number',
-        'student',
-        'service',
-        'format_date_created',
-        'format_date_paid_until',
-        'status',
-        'days_left_for_payment',
-        'status_payed',
-    )
-
-    autocomplete_fields = ['student', ]
-
-    search_fields = (
-        'student__last_name',
-        'student__first_name',
-        'status',
-        'service__name',
-    )
-    list_filter = (
-        InvoiceStatusFilter,
-        InvoiceReceiverFilter,
-    )
-    readonly_fields = ('number', )
-    list_per_page = 10
-    list_editable = ('status', )
-
-    def format_date_created(self, rec: Invoice):
-        return rec.date_created.strftime('%d.%m.%Y')
-
-    def format_date_paid_until(self, rec: Invoice):
-        return rec.date_paid_until.strftime('%d.%m.%Y')
-
-    def days_left_for_payment(self, rec: Invoice) -> int:
-        if rec.status == rec.Status.PENDING:
-            return (rec.date_paid_until - now().date()).days
-        return 0
-
-    def status_payed(self, res: Invoice) -> bool:
-        return res.status != res.Status.PENDING
-
-    status_payed.boolean = True
-    status_payed.short_description = 'Оплата'
-    format_date_created.short_description = 'Дата створення'
-    format_date_paid_until.short_description = (
-        'Дата до якої здійснити оплату'
-    )
-    days_left_for_payment.short_description = 'Днів до оплати'
-
-
-class SourceAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'students_from_source_total',
-    )
-
-    def students_from_source_total(self, rec: Source):
-        return rec.students_from_source_total
-
-    students_from_source_total.short_description = 'К-сть учнів'
-
-
-class EventAdmin(admin.ModelAdmin):
-    list_filter = ()
-    list_display = (
-        'name',
-        'location',
-        'date_of_event_formated',
-        'time_start',
-        'time_end',
-        'count_of_participants',
-    )
-    autocomplete_fields = ['participants', ]
-
-    def count_of_participants(self, rec: Event):
-        return rec.participants.count()
-
-    def date_of_event_formated(self, rec: Event):
-        return rec.date_of_event.strftime('%d.%m.%Y')
-
-    date_of_event_formated.short_description = 'Дата заходу'
-    count_of_participants.short_description = 'К-сть учасників'
-
-    list_per_page = 10
-
-
-admin.site.register(ClassRoom, ClassRoomAdmin)
-admin.site.register(Service, ServiceAdmin)
 admin.site.register(Teacher, TeacherAdmin)
 admin.site.register(Group, GroupAdmin)
 admin.site.register(Student, StudentAdmin)
-admin.site.register(Subject, SubjectAdmin)
-admin.site.register(Invoice, InvoiceAdmin)
 admin.site.register(Lessons, LessonsAdmin)
-admin.site.register(Source, SourceAdmin)
-admin.site.register(Event, EventAdmin)
