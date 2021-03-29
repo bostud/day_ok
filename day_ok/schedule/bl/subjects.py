@@ -1,6 +1,6 @@
 from typing import Optional, List
 from ..models import Subject
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 
 def add_subject(
@@ -9,7 +9,9 @@ def add_subject(
     minute: int,
 ) -> Optional[Subject]:
     duration = timedelta(hours=hour, minutes=minute)
-    s, _ = Subject.objects.get_or_create(name=name, lessons_duration=duration)
+    if s := Subject.objects.filter(name=name).first():
+        return s
+    s = Subject.objects.create(name=name, lessons_duration=duration)
     return s
 
 
