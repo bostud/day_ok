@@ -1,0 +1,90 @@
+{% extends 'schedule/base/base_cms.html' %}
+{% block title %}Предмети{% endblock %}
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/subject/base.css' %}">
+{% endblock %}
+{% block body %}
+<br >
+<div class="row">
+    <div class="col-6">
+        <h5>
+            <button class="btn btn-outline-info" data-toggle="collapse" data-target="#add">
+                <span class="fas fa-plus"></span>
+            </button>
+            Додати предмет
+        </h5>
+        <div id="add" class="collapse add">
+            <form class="form" method="post">
+                {% csrf_token %}
+                {% include 'schedule/subject/add_form.html' with form=form %}
+                <button type="submit" class="btn btn-success">Додати</button>
+            </form>
+            <hr />
+        </div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col table-responsible subjects_table">
+        <p>Предмети</p>
+        <table class="table table-hover">
+            <thead>
+                <th>Назва</th>
+                <th>Тривалість заняття</th>
+                <th>Дата додавання</th>
+                <th>#</th>
+            </thead>
+            <tbody>
+                {% for subject in subjects %}
+                    <tr>
+                        <td>
+                            <a  type="button"
+                                class="btn btn-warning"
+                                href="{% url 'subject_view' subject.id %}"
+                            >
+                                <span class="fas fa-edit"></span>
+                            </a>
+                            {{ subject.name }}
+                        </td>
+                        <td>{{ subject.lessons_duration }}</td>
+                        <td>{{ subject.datetime_created|date:'d.m.Y' }}</td>
+                        <td>
+                            <button type="button"
+                                    class="btn btn-outline-danger"
+                                    data-toggle="modal"
+                                    data-target="#delete_{{subject.id}}"
+                            >
+                                <span class="fas fa-archive"></span>
+                            </button>
+                        </td>
+                    </tr>
+                    <div class="modal" id="delete_{{subject.id}}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Видалити предмет</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <h5>Ви впевнені що хочете видалити предмет "{{subject.name}}"?</h5>
+
+                                    <p>Предмет буде відстунім для вибору при створенні заняття.</p>
+                                    <p>Закріплені заняття <strong>не будуть</strong> видалені!</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <form method="POST" action="{% url 'subject_delete' subject.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Видалити</button>
+                                    </form>
+                                    <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

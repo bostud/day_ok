@@ -11,3 +11,4 @@ from .finance import finance
 from .services import get_service_subjects, services, services_actions
 from .sources import sources, source_actions, source_actions_view
 from .present import present_actions, presence
+from .subjects import subject, subject_delete, subject_view

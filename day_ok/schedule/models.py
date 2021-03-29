@@ -2,6 +2,7 @@ from typing import List
 
 import json
 from datetime import datetime
+from time import gmtime
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
@@ -13,16 +14,35 @@ class Subject(models.Model):
         verbose_name = 'Предмети'
         verbose_name_plural = 'Предмети'
 
+    class Status(models.IntegerChoices):
+        ACTIVE = 1, _('Активний')
+        DELETED = 2, _('Видалено')
+
     name = models.CharField(
         'Назва предмету',
-        max_length=100
+        max_length=100,
+        unique=True,
     )
     lessons_duration = models.DurationField(
         'Тривалість заняття',
     )
+    status = models.CharField(
+        choices=Status.choices,
+        default=Status.ACTIVE,
+        max_length=2,
+    )
+    datetime_created = models.DateTimeField(
+        auto_created=True,
+        auto_now_add=True,
+    )
 
     def __str__(self):
         return self.name
+
+    @property
+    def duration_to_time(self):
+        seconds = self.lessons_duration.total_seconds()
+        return gmtime(seconds)
 
 
 class ContactMixin(models.Model):
