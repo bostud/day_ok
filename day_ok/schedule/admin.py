@@ -1,10 +1,6 @@
 from django.contrib import admin
 from django.utils.timezone import now
-# Register your models here.
-from .models import (
-    ClassRoom, Service, Teacher, Group, Student, Subject, Invoice, Lessons,
-    Source, Event,
-)
+from .models import Teacher, Student, Lessons
 
 
 class TeacherAdmin(admin.ModelAdmin):
@@ -67,25 +63,6 @@ class StudentAdmin(admin.ModelAdmin):
     years_old.short_description = 'Вік'
 
 
-class GroupAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'subject',
-        'age_from',
-        'teacher',
-        'students_count',
-    )
-
-    autocomplete_fields = ['students', 'teacher']
-
-    list_per_page = 10
-
-    def students_count(self, rec: Group):
-        return rec.students.count()
-
-    students_count.short_description = 'К-сть учнів'
-
-
 class LessonsAdmin(admin.ModelAdmin):
     list_display = (
         'classroom',
@@ -110,6 +87,5 @@ class LessonsAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Teacher, TeacherAdmin)
-admin.site.register(Group, GroupAdmin)
 admin.site.register(Student, StudentAdmin)
 admin.site.register(Lessons, LessonsAdmin)
