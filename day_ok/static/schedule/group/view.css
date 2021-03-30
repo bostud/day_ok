@@ -1,0 +1,58 @@
+
+.add {
+    max-width: 50vh;
+}
+
+.add_form.duration {
+    max-width: 25vh;
+}
+
+
+.period_form {
+    max-width: 20vh;
+}
+
+.search {
+    max-width: 50vh;
+}
+
+.students_table {
+    max-width: 160vh;
+}
+
+
+@media screen and (max-width: 1024px) {
+    .add {
+        max-width: 50vh;
+    }
+
+    .add_form.duration {
+        max-width: 25vh;
+    }
+
+    .students_table {
+        width: 140vh;
+    }
+}
+
+/* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 768px) {
+    .add {
+        max-width: 50vh;
+    }
+
+    .add_form.duration {
+        max-width: 25vh;
+    }
+}
+
+/* On screens that are 600px or less, set the background color to olive */
+@media screen and (max-width: 425px) {
+    .add {
+        width: 45vh;
+    }
+
+    .add_form.duration {
+        width: 25vh;
+    }
+}

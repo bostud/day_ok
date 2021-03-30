@@ -1,5 +1,5 @@
-from typing import Optional, List
-from ..models import Group
+from typing import Optional, List, Tuple
+from ..models import Group, Student, Subject, Teacher, Lessons
 from datetime import datetime, timedelta
 from dataclasses import dataclass
 
@@ -25,7 +25,7 @@ class MyGroup:
 
 
 def groups_objects():
-    return Group.objects.all()
+    return Group.objects.filter(status=Group.Status.ACTIVE).all()
 
 
 def get_group(id_: int) -> Optional[Group]:
@@ -64,3 +64,74 @@ def get_group_info_by_period(
             )
         )
     return custom_group
+
+
+def add_group(
+    name: str,
+    age_from: str,
+    students: List[int],
+    subject: int,
+    teacher: int,
+) -> Tuple[Group, str]:
+    if g := Group.objects.filter(name=name, status=Group.Status.ACTIVE).first():  # noqa
+        return g, f'Group with name: {name} already exist'
+    g = Group.objects.create(
+        name=name,
+        age_from=age_from,
+        subject=Subject.objects.filter(id=subject).first(),
+        teacher=Teacher.objects.filter(id=teacher).first(),
+    )
+    if students:
+        g.students.add(
+            *list(Student.objects.filter(id__in=[int(v) for v in students]).all())  # noqa
+        )
+        g.save()
+    return g, ''
+
+
+def edit_group(
+    id_: int,
+    name: str,
+    age_from: str,
+    students: List[int],
+    subject: int,
+    teacher: int,
+) -> Tuple[Group, str]:
+    if g := Group.objects.filter(name=name, status=Group.Status.ACTIVE).exclude(id=id_).first():  # noqa
+        return g, f'Group with name: {name} already exist'
+    if g := Group.objects.filter(id=id_).first():
+        g.name = name
+        g.age_from = age_from
+        g.subject = Subject.objects.filter(id=subject).first()
+        g.teacher = Teacher.objects.filter(id=teacher).first()
+
+        if students:
+            g.students.add(
+                *list(Student.objects.filter(id__in=[int(v) for v in students]).all())  # noqa
+            )
+        g.save()
+    return g, ''
+
+
+def delete_group(
+    id_: int,
+) -> int:
+    g = Group.objects.filter(id=id_).first()
+    if g:
+        if not Lessons.objects.filter(group=g).all():
+            g.delete()
+        else:
+            Group.objects.filter(id=id_).update(status=Group.Status.DELETED)
+        return 1
+    return 0
+
+
+def unpin_student(
+    id_: int,
+    student_id: int,
+) -> Optional[Group]:
+    if g := Group.objects.filter(id=id_).first():
+        if s := Student.objects.filter(id=student_id).first():
+            g.students.remove(s)
+            g.save()
+    return g

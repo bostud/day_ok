@@ -16,7 +16,7 @@
                 {% for group in groups %}
                     <tr>
                         <td style="vertical-align: middle">
-                            <a href="{% url 'groups_actions' 'view' group.id %}">{{ group.name }}</a>
+                            <a href="{% url 'groups_actions' group.id %}">{{ group.name }}</a>
                         </td>
                         <td style="vertical-align: middle">{{ group.students_count }}</td>
                         <td style="vertical-align: middle">{{ group.age_from }}+</td>
