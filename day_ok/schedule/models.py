@@ -333,7 +333,7 @@ class Student(ContactMixin):
         subjects: List[Subject],
     ):
         return StudentPresence.objects.filter(
-            student=self,
+            participants__in=[self],
             lessons__date__gte=dt_gte.date(),
             lessons__date__lte=dt_lte.date(),
             lessons__lessons_type=Lessons.Type.GROUP,
@@ -425,6 +425,10 @@ class Group(models.Model):
         verbose_name = 'Групи'
         verbose_name_plural = 'Групи'
 
+    class Status(models.IntegerChoices):
+        ACTIVE = 1, _('Активна')
+        DELETED = 2, _('Неактивна')
+
     name = models.CharField('Назва групи', max_length=150)
     subject = models.ForeignKey(
         Subject,
@@ -444,6 +448,12 @@ class Group(models.Model):
     )
     students = models.ManyToManyField(
         Student, verbose_name='Учні', blank=True)
+
+    status = models.CharField(
+        max_length=2,
+        choices=Status.choices,
+        default=Status.ACTIVE,
+    )
 
     def __str__(self):
         return f"{self.name}, Вік: {self.age_from}+"
@@ -476,6 +486,12 @@ class Group(models.Model):
             time_end__gte=dt_now.time(),
         ).order_by('id').first()
         return lsn
+
+    @property
+    def students_not_in_group(self):
+        return list(Student.objects.exclude(
+            id__in=self.students.all()
+        ).all())
 
 
 class LessonsParent(models.Model):

@@ -1,4 +1,4 @@
-from django.core.exceptions import PermissionDenied
+from django.shortcuts import redirect
 
 
 def authenticated(get_response):
@@ -6,5 +6,5 @@ def authenticated(get_response):
         if request.user.is_authenticated:
             return get_response(request, *args, **kwargs)
         else:
-            raise PermissionDenied
+            return redirect('dayok')
     return middleware

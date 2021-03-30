@@ -2,64 +2,93 @@
 {% block title %}Групи{% endblock %}
 {% block head %}
     {% load static %}
+    {% include 'date_select_picker.html' %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/group/base.css' %}">
 {% endblock %}
 {% block body %}
-    <div class="row text-center" style="background-color: lightgrey">
-        <div class="col">
-            <h3>
-                Групи
-            </h3>
+{% if error %}
+<div class="row">
+    <div class="col alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{error}}
+    </div>
+</div>
+{% endif %}
+<br />
+<div class="row">
+    <div class="col">
+        <h5>
+            <button class="btn btn-outline-info" data-toggle="collapse" data-target="#add">
+                <span class="fas fa-plus"></span>
+            </button>
+            Додати групу
+        </h5>
+        <div id="add" class="collapse add">
+            <form class="form" method="post">
+                {% csrf_token %}
+                {% include 'schedule/groups/group_form.html' with form=form %}
+                <button type="submit" class="btn btn-success">Додати</button>
+            </form>
         </div>
     </div>
-    <br >
-    <div class="row justify-content-center">
-        {% include 'schedule/groups/_header.html' %}
+</div>
+<hr />
+<div class="row">
+    <div class="col-4">
+        <p>Вкажіть групу для пошуку</p>
+        <input class="form-control" id="id_group_name" type="text" placeholder="Пошук..">
+        <br>
     </div>
-    <br />
-    <div class="row">
-        <div class="col-4">
-            <p>Вкажіть групу для пошуку</p>
-            <input class="form-control" id="id_group_name" type="text" placeholder="Пошук..">
-            <br>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col table-responsive">
-            <table class="table table-striped table-sm" cellspacing="0" style="max-width: 75%">
-                <thead>
-                    <th>Назва групи</th>
-                    <th>Кількість учнів</th>
-                    <th>Вік</th>
-                    <th>Предмет</th>
-                    <th>Викладач</th>
-                    <th>Поточне заняття</th>
-                    <th>Наступне заняття</th>
-                </thead>
-                <tbody id="group_table">
-                    {% for group in groups %}
-                        <tr>
-                            <td style="vertical-align: middle">
-                                <a href="{% url 'groups_actions' 'view' group.id %}">{{ group.name }}</a>
-                            </td>
-                            <td style="vertical-align: middle">{{ group.students_count }}</td>
-                            <td style="vertical-align: middle">{{ group.age_from }}+</td>
-                            <td style="vertical-align: middle">
-                                {% if group.subject %}
-                                    {{ group.subject }}
-                                {% else %}
-                                    ----
-                                {% endif %}
-                            </td>
-                            <td style="vertical-align: middle">
-                                {% if group.teacher %}
-                                    {{ group.teacher }}
-                                {% else %}
-                                    ----
-                                {% endif %}
-                            </td>
-                            <td style="vertical-align: middle">
-                                {% if group.current_lessons %}
-                                    {% include 'schedule/lessons/div_cell.html' with lessons=group.current_lessons show_type='groups' %}
+</div>
+<div class="row">
+    <div class="col table-responsive">
+        <table class="table table-striped table-sm" cellspacing="0" style="max-width: 75%">
+            <thead>
+                <th>Назва групи</th>
+                <th>Кількість учнів</th>
+                <th>Вік</th>
+                <th>Предмет</th>
+                <th>Викладач</th>
+                <th>Поточне заняття</th>
+                <th>Наступне заняття</th>
+            </thead>
+            <tbody id="group_table">
+                {% for group in groups %}
+                    <tr>
+                        <td style="vertical-align: middle">
+                            <a href="{% url 'groups_actions' group.id %}">{{ group.name }}</a>
+                        </td>
+                        <td style="vertical-align: middle">{{ group.students_count }}</td>
+                        <td style="vertical-align: middle">{{ group.age_from }}+</td>
+                        <td style="vertical-align: middle">
+                            {% if group.subject %}
+                                {{ group.subject }}
+                            {% else %}
+                                ----
+                            {% endif %}
+                        </td>
+                        <td style="vertical-align: middle">
+                            {% if group.teacher %}
+                                {{ group.teacher }}
+                            {% else %}
+                                ----
+                            {% endif %}
+                        </td>
+                        <td style="vertical-align: middle">
+                            {% if group.current_lessons %}
+                                {% include 'schedule/lessons/div_cell.html' with lessons=group.current_lessons show_type='groups' %}
+                            {% else %}
+                                ----(
+                                <a href="{% url 'add_lessons' %}">
+                                    Додати заняття
+                                </a>
+                                )
+                            {% endif %}
+                        </td>
+                        <td style="vertical-align: middle;">
+                            <div style="max-width: 25vh">
+                                {% if group.next_lessons %}
+                                    {% include 'schedule/lessons/div_cell.html' with lessons=group.next_lessons show_type='groups' show_date='true' %}
                                 {% else %}
                                     ----(
                                     <a href="{% url 'add_lessons' %}">
@@ -67,52 +96,40 @@
                                     </a>
                                     )
                                 {% endif %}
-                            </td>
-                            <td style="vertical-align: middle;">
-                                <div style="max-width: 25vh">
-                                    {% if group.next_lessons %}
-                                        {% include 'schedule/lessons/div_cell.html' with lessons=group.next_lessons show_type='groups' show_date='true' %}
-                                    {% else %}
-                                        ----(
-                                        <a href="{% url 'add_lessons' %}">
-                                            Додати заняття
-                                        </a>
-                                        )
-                                    {% endif %}
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    <script>
-        $(document).ready(function(){
-            $("#id_group_name").on("keyup", function() {
-                var value = $(this).val().toLowerCase();
-                $("#group_table tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
+</div>
+<script>
+    $(document).ready(function(){
+        $("#id_group_name").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#group_table tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
         });
-    </script>
-    <script type="text/javascript">
-        let span = document.getElementById('spanTime');
+    });
+</script>
+<script type="text/javascript">
+    let span = document.getElementById('spanTime');
 
-        function reload() {
-            location.reload();
-        }
+    function reload() {
+        location.reload();
+    }
 
-        function time() {
-            let d = new Date();
-            let s = d.getSeconds();
-            let m = d.getMinutes();
-            let h = d.getHours();
-            span.textContent = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2) + ":" + ("0" + s).substr(-2);
-        }
+    function time() {
+        let d = new Date();
+        let s = d.getSeconds();
+        let m = d.getMinutes();
+        let h = d.getHours();
+        span.textContent = ("0" + h).substr(-2) + ":" + ("0" + m).substr(-2) + ":" + ("0" + s).substr(-2);
+    }
 
-        setInterval(time, 1000);
-        setInterval(reload, 1000 * 60);
-    </script>
+    setInterval(time, 1000);
+    setInterval(reload, 1000 * 60);
+</script>
 {% endblock %}

@@ -5,7 +5,7 @@ from .views import (
     lessons_view, lessons_actions, add_lessons,
     events, event_actions, event_location,
     classrooms, classrooms_actions,
-    groups, groups_actions,
+    groups, groups_actions, group_delete, group_unpin_student,
     students_actions, students,
     teachers, teachers_actions,
     invoices, invoices_actions,
@@ -49,9 +49,15 @@ classrooms_urlpatterns = [
 groups_urlpatterns = [
     path('groups', groups, name='groups'),
     path(
-        'groups/<str:action>/<int:group_id>/',
+        'groups/<int:group_id>/',
         groups_actions,
         name='groups_actions'
+    ),
+    path('group/<int:group_id>/delete', group_delete, name='group_delete'),
+    path(
+        'group/<int:group_id>/unpin_student',
+        group_unpin_student,
+        name='group_unpin_student'
     ),
 ]
 

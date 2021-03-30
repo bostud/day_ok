@@ -2,72 +2,103 @@
 {% block title %}Сторінка групи{% endblock %}
 {% block head %}
     {% load static %}
+    {% include 'date_select_picker.html' %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/group/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/group/view.css' %}">
 {% endblock %}
 {% block body %}
-    <div class="row text-center" style="background-color: lightgrey">
-        <div class="col">
-            <h3>
-                {{ group.name }}
-            </h3>
-        </div>
-    </div>
     <br />
-    <div class="row justify-content-center">
+    <div class="row">
         <div class="col">
-            <div>
-                <a class="btn btn-secondary btn-sm form-control" role="button" href="/admin/schedule/group/add/">
-                    + Додати групу
-                </a>
-            </div>
+            <h5>
+                <button class="btn btn-outline-info" data-toggle="collapse" data-target="#add">
+                    <span class="fas fa-edit"></span>
+                </button>
+                Редагувати групу <strong>{{ group.name }}</strong>
+            </h5>
         </div>
         <div class="col">
-            <div>
-                <a class="btn btn-secondary btn-sm form-control" role="button" href="/admin/schedule/group/{{ group.id }}/change">
-                    Редагувати групу
-                </a>
-            </div>
-        </div>
-        <div class="col offset-7">
-            <div class="text-muted form-control d-inline-flex p-2 justify-content-center">
-                <span class="far fa-clock">
-                    &nbsp;
-                    <span id="spanTime"><small class="spinner-grow spinner-grow-sm"></small></span>
-                </span>
+            <h5>
+                <button class="btn btn-outline-warning" data-toggle="modal" data-target="#delete">
+                    <span class="fas fa-archive"></span>
+                </button>
+                Видалити групу
+            </h5>
+            <div class="modal" id="delete">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Видалити групу</h4>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            Ви впевнені що хочете видалити групу <strong>{{group.name}}</strong>?
+                            <p>
+                                Усі заплановані заняття будуть видалені.
+                            </p>
+                            <p>Заняття які відбулись не будуть видалені</p>
+                        </div>
+                        <div class="modal-footer">
+                            <form method="POST" action="{% url 'group_delete' group.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Видалити</button>
+                            </form>
+                            <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col">
+            <div id="add" class="collapse">
+                <div class="row">
+                    <div class="col add">
+                        <form class="form" method="post">
+                            {% csrf_token %}
+                            {% include 'schedule/groups/group_form.html' with form=form %}
+                            <button type="submit" class="btn btn-success">Зберегти</button>
+                        </form>
+                    </div>
+                    <div class="col add">
+                        <h6>Поточні дані</h6>
+                        <p>Назва: <strong>{{group.name}}</strong></p>
+                        <p>Вік з: <strong>{{group.age_from}}+</strong></p>
+                        <p>Викладач: <strong>{{group.teacher}} </strong>(якщо None - не вказано)</p>
+                        <p>Предмет: <strong>{{group.subject}} </strong>(якщо None - не вказано)</p>
+                        <p>Учні перераховані в таблиці нижче</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<hr />
+    <div class="row">
+        <div class="col search">
             <label for="id_student_name">Пошук по групі</label>
             <input class="form-control" id="id_student_name" type="text" placeholder="Пошук..">
             <br>
         </div>
-        <div class="col">
-            <div class="row">
-                <div class="col-4">
-                    <form method="GET">
-                        <label for="period">Виберіть місяць</label>
-                        <select class="form-control" id="period" name="period" onchange="this.form.submit()">
-                            <option selected></option>
-                            {% for period in periods %}
-                                {% if selected_period == period %}
-                                    <option selected value="{{period}}">{{period}}</option>
-                                {% else %}
-                                    <option value="{{period}}">{{period}}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
-                    </form>
-                </div>
-                <div class="col">
-                    <p>Предмет: <strong>{{ group.subject.name }}</strong></p>
-                </div>
-            </div>
+        <div class="col period_form">
+            <form method="GET">
+                <label for="period">Місяць</label>
+                <select class="form-control" id="period" name="period" onchange="this.form.submit()">
+                    <option selected></option>
+                    {% for period in periods %}
+                        {% if selected_period == period %}
+                            <option selected value="{{period}}">{{period}}</option>
+                        {% else %}
+                            <option value="{{period}}">{{period}}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </form>
         </div>
     </div>
     <div class="row">
         <div class="col table-responsive">
-            <table class="table table-striped table-sm" cellspacing="0" width="100%">
+            <table class="table table-striped table-sm students_table">
                 <thead>
                     <th>Прізвище Ім'я</th>
                     <th>Вік</th>
@@ -76,6 +107,7 @@
                     <th>Занять оплачено</th>
                     <th>Занять відвідано</th>
                     <th>Рахунки</th>
+                    <th>#</th>
                 </thead>
                 <tbody id="students_table">
                     {% for student in group_data.next_student %}
@@ -94,23 +126,52 @@
                             <td style="vertical-align: middle">{{ student.paid_groups_services }}</td>
                             <td style="vertical-align: middle">{{ student.group_lessons_paid }}</td>
                             <td style="vertical-align: middle">{{ student.group_lessons_present }}</td>
-                            <td style="vertical-align: middle">
-                                {% if selected_period %}
-                                    <button class="btn btn-info"
-                                            onclick="changeLocation(this)"
-                                            data-url="{% url 'invoices_add' %}"
-                                            title="Додати рахунок"
-                                    >
-                                        <span class="fab fa-bitcoin"></span>
-                                    </button>
-                                {% endif %}
-                                <button class="btn btn-info"
-                                        onclick="changeLocation(this)"
-                                        data-url="{% url 'invoices' %}?students={{student.id}}&service_types={{group.SERVICE_TYPE}}"
-                                        title="Рахунки учня"
-                                >
-                                    <span class="fas fa-receipt"></span>
-                                </button>
+                            <td>
+                                <div class="form-inline">
+                                    <div style="float:left;margin-right:20px;">
+                                        <button class="btn btn-info"
+                                                onclick="changeLocation(this)"
+                                                data-url="{% url 'invoices' %}?students={{student.id}}&service_types={{group.SERVICE_TYPE}}&subjects={{group.subject.id}}"
+                                                title="Рахунки учня"
+                                        >
+                                            <span class="fas fa-receipt"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-inline">
+                                    <div style="float:left;margin-right:20px;">
+                                        <button class="btn btn-warning"
+                                                data-toggle="modal"
+                                                data-target="#delete_student_{{student.id}}"
+                                                title="Відкріпити учня"
+                                        >
+                                            <span class="fas fa-unlink"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="modal" id="delete_student_{{student.id}}">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Відкріпити учня</h4>
+                                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Ви впевнені що хочете відкрипити учня <strong>{{student.full_name}}</strong>?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form method="POST" action="{% url 'group_unpin_student' group.id %}">
+                                                    {% csrf_token %}
+                                                    <input hidden name="student" value="{{student.id}}">
+                                                    <button type="submit" class="btn btn-warning">Відкріпити</button>
+                                                </form>
+                                                <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     {% endfor %}
@@ -140,7 +201,7 @@
         setInterval(time, 1000);
 
         function changeLocation(elem) {
-            location.href = elem.getAttribute('data-url');
+            window.open(elem.getAttribute('data-url'));
         }
     </script>
 

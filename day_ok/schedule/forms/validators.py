@@ -1,4 +1,4 @@
-from ..models import Source
+from ..models import Source, Group
 
 
 METHOD_DELETE = 'delete'
@@ -19,3 +19,7 @@ def validate_edit_method(value: str) -> bool:
 
 def validate_source_name(value: str) -> bool:
     return Source.objects.filter(name=value.strip()).count() == 0
+
+
+def validate_group_name(value: str) -> bool:
+    return not list(Group.objects.filter(name=value).all())

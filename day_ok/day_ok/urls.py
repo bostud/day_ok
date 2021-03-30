@@ -21,7 +21,7 @@ from .views import home_view, page_not_found
 handler404 = page_not_found
 
 urlpatterns = [
-    path('', home_view, name='home'),
+    path('', home_view, name='dayok'),
     path('admin/', admin.site.urls, name='admin'),
     path('schedule/', include('schedule.urls'), name='schedule'),
 ]
