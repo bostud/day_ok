@@ -46,6 +46,10 @@ class Subject(models.Model):
 
 
 class ContactMixin(models.Model):
+    class RecordStatus(models.IntegerChoices):
+        ACTIVE = 1, _('Активний')
+        DELETED = 2, _('Видалено')
+
     first_name = models.CharField(
         'Імʼя',
         max_length=50, 
@@ -57,7 +61,13 @@ class ContactMixin(models.Model):
         'Номер телефону', max_length=13, blank=False)
     email = models.CharField(max_length=150, blank=True, null=True)
     date_of_birth = models.DateField('Дата народження', blank=True, null=True)
-    date_created = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_created=True, auto_now_add=True)
+    record_status = models.CharField(
+        choices=RecordStatus.choices,
+        max_length=2,
+        default=RecordStatus.ACTIVE
+    )
+    date_update = models.DateTimeField(null=True)
 
     class Meta:
         abstract = True
@@ -134,6 +144,7 @@ class Teacher(ContactMixin):
         ACTIVE = 1, _('Активний')
         VACATION = 2, _('Відпустка')
         INACTIVE = 3, _('Неактивний')
+        RELEASE = 4, _('Звільнений')
 
     status = models.IntegerField(
         'Статус',
@@ -152,8 +163,12 @@ class Teacher(ContactMixin):
         'Колір занять',
         max_length=10,
         default='#269faf',
-        null=True,
-        blank=True,
+    )
+
+    lessons_font_color = models.CharField(
+        'Колір тексту занять',
+        max_length=10,
+        default='#FBF9F9',
     )
 
     @property
@@ -190,6 +205,10 @@ class Teacher(ContactMixin):
         for id_, name in self.Status.choices:
             if self.status == id_:
                 return name
+
+    @property
+    def free_subjects_list(self):
+        return Subject.objects.exclude(id__in=self.subjects.all()).all()
 
 
 class Source(models.Model):

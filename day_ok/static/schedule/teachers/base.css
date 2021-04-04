@@ -1,0 +1,176 @@
+
+.add {
+    width: 60vh;
+    padding-left: 3vh;
+}
+
+.add_form {
+    width: 60vh;
+}
+
+.add_form.first_name {
+    width: 17vh;
+    float: left;
+}
+
+.add_form.last_name {
+    width: 33vh;
+    float: left;
+    padding-left: 5vh;
+}
+
+.add_form.phone_number {
+    width: 17vh;
+    float: left;
+}
+
+.add_form.email {
+    width: 33vh;
+    padding-left: 5vh;
+    float: left;
+}
+
+.add_form.date_of_birth {
+    width: 25vh;
+    padding-right: 5vh;
+    float: left;
+}
+
+.add_form.date_start {
+    width: 25vh;
+    padding-left: 5vh;
+    float: left;
+}
+
+.add_form.subjects {
+    width: 50vh;
+}
+
+
+@media screen and (max-width: 1024px) {
+    .add {
+        max-width: 60vh;
+        padding-left: 3vh;
+    }
+
+    .add_form.first_name {
+        width: 17vh;
+    }
+
+    .add_form.last_name {
+        width: 33vh;
+        padding-left: 5vh;
+    }
+
+    .add_form.phone_number {
+        width: 17vh;
+        float: left;
+    }
+
+    .add_form.email {
+        width: 33vh;
+        padding-left: 5vh;
+        float: left;
+    }
+
+    .add_form.date_of_birth {
+        width: 25vh;
+        padding-right: 5vh;
+    }
+
+    .add_form.date_start {
+        width: 25vh;
+        padding-left: 5vh;
+    }
+
+    .add_form.subjects {
+        width: 50vh;
+    }
+}
+
+/* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 768px) {
+    .add {
+        max-width: 60vh;
+        padding-left: 3vh;
+    }
+
+    .add_form.first_name {
+        width: 17vh;
+    }
+
+    .add_form.last_name {
+        width: 33vh;
+        padding-left: 5vh;
+    }
+
+    .add_form.phone_number {
+        width: 17vh;
+        float: left;
+    }
+
+    .add_form.email {
+        width: 33vh;
+        padding-left: 5vh;
+        float: left;
+    }
+
+    .add_form.date_of_birth {
+        width: 25vh;
+        padding-right: 5vh;
+    }
+
+    .add_form.date_start {
+        width: 25vh;
+        padding-left: 5vh;
+    }
+
+    .add_form.subjects {
+        width: 50vh;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .add {
+        max-width: 60vh;
+        padding-left: 3vh;
+    }
+
+    .add_form {
+        width: 30vh;
+    }
+
+    .add_form.first_name {
+        width: 23vh;
+        float: left;
+    }
+
+    .add_form.last_name {
+        width: 37vh;
+        float: left;
+        padding-left: 5vh;
+    }
+
+    .add_form.phone_number {
+        width: 23vh;
+        float: left;
+    }
+
+    .add_form.email {
+        width: 37vh;
+        padding-left: 5vh;
+        float: left;
+    }
+
+    .add_form.date_of_birth {
+        width: 30vh;
+        padding-right: 5vh;
+        float: left;
+    }
+
+    .add_form.date_start {
+        width: 30vh;
+        padding-left: 5vh;
+        float: left;
+    }
+}

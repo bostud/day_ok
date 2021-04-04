@@ -18,7 +18,7 @@ def get_teachers_month_statistics(
         date_end = get_last_date_of_month(date_start)
 
     for teacher in teachers_objects():
-        if teacher.date_release and teacher.date_release < date_start:
+        if teacher.date_release and teacher.date_release.date() < date_start:
             continue
 
         subjects_stat = []

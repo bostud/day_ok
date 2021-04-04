@@ -1,7 +1,10 @@
 {% extends 'schedule/base/base_cms.html' %}
+{% block title %}{{teacher.full_name}}{% endblock %}
 {% block head %}
     {% load static %}
+    {% include 'date_select_picker.html' %}
     <link rel="stylesheet" type="text/css" href="{% static 'schedule/teachers/view.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/teachers/base.css' %}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/3.2.0/css/bootstrap-colorpicker.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-colorpicker/3.2.0/js/bootstrap-colorpicker.min.js"></script>
 {% endblock %}
@@ -9,24 +12,110 @@
     <div class="row text-center" style="background-color: lightgrey">
         <div class="col">
             <h3>
+                <button class="btn btn-outline-info" data-toggle="collapse" data-target="#edit">
+                    <span class="fas fa-edit"></span>
+                </button>
                 {{ teacher.full_name }}
             </h3>
         </div>
-    </div>
-    <br />
-    <div class="row">
-        <div class="col-2">
-            Телефон: {{teacher.phone_number}}
+        <div class="col">
+            <h5>
+                <button class="btn btn-warning" data-toggle="modal" data-target="#change_status">
+                    <span class="fas fa-edit"></span>
+                </button>
+                Видалити
+            </h5>
         </div>
-        <div class="col-4">
-            <form method="POST" class="form-inline">
-                {% csrf_token %}
-                <div>
-                    <label for="id_color">Виберіть колір для занять</label>
-                    <input class="form-control color" id="id_color" name="color" type="text" style="width: 15vh; background-color: {{teacher.lessons_color}}">
-                    <button class="btn btn-outline-secondary">Вибрати</button>
+    </div>
+    <div class="modal" id="change_status">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Видалити</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-            </form>
+                <div class="modal-body">
+                    <h6>Ви впевнені що хочете видалити викладача <strong>{{teacher.full_name}}</strong>?</h6>
+                    <p>Усі заплановані заняття будуть видалені.</p>
+                    <p>Заняття які відбулись <strong>не будуть</strong> видалені.</p>
+                </div>
+                <div class="modal-footer">
+                    <form method="POST" action="{% url 'teacher_delete' teacher.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Видалити</button>
+                    </form>
+                    <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="edit" class="collapse">
+            <div class="row">
+                <div class="col add">
+                    <form class="add_form" method="post">
+                        {% csrf_token %}
+                        {% include 'schedule/teachers/add_form.html' with form=form %}
+                        <button type="submit" class="btn btn-success">Редагувати</button>
+                    </form>
+                </div>
+                <div class="col add">
+                    <h6>Поточні дані</h6>
+                    <p>Статус: <strong>{{teacher.status_name}}</strong></p>
+                    <p>Ім'я: <strong>{{teacher.first_name}}</strong></p>
+                    <p>Прізвище: <strong>{{teacher.last_name}}</strong></p>
+                    <p>Телефон: <strong>{{teacher.phone_number}} </strong></p>
+                    <p>@email: <strong>{{teacher.email}} </strong></p>
+                    <p>Дата народження: <strong>{{teacher.date_of_birth|date:'d.m.Y'}} </strong></p>
+                    <p>Дата початку роботи: <strong>{{teacher.date_start|date:'d.m.Y'}} </strong></p>
+                    <p>Дата звільнення: <strong>{{teacher.date_release|date:'d.m.Y'}} </strong></p>
+                    <p>Предмети:
+                        {% for subject in teacher.subjects_list %}
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info" disabled>{{subject.name}}</button>
+                                {% if not teacher.date_release %}
+                                    <form method="post" action="{% url 'unpin_teacher_subject' teacher.id %}">
+                                        {% csrf_token %}
+                                        <input hidden name="subject_id" value="{{subject.id}}">
+                                        <button type="submit" class="btn btn-info" title="Відкріпити предмет">
+                                            <span class="fas fa-eraser"></span>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </p>
+                </div>
+                <div class="col add">
+                    <form method="POST" class="form-group" action="{% url 'set_teacher_lessons_style' teacher.id %}">
+                        {% csrf_token %}
+                        <div>
+                            <label for="id_full_style">Виберіть колір для занять</label>
+                            <input class="form-control color"
+                                   id="id_full_style"
+                                   type="text"
+                                   value="Заняття"
+                                   style="width: 15vh; background-color: {{teacher.lessons_color}}; color: {{teacher.lessons_font_color}};"
+                                   disabled
+                            >
+                            <input type="text"
+                                   class="btn btn-outline-info"
+                                   id="id_select_color"
+                                   value="{{teacher.lessons_color}}"
+                                   name="color"
+                                   style="max-width: 10vh;">Фон
+                            <input type="text"
+                                   class="btn btn-outline-info"
+                                   id="id_select_font_color"
+                                   value="{{teacher.lessons_font_color}}"
+                                   name="font_color"
+                                   style="max-width: 10vh;"
+                            >Текст
+                            <button class="btn btn-outline-secondary">Вибрати</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
     <br />
@@ -164,10 +253,14 @@
             window.open(elem.getAttribute('data-url'));
         }
         $(function () {
-            $('#id_color').colorpicker();
+            $('#id_select_color').colorpicker();
+            $('#id_select_font_color').colorpicker();
 
-            $('#id_color').on('colorpickerChange', function(event) {
+            $('#id_select_color').on('colorpickerChange', function(event) {
                 $('.color').css('background-color', event.color.toString());
+            });
+            $('#id_select_font_color').on('colorpickerChange', function(event) {
+                $('.color').css('color', event.color.toString());
             });
         });
     </script>
