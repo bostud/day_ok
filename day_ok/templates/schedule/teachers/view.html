@@ -69,7 +69,15 @@
                     <p>Дата народження: <strong>{{teacher.date_of_birth|date:'d.m.Y'}} </strong></p>
                     <p>Дата початку роботи: <strong>{{teacher.date_start|date:'d.m.Y'}} </strong></p>
                     <p>Дата звільнення: <strong>{{teacher.date_release|date:'d.m.Y'}} </strong></p>
-                    <p>Предмети:
+                    <p>
+                        <a  href="#"
+                            data-toggle="popover"
+                           title="Відкріплення предметів"
+                           data-content="Після відкріплення предмету, заняття що відбулись - зберігаються, заняття що не відбулись - видаляються"
+                        >
+                            Предмети:
+                        </a>
+
                         {% for subject in teacher.subjects_list %}
                             <div class="btn-group">
                                 <button type="button" class="btn btn-info" disabled>{{subject.name}}</button>
@@ -262,6 +270,9 @@
             $('#id_select_font_color').on('colorpickerChange', function(event) {
                 $('.color').css('color', event.color.toString());
             });
+        });
+        $(document).ready(function(){
+          $('[data-toggle="popover"]').popover();
         });
     </script>
 

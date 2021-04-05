@@ -191,6 +191,19 @@ def unpin_teacher_subject(
     if t and t.subjects:
         s: Optional[Subject] = Subject.objects.filter(id=int(subject_id)).first()  # noqa
         if s:
-            t.subjects.remove(s)
+            dt_now = datetime_now_tz()
+            Lessons.objects.filter(
+                teacher=t,
+                subject=s,
+                date__gt=dt_now.date(),
+            ).delete()
+            if not (
+                Lessons.objects.filter(
+                    teacher=t,
+                    subject=s,
+                    date__lte=dt_now.date(),
+                ).all()
+            ):
+                t.subjects.remove(s)
         t.save()
     return t
