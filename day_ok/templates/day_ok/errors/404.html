@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Сторінку не знайдено</title>
-</head>
-<body>
-<h3>Сторінку не знайдено</h3>
-<a href="/">Головна</a>
-</body>
-</html>
+{% extends 'schedule/base/base_cms.html' %}
+{% block title %}Сторінку не знайдено{% endblock %}
+{% block head %}
+    {% load static %}
+{% endblock %}
+{% block body %}
+<div class="row">
+    <div class="col jumbotron">
+        <h2>Сторінку не знайдено</h2>
+    </div>
+</div>
+{% endblock %}

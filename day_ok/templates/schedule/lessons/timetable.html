@@ -20,7 +20,7 @@
                         <div class="dropdown">
                             <div class="lessons dauto border border-success"
                                  data-tooltip="{{lessons.classroom.name}} / {{lessons.subject.name}} / {{lessons.get_lessons_type_name}} / {{lessons.time_start|time:'H:i'}}-{{lessons.time_end|time:'H:i'}}"
-                                 style="background-color: {{ lessons.teacher.lessons_color }}; height: {{lessons.style_height}}vh;"
+                                 style="background-color: {{ lessons.teacher.lessons_color }}; height: {{lessons.style_height}}vh; color: {{lessons.teacher.lessons_font_color}};"
                                  data-is-live="{{lessons.is_live}}"
                                  data-is-finished="{{lessons.is_finished}}"
                                  data-url="{% url 'lessons_action' 'edit' lessons.id %}"

@@ -7,7 +7,8 @@ from .views import (
     classrooms, classrooms_actions,
     groups, groups_actions, group_delete, group_unpin_student,
     students_actions, students,
-    teachers, teachers_actions,
+    teachers, teachers_view, set_teacher_lessons_style, teacher_delete,
+    unpin_subject,
     invoices, invoices_actions,
     invoices_add, invoices_change_status,
     finance, get_service_subjects,
@@ -78,9 +79,21 @@ students_urlpatterns = [
 teachers_urlpatterns = [
     path('teachers', teachers, name='teachers'),
     path(
-        'teachers/<str:action>/<int:teacher_id>/',
-        teachers_actions,
+        'teacher/<int:teacher_id>/',
+        teachers_view,
         name='teachers_actions'
+    ),
+    path(
+        'teacher/<int:teacher_id>/set_lessons_style',
+        set_teacher_lessons_style, name='set_teacher_lessons_style',
+    ),
+    path(
+        'teacher/<int:teacher_id>/delete',
+        teacher_delete, name='teacher_delete',
+    ),
+    path(
+        'teacher/<int:teacher_id>/unpin_subject',
+        unpin_subject, name='unpin_teacher_subject',
     ),
 ]
 
