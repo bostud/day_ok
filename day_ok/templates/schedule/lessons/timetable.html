@@ -1,5 +1,5 @@
 <div class="schedule">
-    <div class="teacher time table-responsible">
+    <div class="teacher time">
         <div class="teacher_title">Time</div>
         {% for t in time_periods %}
             {% if live_period == t %}
@@ -9,89 +9,56 @@
             {% endif %}
         {% endfor %}
     </div>
-    <div style="overflow: hidden; width: 96%">
-        {% for teacher_lessons in total_schedule %}
-            <div class="teacher">
-                <div class="teacher_title">{{teacher_lessons.teacher.full_name}}</div>
-                {% for lessons in teacher_lessons.lessons %}
-                    {% if lessons.is_empty %}
-                        <div class="lessons b30"></div>
-                    {% else %}
-                        <div class="dropdown">
-                            <div class="lessons dauto border border-success"
-                                 data-tooltip="{{lessons.classroom.name}} / {{lessons.subject.name}} / {{lessons.get_lessons_type_name}} / {{lessons.time_start|time:'H:i'}}-{{lessons.time_end|time:'H:i'}}"
-                                 style="background-color: {{ lessons.teacher.lessons_color }}; height: {{lessons.style_height}}vh; color: {{lessons.teacher.lessons_font_color}};"
-                                 data-is-live="{{lessons.is_live}}"
-                                 data-is-finished="{{lessons.is_finished}}"
-                                 data-url="{% url 'lessons_action' 'edit' lessons.id %}"
-                                 data-toggle="dropdown"
-                            >
-                                {{lessons.participation_name}}
-                                {% if lessons.is_live_now %}
-                                    <span class="badge badge-danger">Live!</span>
-                                {% endif %}
-                                {% if lessons.is_finished %}
-                                    <span class="badge badge-secondary">Finished</span>
-                                {% endif %}
+    <div class="schedule_content">
+        <div class="schedule_data" style="width: {{schedule_data_width}}px;">
+            {% for teacher_lessons in total_schedule %}
+                <div class="teacher">
+                    <div class="teacher_title">{{teacher_lessons.teacher.full_name}}</div>
+                    {% for lessons in teacher_lessons.lessons %}
+                        {% if lessons.is_empty %}
+                            <div class="lessons b30"></div>
+                        {% else %}
+                            <div class="dropdown">
+                                <div class="lessons dauto border border-success"
+                                     data-tooltip="{{lessons.classroom.name}} / {{lessons.subject.name}} / {{lessons.get_lessons_type_name}} / {{lessons.time_start|time:'H:i'}}-{{lessons.time_end|time:'H:i'}}"
+                                     style="background-color: {{ lessons.teacher.lessons_color }}; height: {{lessons.style_height}}vh; color: {{lessons.teacher.lessons_font_color}};"
+                                     data-is-live="{{lessons.is_live}}"
+                                     data-is-finished="{{lessons.is_finished}}"
+                                     data-url="{% url 'lessons_action' 'edit' lessons.id %}"
+                                     data-toggle="dropdown"
+                                >
+                                    {{lessons.participation_name}}
+                                    {% if lessons.is_live_now %}
+                                        <span class="badge badge-danger">Live!</span>
+                                    {% endif %}
+                                    {% if lessons.is_finished %}
+                                        <span class="badge badge-secondary">Finished</span>
+                                    {% endif %}
+                                </div>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{% url 'lessons_action' 'edit'  lessons.id %}">Редагувати</a>
+                                    <a class="dropdown-item" href="{% url 'lessons_action' 'view'  lessons.id %}">Переглянути</a>
+                                    <a class="dropdown-item" href="{% url 'lessons_action' 'delete'  lessons.id %}">Видалити</a>
+                                    <div class="dropdown-header">
+                                        Присутність:
+                                        {{ lessons.presence_count }}/{{ lessons.students_count}}
+                                    </div>
+                                    {% if lessons.condition_individual %}
+                                        {% if lessons.presence_count < lessons.students_count %}
+                                            <a class="dropdown-item" target="_blank" href="{% url 'presence_actions' lessons.id 'all' %}">Урок відбувся</a>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if lessons.presence_count != lessons.students_count %}
+                                            <a class="dropdown-item" target="_blank" href="{% url 'presence_actions' lessons.id 'all' %}">Усі є</a>
+                                        {% endif %}
+                                    {% endif %}
+                                    <a class="dropdown-item" target="_blank" href="{% url 'presence_actions' lessons.id 'edit' %}">Редагувати</a>
+                                </div>
                             </div>
-<!--                        {% if lessons.duration_minute > 60 %}-->
-<!--                            <div class="lessons dauto border border-success"-->
-<!--                                 data-tooltip="{{lessons.classroom.name}} / {{lessons.subject.name}} / {{lessons.get_lessons_type_name}} / {{lessons.time_start|time:'H:i'}}-{{lessons.time_end|time:'H:i'}}"-->
-<!--                                 style="background-color: {{ lessons.teacher.lessons_color }}; &#45;&#45;duration_min: {{lessons.duration_minute}}"-->
-<!--                                 data-is-live="{{lessons.is_live}}"-->
-<!--                                 data-is-finished="{{lessons.is_finished}}"-->
-<!--                                 data-url="{% url 'lessons_action' 'edit' lessons.id %}"-->
-<!--                                 data-toggle="dropdown"-->
-<!--                            >-->
-<!--                                {{lessons.participation_name}}-->
-<!--                                {% if lessons.is_live_now %}-->
-<!--                                    <span class="badge badge-danger">Live!</span>-->
-<!--                                {% endif %}-->
-<!--                                {% if lessons.is_finished %}-->
-<!--                                    <span class="badge badge-secondary">Finished</span>-->
-<!--                                {% endif %}-->
-<!--                            </div>-->
-<!--                        {% else %}-->
-<!--                            <div class="lessons d60 border border-success"-->
-<!--                                 data-tooltip="{{lessons.classroom.name}} / {{lessons.subject.name}} / {{lessons.get_lessons_type_name}} / {{lessons.time_start|time:'H:i'}}-{{lessons.time_end|time:'H:i'}}"-->
-<!--                                 style="background-color: {{ lessons.teacher.lessons_color }}"-->
-<!--                                 data-is-live="{{lessons.is_live}}"-->
-<!--                                 data-is-finished="{{lessons.is_finished}}"-->
-<!--                                 data-url="{% url 'lessons_action' 'edit' lessons.id %}"-->
-<!--                                 data-toggle="dropdown"-->
-<!--                            >-->
-<!--                                {{lessons.participation_name}}-->
-<!--                                {% if lessons.is_live_now %}-->
-<!--                                    <span class="badge badge-danger">Live!</span>-->
-<!--                                {% endif %}-->
-<!--                                {% if lessons.is_finished %}-->
-<!--                                    <span class="badge badge-secondary">Finished</span>-->
-<!--                                {% endif %}-->
-<!--                            </div>-->
-<!--                        {% endif %}-->
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{% url 'lessons_action' 'edit'  lessons.id %}">Редагувати</a>
-                            <a class="dropdown-item" href="{% url 'lessons_action' 'view'  lessons.id %}">Переглянути</a>
-                            <a class="dropdown-item" href="{% url 'lessons_action' 'delete'  lessons.id %}">Видалити</a>
-                            <div class="dropdown-header">
-                                Присутність:
-                                {{ lessons.presence_count }}/{{ lessons.students_count}}
-                            </div>
-                            {% if lessons.condition_individual %}
-                                {% if lessons.presence_count < lessons.students_count %}
-                                    <a class="dropdown-item" target="_blank" href="{% url 'presence_actions' lessons.id 'all' %}">Урок відбувся</a>
-                                {% endif %}
-                            {% else %}
-                                {% if lessons.presence_count != lessons.students_count %}
-                                    <a class="dropdown-item" target="_blank" href="{% url 'presence_actions' lessons.id 'all' %}">Усі є</a>
-                                {% endif %}
-                            {% endif %}
-                            <a class="dropdown-item" target="_blank" href="{% url 'presence_actions' lessons.id 'edit' %}">Редагувати</a>
-                        </div>
-                    </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>

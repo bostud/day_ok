@@ -5,8 +5,16 @@
 .schedule {
   font-family: 'Open Sans', sans-serif;
   color: #efefef;
-  overflow: auto;
 }
+
+.schedule_content {
+  width: 175vh;
+  overflow-x: scroll;
+}
+
+/*.schedule_data {*/
+/*  width: 250vh;*/
+/*}*/
 
 .schedule_modal {
   color: #343a40;
@@ -59,6 +67,61 @@
   font-weight: 200;
   padding-left: 5px;
 }
+
+
+@media screen and (max-width: 1440px){
+
+  .schedule_content {
+    width: 170vh;
+  }
+
+}
+
+@media screen and (max-width: 1024px) {
+  .schedule_content {
+    width: 115vh;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .schedule_content {
+    width: 90vh;
+  }
+}
+
+@media screen and (max-width: 425px) {
+  .teacher.time {
+    width: 5vh;
+  }
+
+  .schedule_content {
+    width: 45vh;
+  }
+}
+
+
+@media screen and (max-width: 375px) {
+  .teacher.time {
+    width: 5vh;
+  }
+
+  .schedule_content {
+    width: 37vh;
+  }
+}
+
+
+@media screen and (max-width: 320px) {
+  .teacher.time {
+    width: 5vh;
+  }
+
+  .schedule_content {
+    width: 30vh;
+  }
+}
+
+
 .lessons.dauto { font-size: 15px; }
 .lessons.d120 { height: 12vh; }
 .lessons.d90 { height: 9vh; }

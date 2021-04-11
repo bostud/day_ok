@@ -62,7 +62,7 @@ class ContactMixin(models.Model):
     email = models.CharField(max_length=150, blank=True, null=True)
     date_of_birth = models.DateField('Дата народження', blank=True, null=True)
     date_created = models.DateTimeField(auto_created=True, auto_now_add=True)
-    record_status = models.CharField(
+    record_status = models.IntegerField(
         choices=RecordStatus.choices,
         max_length=2,
         default=RecordStatus.ACTIVE

@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest
 from ..middleware import authenticated
 from datetime import datetime, timedelta
-from django.utils.timezone import now
+from ..utils import datetime_now_tz as now
 
 from ..forms.lessons import (
     LessonsByClassRoomForm,
@@ -21,6 +21,7 @@ from ..bl.lessons import (
     edit_lessons_from_form,
     get_lessons_data_by_filter_form,
     get_lessons_data_for_teachers,
+    get_lessons_for_week_view,
 )
 from ..utils import (
     get_weekday_number, get_weekday_name,
@@ -35,6 +36,8 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
     elif show_type == 'classroom':
         landing_form = LessonsByClassRoomForm
     elif show_type == 'teachers':
+        landing_form = LessonsByDayForm
+    elif show_type == 'week':
         landing_form = LessonsByDayForm
     else:
         landing_form = FilterLessonsForm
@@ -80,11 +83,16 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
         res = [teacher for teacher in day_schedule]
         context.update(form=LessonsByDayForm({'date': dt.strftime('%d.%m.%Y')}))
         context['total_schedule'] = res
+        context['schedule_data_width'] = len(res) * 125  # px
         context['tomorrow_date'] = now() + timedelta(days=1)
         context['yesterday_date'] = now() - timedelta(days=1)
         context['today_date'] = now()
         context['live_period'] = get_live_time_period()
         context['time_periods'] = get_day_time_periods()
+
+    def _fill_context_for_form_week(dt: datetime.date):
+        context['week'] = get_lessons_for_week_view(dt)
+        context['form'] = LessonsByDayForm({'date': dt.strftime('%d.%m.%Y')})
 
     if request.method == 'GET':
         form = landing_form(request.GET)
@@ -99,6 +107,9 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
             elif show_type == 'teachers':
                 date_from = form.cleaned_data['date']
                 _fill_context_for_form_teachers(date_from)
+            elif show_type == 'week':
+                date_from = form.cleaned_data['date']
+                _fill_context_for_form_week(date_from)
             else:
                 date_from = form.cleaned_data['date_from']
                 _fill_context_by_form_filter(form)
@@ -112,6 +123,8 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
             form = FilterLessonsForm(data={'date_from': dt_now})
             form.is_valid()
             _fill_context_by_form_filter(form)
+        elif show_type == 'week':
+            _fill_context_for_form_week(now().date())
 
     return render(request, 'schedule/lessons/main.html', context)
 

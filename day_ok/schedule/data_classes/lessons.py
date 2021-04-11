@@ -59,3 +59,13 @@ class EmptyLessons(Base):
     time_start: datetime.time
     is_empty: bool = True
     duration: int = 30
+
+
+@dataclass
+class LessonsDayWeekView(Base):
+    date_name: str
+    date: datetime.date
+    is_today: bool
+    lessons: List[Lessons]
+    head_color: str
+

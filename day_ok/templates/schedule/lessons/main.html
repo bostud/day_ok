@@ -4,7 +4,10 @@
     {% load static %}
     {% include 'date_select_picker.html' %}
     <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons/timetable.css' %}">
+    {% if show_type == 'teachers' %}
+        <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons/timetable.css' %}">
+    {% endif %}
+    <link rel="stylesheet" type="text/css" href="{% static 'schedule/lessons/week.css' %}">
 {% endblock %}
 {% block body %}
     <script type="text/javascript">
@@ -35,6 +38,7 @@
                     <a class="dropdown-item" href="{% url 'lessons' 'classroom' %}">аудиоріях</a>
                     <a class="dropdown-item" href="{% url 'lessons' 'filter' %}">фільтр</a>
                     <a class="dropdown-item" href="{% url 'lessons' 'teachers' %}">викладачах</a>
+                    <a class="dropdown-item" href="{% url 'lessons' 'week' %}">тижнях</a>
                 </div>
             </div>
         </div>
@@ -83,6 +87,12 @@
                             onclick="goToUrl(this)"
                     >Завтра
                     </button><span>&nbsp;&nbsp;&nbsp;</span>
+                    <label for="id_date">Дата:&nbsp;</label>
+                    {{ form.date }}<span>&nbsp;&nbsp;&nbsp;</span>
+                    <input type="submit" class="btn btn-secondary" value="Показати"><br>
+                </form>
+            {% elif show_type == 'week' and form %}
+                <form class="form-inline" method="GET" action="{% url 'lessons' show_type %}">
                     <label for="id_date">Дата:&nbsp;</label>
                     {{ form.date }}<span>&nbsp;&nbsp;&nbsp;</span>
                     <input type="submit" class="btn btn-secondary" value="Показати"><br>
@@ -191,5 +201,8 @@
     {% endif %}
     {% if show_type == 'teachers' %}
         {% include 'schedule/lessons/timetable.html' with time_periods=time_periods total_schedule=total_schedule %}
+    {% endif %}
+    {% if show_type == 'week' %}
+        {% include 'schedule/lessons/base/week.html' with week=week %}
     {% endif %}
 {% endblock %}

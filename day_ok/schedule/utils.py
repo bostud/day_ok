@@ -200,3 +200,7 @@ def get_last_date_of_month(dt: datetime = None, return_str: bool = True) -> str:
         return dt.strftime('%d.%m.%Y')
     else:
         return dt
+
+
+def get_week_date_start(dt: date) -> date:
+    return dt - timedelta(days=get_weekday_number(dt)-1)

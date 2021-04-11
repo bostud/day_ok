@@ -1,0 +1,111 @@
+.week {
+    width: 165vh;
+    overflow-x: scroll;
+    height: auto;
+    min-height: 50vh;
+}
+
+.week_content {
+    width: 165vh;
+    display: flex;
+    justify-content: space-between;
+}
+
+.day_content {
+    /*display: inline-block;*/
+    float: left;
+    width: 20vh;
+    top: 0;
+    height: auto;
+}
+
+.tooltip_ex {
+  position: relative;
+  display: inline-block;
+    width: 13vh;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip_ex .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 10%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip_ex .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip_ex:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+@media screen and (max-width: 1440px) {
+    .week {
+        width: 160vh;
+    }
+
+    .week_content {
+        width: 165vh;
+    }
+
+}
+
+@media screen and (max-width: 1024px) {
+    .week {
+        width: 100vh;
+    }
+
+    .tooltip_ex {
+        width: 15vh;
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+    .week {
+        width: 95vh;
+    }
+
+    .tooltip_ex {
+        width: 15vh;
+    }
+}
+
+
+@media screen and (max-width: 425px) {
+    .week {
+        width: 50vh;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .week {
+        width: 40vh;
+    }
+}
+
+@media screen and (max-width: 320px) {
+    .week {
+        width: 37vh;
+    }
+}

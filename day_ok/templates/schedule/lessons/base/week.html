@@ -1,0 +1,67 @@
+<div class="week">
+    <div class="week_content">
+    {% for day in week %}
+        <div class="day_content">
+            <table class="table table-sm">
+                <thead style="background-color: {{day.head_color}}">
+                <th>Час</th>
+                <th>{{ day.date_name }}({{day.date|date:'d.m'}})</th>
+                </thead>
+                <tbody>
+                {% for lesson in day.lessons %}
+                    <tr>
+                        <td>{{lesson.time_start|time:"H:i"}}</td>
+                        <td>
+                            <div class="dropdown">
+                                <div class="border border-success tooltip_ex"
+                                     style="background-color: {{ lesson.teacher.lessons_color }}; height: 5vh; color: {{lesson.teacher.lessons_font_color}};"
+                                     data-is-live="{{lesson.is_live}}"
+                                     data-is-finished="{{lesson.is_finished}}"
+                                     data-url="{% url 'lessons_action' 'edit' lesson.id %}"
+                                     data-toggle="dropdown"
+                                     onmouseover="showTooltip(this);"
+                                >
+                                    <span class="tooltiptext">
+                                        {{lesson.classroom.name}} / {{lesson.subject.name}} / {{lesson.get_lessons_type_name}} / {{lesson.time_start|time:'H:i'}}-{{lesson.time_end|time:'H:i'}}
+                                    </span>
+                                    {{lesson.participation_name}}
+                                    {% if lesson.is_live_now %}
+                                        <span class="badge badge-danger">Live!</span>
+                                    {% endif %}
+                                    {% if lesson.is_finished %}
+                                        <span class="badge badge-secondary">Finished</span>
+                                    {% endif %}
+                                </div>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{% url 'lessons_action' 'edit'  lesson.id %}">Редагувати</a>
+                                    <a class="dropdown-item" href="{% url 'lessons_action' 'delete'  lesson.id %}">Видалити</a>
+                                    <div class="dropdown-header">
+                                        Присутність:
+                                        {{ lesson.presence_count }}/{{ lesson.students_count}}
+                                    </div>
+                                    {% if lesson.condition_individual %}
+                                        {% if lesson.presence_count < lesson.students_count %}
+                                            <a class="dropdown-item" target="_blank" href="{% url 'presence_actions' lesson.id 'all' %}">Урок відбувся</a>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if lesson.presence_count != lesson.students_count %}
+                                            <a class="dropdown-item" target="_blank" href="{% url 'presence_actions' lesson.id 'all' %}">Усі є</a>
+                                        {% endif %}
+                                    {% endif %}
+                                    <a class="dropdown-item" target="_blank" href="{% url 'presence_actions' lesson.id 'edit' %}">Редагувати</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+<script>
+function showTooltip(e) {
+  e.tooltip();
+}
+</script>
