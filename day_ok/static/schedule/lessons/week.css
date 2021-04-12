@@ -1,6 +1,6 @@
 .week {
     width: 165vh;
-    overflow-x: scroll;
+    overflow-x: scroll !important;
     height: auto;
     min-height: 50vh;
 }
@@ -19,16 +19,20 @@
     height: auto;
 }
 
+.lessons {
+    height: 5vh;
+}
+
 .tooltip_ex {
   position: relative;
   display: inline-block;
-    width: 13vh;
+  width: 2vh;
   border-bottom: 1px dotted black;
 }
 
 .tooltip_ex .tooltiptext {
   visibility: hidden;
-  width: 120px;
+  width: 17vh;
   background-color: #555;
   color: #fff;
   text-align: center;
@@ -37,8 +41,8 @@
   position: absolute;
   z-index: 1;
   bottom: 10%;
-  left: 50%;
-  margin-left: -60px;
+  left: 20%;
+  margin-left: 5px;
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -64,19 +68,19 @@
         width: 160vh;
     }
 
-    .week_content {
-        width: 165vh;
+    .lessons {
+        font-size: 13px;
     }
 
 }
 
 @media screen and (max-width: 1024px) {
     .week {
-        width: 100vh;
+        width: 125vh;
     }
 
-    .tooltip_ex {
-        width: 15vh;
+    .lessons {
+        font-size: 13px;
     }
 }
 
@@ -86,8 +90,9 @@
         width: 95vh;
     }
 
-    .tooltip_ex {
-        width: 15vh;
+
+    .lessons {
+        font-size: 13px;
     }
 }
 
@@ -96,16 +101,28 @@
     .week {
         width: 50vh;
     }
+
+    .lessons {
+        font-size: 13px;
+    }
 }
 
 @media screen and (max-width: 375px) {
     .week {
         width: 40vh;
     }
+
+    .lessons {
+        font-size: 13px;
+    }
 }
 
 @media screen and (max-width: 320px) {
     .week {
         width: 37vh;
+    }
+
+    .lessons {
+        font-size: 13px;
     }
 }

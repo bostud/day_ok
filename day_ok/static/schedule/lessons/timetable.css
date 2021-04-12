@@ -85,7 +85,7 @@
 
 @media screen and (max-width: 768px) {
   .schedule_content {
-    width: 90vh;
+    width: 85vh;
   }
 }
 
@@ -95,7 +95,7 @@
   }
 
   .schedule_content {
-    width: 45vh;
+    width: 42vh;
   }
 }
 
@@ -106,7 +106,7 @@
   }
 
   .schedule_content {
-    width: 37vh;
+    width: 35vh;
   }
 }
 

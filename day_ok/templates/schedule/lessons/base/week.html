@@ -10,26 +10,26 @@
                 <tbody>
                 {% for lesson in day.lessons %}
                     <tr>
-                        <td>{{lesson.time_start|time:"H:i"}}</td>
                         <td>
-                            <div class="dropdown">
-                                <div class="border border-success tooltip_ex"
-                                     style="background-color: {{ lesson.teacher.lessons_color }}; height: 5vh; color: {{lesson.teacher.lessons_font_color}};"
+                            {{lesson.time_start|time:"H:i"}}
+                            <span class="fas fa-ellipsis-h tooltip_ex">
+                                <span class="tooltiptext">
+                                    {{lesson.classroom.name}} / {{lesson.subject.name}} / {{lesson.get_lessons_type_name}} / {{lesson.time_start|time:'H:i'}}-{{lesson.time_end|time:'H:i'}}
+                                </span>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="border border-success dropdown">
+                                <div class="lessons"
+                                     style="background-color: {{ lesson.teacher.lessons_color }}; color: {{lesson.teacher.lessons_font_color}};"
                                      data-is-live="{{lesson.is_live}}"
                                      data-is-finished="{{lesson.is_finished}}"
                                      data-url="{% url 'lessons_action' 'edit' lesson.id %}"
                                      data-toggle="dropdown"
-                                     onmouseover="showTooltip(this);"
                                 >
-                                    <span class="tooltiptext">
-                                        {{lesson.classroom.name}} / {{lesson.subject.name}} / {{lesson.get_lessons_type_name}} / {{lesson.time_start|time:'H:i'}}-{{lesson.time_end|time:'H:i'}}
-                                    </span>
                                     {{lesson.participation_name}}
                                     {% if lesson.is_live_now %}
                                         <span class="badge badge-danger">Live!</span>
-                                    {% endif %}
-                                    {% if lesson.is_finished %}
-                                        <span class="badge badge-secondary">Finished</span>
                                     {% endif %}
                                 </div>
                                 <div class="dropdown-menu">
@@ -60,8 +60,3 @@
     {% endfor %}
     </div>
 </div>
-<script>
-function showTooltip(e) {
-  e.tooltip();
-}
-</script>
