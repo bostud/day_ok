@@ -99,6 +99,16 @@
   }
 }
 
+@media screen and (max-width: 414px) {
+  .teacher.time {
+    width: 5vh;
+  }
+
+  .schedule_content {
+    width: 37vh;
+  }
+}
+
 
 @media screen and (max-width: 375px) {
   .teacher.time {
