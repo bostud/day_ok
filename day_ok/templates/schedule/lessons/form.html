@@ -52,7 +52,7 @@
             </div>
             <div>
                 <label for="id_lessons_type">Тип заняття</label>
-                <select class="custom-select" id="id_lessons_type" name="lessons_type" required>
+                <select class="custom-select" id="id_lessons_type" name="lessons_type" required onchange="setRequiredGroupOrStudent(this)">
                     <option selected></option>
                     {% for id_, name in lessons_types %}
                         {% if edit_lessons_type and edit_lessons_type == id_ %}
@@ -68,12 +68,14 @@
                     Якщо тип заняття <mark>індивідуальний</mark> - вказуємо лише <mark>учня</mark></span>
                 {% endif %}
             </div>
-            <div>
+            <div id="student_div" hidden>
                 <label for="id_student">Учень</label>
                 <select class="selectpicker form-control"
                         data-live-search="true"
                         title="Виберіть учня ..."
-                        id="id_student" name="student">
+                        name="student"
+                        id="id_student"
+                >
                     {% for id_, name in students %}
                         {% if edit_student and edit_student == id_ %}
                             <option value="{{ id_ }}" selected>{{ name }}</option>
@@ -83,7 +85,7 @@
                     {% endfor %}
                 </select>
             </div>
-            <div>
+            <div id="group_div" hidden>
                 <label for="id_group">Група</label>
                 <select class="selectpicker form-control"
                         data-live-search="true"
@@ -192,3 +194,19 @@
         </div>
     </div>
 </form>
+<script>
+    function setRequiredGroupOrStudent(elem) {
+        document.getElementById('id_student').required = parseInt(elem.value) === 1;
+        document.getElementById('student_div').hidden = parseInt(elem.value) !== 1;
+        document.getElementById('id_group').required = parseInt(elem.value) === 2;
+        document.getElementById('group_div').hidden = parseInt(elem.value) !== 2;
+    }
+
+    function loadPage() {
+        let elem = document.getElementById('id_lessons_type');
+        setRequiredGroupOrStudent(elem);
+   }
+
+   $(document).ready(loadPage());
+
+</script>
