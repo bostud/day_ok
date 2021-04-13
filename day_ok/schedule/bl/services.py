@@ -13,6 +13,13 @@ class NameAlreadyExistError(Error):
         )
 
 
+class SubjectsInvalidValue(Error):
+    def __init__(self):
+        super().__init__(
+            'Предмети не вказані'
+        )
+
+
 def get_service_subjects(service_id: int) -> List[Optional[Subject]]:
     service = Service.objects.filter(id=service_id).first()
     if service:
@@ -38,6 +45,9 @@ def add_service(
     if Service.objects.filter(name=name).first():
         raise NameAlreadyExistError(name)
 
+    if not subjects:
+        raise SubjectsInvalidValue()
+
     subjects = Subject.objects.filter(
         id__in=[int(s_i) for s_i in subjects]
     ).all()
@@ -46,8 +56,10 @@ def add_service(
         price=int(price),
         lessons_count=int(lessons_count),
         type_of=int(type_of),
-        subjects=subjects,
     )
+
+    s.save()
+    s.subjects.add(*subjects)
     s.save()
 
     return s

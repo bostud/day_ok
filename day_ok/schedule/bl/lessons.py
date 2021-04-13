@@ -151,6 +151,8 @@ def add_lessons_from_form(form: AddLessonsForm) -> int:
             lessons=ls,
         )
         presence.save()
+        presence.participants.add(*ls.participants_list)
+        presence.save()
         lessons_created += 1
 
     if lessons_created == 0:

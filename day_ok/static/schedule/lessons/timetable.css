@@ -77,9 +77,45 @@
 
 }
 
+@media screen and (max-width: 1390px){
+
+  .schedule_content {
+    width: 150vh;
+  }
+
+}
+
+@media screen and (max-width: 1281px){
+
+  .schedule_content {
+    width: 140vh;
+  }
+
+}
+
+@media screen and (max-width: 1180px){
+
+  .schedule_content {
+    width: 125vh;
+  }
+
+}
+
 @media screen and (max-width: 1024px) {
   .schedule_content {
     width: 115vh;
+  }
+}
+
+@media screen and (max-width: 950px) {
+  .schedule_content {
+    width: 100vh;
+  }
+}
+
+@media screen and (max-width: 830px) {
+  .schedule_content {
+    width: 90vh;
   }
 }
 
@@ -88,6 +124,25 @@
     width: 85vh;
   }
 }
+
+@media screen and (max-width: 710px) {
+  .schedule_content {
+    width: 70vh;
+  }
+}
+
+@media screen and (max-width: 590px) {
+  .schedule_content {
+    width: 60vh;
+  }
+}
+
+@media screen and (max-width: 590px) {
+  .schedule_content {
+    width: 50vh;
+  }
+}
+
 
 @media screen and (max-width: 425px) {
   .teacher.time {
