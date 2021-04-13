@@ -11,6 +11,7 @@ uvloop = "*"
 httptools = "*"
 asgiref = "*"
 coverage = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 
