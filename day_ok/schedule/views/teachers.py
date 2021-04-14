@@ -18,6 +18,8 @@ from ..bl.teachers import (
     prepare_date_fields,
     delete_teacher,
     unpin_teacher_subject,
+    get_lessons_by_year_and_month,
+    get_weekly_lessons_by_year_and_month,
 )
 from ..utils import (
     is_valid_period_format, create_datetime_start_from_period,
@@ -91,7 +93,11 @@ def teachers_view(request: HttpRequest, teacher_id: int):
         teacher = get_teacher(teacher_id)
         if not teacher:
             raise Http404("Викладач не існує")
-
+        year = (dt_start or dt_start_period).year
+        month = (dt_start or dt_start_period).month
+        ctx.update(lessons_calendar=list(get_weekly_lessons_by_year_and_month(
+            teacher, year, month,
+        )))
         data = model_to_dict(teacher)
         prepare_date_fields(data)
         ctx.update(teacher=teacher)

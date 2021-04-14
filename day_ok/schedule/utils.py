@@ -192,7 +192,10 @@ def get_first_date_of_month(dt: datetime = None, return_str: bool = True) -> str
         return dt
 
 
-def get_last_date_of_month(dt: datetime = None, return_str: bool = True) -> str:
+def get_last_date_of_month(
+    dt: datetime = None,
+    return_str: bool = True
+) -> Union[str, datetime]:
     dt = datetime_now_tz() if not dt else dt
     next_month = get_next_month_from_date(dt)
     dt = (next_month - timedelta(days=1)).date()
