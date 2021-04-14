@@ -5,3 +5,24 @@
 .colorTarget2 {
     background-color: rgba(178,147,157,0.7);
 }
+
+.table_data{
+    width: 120vh;
+}
+
+.subject_table {
+    padding-left: 10vh;
+    background-color: #cccccc;
+}
+
+.lessons_table {
+    padding-left: 10vh;
+    background-color: darkgray;
+}
+
+
+@media screen and (max-width: 1024px){
+    .table_data {
+        width: 100vh;
+    }
+}

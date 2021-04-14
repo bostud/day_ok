@@ -1,8 +1,9 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple, Generator
 from ..models import Teacher, Subject, Lessons
-from datetime import datetime
-from ..utils import datetime_now_tz
+from datetime import datetime, timedelta
+from ..utils import datetime_now_tz, get_last_date_of_month, get_weekday_number
 from dataclasses import dataclass
+from ..data_classes.teachers import DailyLessonsReport, WeeklyLessonsReport
 
 
 @dataclass
@@ -207,3 +208,68 @@ def unpin_teacher_subject(
                 t.subjects.remove(s)
         t.save()
     return t
+
+
+def get_lessons_by_date(
+    dt: datetime.date,
+    teacher: Teacher,
+) -> List[Optional[Lessons]]:
+    return Lessons.objects.filter(
+        date=dt,
+        teacher=teacher,
+    ).order_by('time_start').all()
+
+
+def get_lessons_by_year_and_month(
+    teacher: Teacher,
+    year: int,
+    month: int,
+) -> Tuple[datetime.date, List[Optional[Lessons]]]:
+    _date = datetime(year=year, month=month, day=1)
+    _last_date = get_last_date_of_month(_date, return_str=False).date()
+    _date = _date.date()
+    while _date <= _last_date:
+        yield _date, get_lessons_by_date(_date, teacher)
+        _date = _date + timedelta(days=1)
+
+
+def get_weekly_lessons_by_year_and_month(
+    teacher: Teacher,
+    year: int,
+    month: int,
+) -> Generator:
+    _date = datetime(year=year, month=month, day=1)
+    _last_date = get_last_date_of_month(_date, return_str=False)
+    _date = _date.date() - timedelta(days=get_weekday_number(_date) - 1)
+    week_day = 0
+    result = []
+    while _date <= _last_date:
+        if _date.month != month:
+            daily_r = DailyLessonsReport([], _date, False)
+        else:
+            daily_r = DailyLessonsReport(
+                get_lessons_by_date(_date, teacher),
+                _date
+            )
+        result.append(daily_r)
+        week_day += 1
+        _date = _date + timedelta(days=1)
+
+        if week_day == 7:
+            yield WeeklyLessonsReport(
+                1,
+                _date - timedelta(days=week_day),
+                _date,
+                result
+            )
+            week_day = 0
+            result = []
+
+    yield WeeklyLessonsReport(
+        1,
+        _date - timedelta(days=week_day),
+        _date,
+        result
+    )
+
+

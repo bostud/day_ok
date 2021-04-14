@@ -147,9 +147,55 @@
             </form>
         </div>
     </div>
+<hr />
+<div class="row col ">
+    <h5>Календар</h5>
+</div>
+<div class="row">
+    <div class="col table-responsive" style="max-width: 125vh;">
+        <table class="table table-hover table-sm" style="text-align: center">
+            <thead class="table-dark" style="text-align: center">
+            <th>Понеділок</th>
+            <th>Вівторок</th>
+            <th>Середа</th>
+            <th>Четвер</th>
+            <th>П'ятниця</th>
+            <th>Субота</th>
+            <th>Неділя</th>
+            </thead>
+            <tbody>
+            {% for week in lessons_calendar %}
+            <tr>
+                {% for day in week.report %}
+                    <td>
+                        <div style="background-color: {{day.style}}">
+                            <b>
+                                {{day.date|date:"d.m.Y" }}
+                                {% if day.is_today %}
+                                    <span class="badge badge-danger">Today</span>
+                                {% endif %}
+                            </b>
+                            <br>
+                            {% if day.lessons %}
+                                {% for l in day.lessons %}
+                            <p><span class="btn btn-info">{{l}}</span></p>
+                                {% endfor %}
+                            {% else %}
+                                <p><span class="btn btn-default">&nbsp;    </span></p>
+                            {% endif %}
+                        </div>
+                    </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
     <br />
     <div class="row">
         <div class="col table-responsive">
+            <div class="table_data">
             {% for lessons_report in lessons_reports %}
                 <div class="colorTarget{{lessons_report.lessons_type_id}}">
                     <table class="table table-striped table-sm" cellspacing="0" width="100%">
@@ -164,14 +210,14 @@
                                             data-toggle="collapse"
                                             data-target="#lessons_type_{{ lessons_report.lessons_type_id }}"
                                             class="fas fa-angle-down"
-                                    ></span>
-                                    {{ lessons_report.lessons_type_name }}
+                                    >{{ lessons_report.lessons_type_name }}</span>
                                 </td>
                                 <td>{{ lessons_report.count }}</td>
                             </tr>
                         </tbody>
                     </table>
                     <div id="lessons_type_{{ lessons_report.lessons_type_id }}" class="collapse table-responsive">
+                        <div class="subject_table">
                         {% for subject_report in lessons_report.subjects_reports %}
                             <table class="table table-striped table-sm" cellspacing="0" width="100%">
                                 <thead>
@@ -185,62 +231,67 @@
                                                     data-toggle="collapse"
                                                     data-target="#subject_{{ lessons_report.lessons_type_id }}_{{ subject_report.subject.id }}"
                                                     class="fas fa-angle-down"
-                                            ></span>
-                                            {{ subject_report.subject.name }}
+                                            >
+                                                {{ subject_report.subject.name }}
+                                            </span>
                                         </td>
                                         <td>{{ subject_report.count }}</td>
                                     </tr>
                                 </tbody>
                             </table>
                             <div id="subject_{{ lessons_report.lessons_type_id }}_{{ subject_report.subject.id }}" class="collapse table-responsive">
-                                <table class="table table-striped table-sm" cellspacing="0" width="100%">
-                                    <thead>
-                                        <th>Учень/Група</th>
-                                        <th>Дата</th>
-                                        <th>Час початку</th>
-                                        <th>Час закінчення</th>
-                                        <th>Присутніх</th>
-                                        <th>Опції</th>
-                                    </thead>
-                                    <tbody id="report_table{{ lessons_report.lessons_type_id }}{{subject_report.subject.name}}">
-                                        {% for lessons in subject_report.lessons %}
-                                            <tr>
-                                                <td>
-                                                    {% if lessons.condition_individual %}
-                                                        {{ lessons.student.full_name}}
-                                                    {% else %}
-                                                        {{ lessons.group.name}}
-                                                    {% endif %}
-                                                </td>
-                                                <td>{{ lessons.date|date:"d.m.y" }}</td>
-                                                <td>{{ lessons.format_t_start }}</td>
-                                                <td>{{ lessons.format_t_end }}</td>
-                                                <td>{{ lessons.presence_count }} / {{ lessons.students_count }}</td>
-                                                <td>
-                                                    <button class="btn btn-info"
-                                                            onClick="editObjectPage(this)"
-                                                            data-url="{% url 'lessons_action' 'edit' lessons.id %}"
-                                                            title="Редагувати заняття"
-                                                    >
-                                                        <span class="fas fa-pencil-ruler"></span>
-                                                    </button>
-                                                    <button class="btn btn-info"
-                                                            onClick="goToUrl(this)"
-                                                            data-url="{% url 'presence_actions' lessons.id 'edit' %}"
-                                                            title="Редагувати присутність"
-                                                    >
-                                                        <span class="fas fa-tasks"></span>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
+                                <div class="lessons_table">
+                                    <table class="table table-hover table-sm" cellspacing="0" width="100%">
+                                        <thead>
+                                            <th>Учень/Група</th>
+                                            <th>Дата</th>
+                                            <th>Час початку</th>
+                                            <th>Час закінчення</th>
+                                            <th>Присутніх</th>
+                                            <th>Опції</th>
+                                        </thead>
+                                        <tbody id="report_table{{ lessons_report.lessons_type_id }}{{subject_report.subject.name}}">
+                                            {% for lessons in subject_report.lessons %}
+                                                <tr>
+                                                    <td>
+                                                        {% if lessons.condition_individual %}
+                                                            {{ lessons.student.full_name}}
+                                                        {% else %}
+                                                            {{ lessons.group.name}}
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ lessons.date|date:"d.m.y" }}</td>
+                                                    <td>{{ lessons.format_t_start }}</td>
+                                                    <td>{{ lessons.format_t_end }}</td>
+                                                    <td>{{ lessons.presence_count }} / {{ lessons.students_count }}</td>
+                                                    <td>
+                                                        <button class="btn btn-info"
+                                                                onClick="editObjectPage(this)"
+                                                                data-url="{% url 'lessons_action' 'edit' lessons.id %}"
+                                                                title="Редагувати заняття"
+                                                        >
+                                                            <span class="fas fa-pencil-ruler"></span>
+                                                        </button>
+                                                        <button class="btn btn-info"
+                                                                onClick="goToUrl(this)"
+                                                                data-url="{% url 'presence_actions' lessons.id 'edit' %}"
+                                                                title="Редагувати присутність"
+                                                        >
+                                                            <span class="fas fa-tasks"></span>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         {% endfor %}
+                        </div>
                     </div>
                 </div>
             {% endfor %}
+            </div>
         </div>
     </div>
     <script>
