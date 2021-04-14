@@ -47,17 +47,19 @@ def services(request: HttpRequest):
     ctx: Dict[Any, Any] = {}
     template_name = 'schedule/services/base.html'
 
-    def _view_all():
+    def _view_all(add_form: bool = False):
         ctx.update(services=get_all_services())
-        ctx.update(form=ServiceForm())
+        if add_form:
+            ctx.update(form=ServiceForm())
 
     def _create():
         form = ServiceForm(request.POST)
         if form.is_valid():
             try:
                 add_service(**form.cleaned_data)
-            except NameAlreadyExistError as e:
+            except Exception as e:
                 ctx.update(errors=e)
+                ctx.update(form=ServiceForm(data=form.cleaned_data))
 
     if request.method == 'POST':
         _create()

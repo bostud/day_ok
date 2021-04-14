@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'h^q!=%t$sb$x!&2tafj@bd_y-5(qoa%yo9+xm8+%#u+!hzu)n1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     'dayok.space',

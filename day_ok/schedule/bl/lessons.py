@@ -1,6 +1,6 @@
 import logging
 import json
-from typing import List, Generator, Optional
+from typing import List, Generator
 from datetime import date, timedelta, datetime
 from ..models import (
     Lessons,
@@ -20,8 +20,13 @@ from ..forms.lessons import (
     AddLessonsForm, EditLessonsForm,
     convert_cleaned_data_to_objects, FilterLessonsForm,
 )
-from ..data_classes.lessons import AddLessonsDC, EditLessonsDC, EmptyLessons
-from ..utils import datetime_now_tz as now, get_weekdays_tuple
+from ..data_classes.lessons import (
+    AddLessonsDC,
+    EditLessonsDC,
+    EmptyLessons,
+    LessonsDayWeekView,
+)
+from ..utils import datetime_now_tz as now, get_weekdays_tuple, get_week_date_start
 from ..data_classes.lessons import LessonsScheduleTeachers
 
 log = logging.getLogger(__name__)
@@ -145,6 +150,8 @@ def add_lessons_from_form(form: AddLessonsForm) -> int:
         presence = StudentPresence(
             lessons=ls,
         )
+        presence.save()
+        presence.participants.add(*ls.participants_list)
         presence.save()
         lessons_created += 1
 
@@ -326,3 +333,26 @@ def fill_daily_lessons(
             result.append(EmptyLessons(t))
 
     return result
+
+
+def get_lessons_for_week_view(
+    date_start: date,
+) -> List[LessonsDayWeekView]:
+    day = 0
+    res = []
+    date_start = get_week_date_start(date_start)
+    while day < 7:
+        dt = date_start + timedelta(days=day)
+        is_today = (dt == now().date())
+        lessons = Lessons.objects.filter(
+            date=dt,
+        ).order_by('time_start').all()
+        res.append(LessonsDayWeekView(
+            date_name=get_weekday_name_by_date(dt),
+            date=dt,
+            lessons=lessons,
+            is_today=is_today,
+            head_color='#c2eff7' if is_today else '',
+        ))
+        day += 1
+    return res

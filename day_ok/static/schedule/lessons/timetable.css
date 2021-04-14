@@ -5,8 +5,16 @@
 .schedule {
   font-family: 'Open Sans', sans-serif;
   color: #efefef;
-  overflow: auto;
 }
+
+.schedule_content {
+  width: 175vh;
+  overflow-x: scroll;
+}
+
+/*.schedule_data {*/
+/*  width: 250vh;*/
+/*}*/
 
 .schedule_modal {
   color: #343a40;
@@ -59,6 +67,126 @@
   font-weight: 200;
   padding-left: 5px;
 }
+
+
+@media screen and (max-width: 1440px){
+
+  .schedule_content {
+    width: 170vh;
+  }
+
+}
+
+@media screen and (max-width: 1390px){
+
+  .schedule_content {
+    width: 150vh;
+  }
+
+}
+
+@media screen and (max-width: 1281px){
+
+  .schedule_content {
+    width: 140vh;
+  }
+
+}
+
+@media screen and (max-width: 1180px){
+
+  .schedule_content {
+    width: 125vh;
+  }
+
+}
+
+@media screen and (max-width: 1024px) {
+  .schedule_content {
+    width: 115vh;
+  }
+}
+
+@media screen and (max-width: 950px) {
+  .schedule_content {
+    width: 100vh;
+  }
+}
+
+@media screen and (max-width: 830px) {
+  .schedule_content {
+    width: 90vh;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .schedule_content {
+    width: 85vh;
+  }
+}
+
+@media screen and (max-width: 710px) {
+  .schedule_content {
+    width: 70vh;
+  }
+}
+
+@media screen and (max-width: 590px) {
+  .schedule_content {
+    width: 60vh;
+  }
+}
+
+@media screen and (max-width: 590px) {
+  .schedule_content {
+    width: 50vh;
+  }
+}
+
+
+@media screen and (max-width: 425px) {
+  .teacher.time {
+    width: 5vh;
+  }
+
+  .schedule_content {
+    width: 42vh;
+  }
+}
+
+@media screen and (max-width: 414px) {
+  .teacher.time {
+    width: 5vh;
+  }
+
+  .schedule_content {
+    width: 37vh;
+  }
+}
+
+
+@media screen and (max-width: 375px) {
+  .teacher.time {
+    width: 5vh;
+  }
+
+  .schedule_content {
+    width: 35vh;
+  }
+}
+
+
+@media screen and (max-width: 320px) {
+  .teacher.time {
+    width: 5vh;
+  }
+
+  .schedule_content {
+    width: 30vh;
+  }
+}
+
+
 .lessons.dauto { font-size: 15px; }
 .lessons.d120 { height: 12vh; }
 .lessons.d90 { height: 9vh; }
