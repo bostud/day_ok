@@ -170,18 +170,86 @@
                     <td>
                         <div style="background-color: {{day.style}}">
                             <b>
-                                {{day.date|date:"d.m.Y" }}
                                 {% if day.is_today %}
-                                    <span class="badge badge-danger">Today</span>
+                                    <span class="badge badge-primary">{{day.date|date:"d.m.Y" }}</span>
+                                {% else %}
+                                    {{day.date|date:"d.m.Y" }}
                                 {% endif %}
                             </b>
                             <br>
                             {% if day.lessons %}
-                                {% for l in day.lessons %}
-                            <p><span class="btn btn-info">{{l}}</span></p>
+                                {% for lesson in day.lessons %}
+                                    <div class="border border-success">
+                                        <div class="lessons dropdown"
+                                             style="background-color: {{ lesson.teacher.lessons_color }}; color: {{lesson.teacher.lessons_font_color}};"
+                                             data-is-live="{{lesson.is_live}}"
+                                             data-is-finished="{{lesson.is_finished}}"
+                                             data-url="{% url 'lessons_action' 'edit' lesson.id %}"
+                                             data-toggle="dropdown"
+                                        >
+                                            {{lesson.participation_name}}
+                                            {% if lesson.is_live_now %}
+                                                <span class="badge badge-danger">Live!</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" data-toggle="modal" data-target="#lessonModal">Інфо</a>
+                                            <a class="dropdown-item" href="{% url 'lessons_action' 'edit'  lesson.id %}">Редагувати</a>
+                                            <a class="dropdown-item" href="{% url 'lessons_action' 'delete'  lesson.id %}">Видалити</a>
+                                            <div class="dropdown-header">
+                                                Присутність:
+                                                {{ lesson.presence_count }}/{{ lesson.students_count}}
+                                            </div>
+                                            {% if lesson.condition_individual %}
+                                                {% if lesson.presence_count < lesson.students_count %}
+                                                    <a class="dropdown-item" target="_blank" href="{% url 'presence_actions' lesson.id 'all' %}">Урок відбувся</a>
+                                                {% endif %}
+                                            {% else %}
+                                                {% if lesson.presence_count != lesson.students_count %}
+                                                    <a class="dropdown-item" target="_blank" href="{% url 'presence_actions' lesson.id 'all' %}">Усі є</a>
+                                                {% endif %}
+                                            {% endif %}
+                                            <a class="dropdown-item" target="_blank" href="{% url 'presence_actions' lesson.id 'edit' %}">Редагувати</a>
+                                        </div>
+                                    </div>
+                                    <div class="modal fade" id="lessonModal">
+                                      <div class="modal-dialog modal-sm modal-dialog-centered">
+                                        <div class="modal-content">
+
+                                          <!-- Modal Header -->
+                                          <div class="modal-header">
+                                            <h4 class="modal-title">Заняття</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                          </div>
+
+                                          <div class="modal-body">
+                                            <ul class="list-group list-group-sm" style="text-align: left">
+                                              <li class="list-group-item">
+                                                  <b>Учень/Група:</b> {{lesson.participation_name}}</li>
+                                              <li class="list-group-item">
+                                                  <b>Аудиторія:</b> {{lesson.classroom.name}}</li>
+                                              <li class="list-group-item">
+                                                  <b>Дата:</b> {{lesson.date|date:"d.m.Y"}}</li>
+                                              <li class="list-group-item">
+                                                  <b>Час початку:</b> {{lesson.time_start|time:"H:i"}}</li>
+                                              <li class="list-group-item">
+                                                  <b>Час кінця:</b> {{lesson.time_end|time:"H:i"}}</li>
+                                              <li class="list-group-item">
+                                                  <b>Предмет:</b> {{lesson.subject}}</li>
+                                            </ul>
+                                          </div>
+
+                                          <!-- Modal footer -->
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                          </div>
+
+                                        </div>
+                                      </div>
+                                    </div>
                                 {% endfor %}
                             {% else %}
-                                <p><span class="btn btn-default">&nbsp;    </span></p>
+                                <span class="btn btn-default">&nbsp;</span></p>
                             {% endif %}
                         </div>
                     </td>

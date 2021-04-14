@@ -76,7 +76,7 @@ def datetime_localize(dt: datetime) -> datetime:
 def get_year_month_periods() -> List[str]:
     dt_now = datetime_now_tz()
     dt_start = DATE_START_PERIODS
-    months = get_month_from_date(dt_start, dt_now)
+    months = 12
     res = []
     month_counter = 0
     for y in range(dt_start.year, dt_now.year + 1):

@@ -244,13 +244,11 @@ def get_weekly_lessons_by_year_and_month(
     week_day = 0
     result = []
     while _date <= _last_date:
-        if _date.month != month:
-            daily_r = DailyLessonsReport([], _date, False)
-        else:
-            daily_r = DailyLessonsReport(
-                get_lessons_by_date(_date, teacher),
-                _date
-            )
+        daily_r = DailyLessonsReport(
+            get_lessons_by_date(_date, teacher),
+            _date,
+            _date.month == month,
+        )
         result.append(daily_r)
         week_day += 1
         _date = _date + timedelta(days=1)
