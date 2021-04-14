@@ -193,7 +193,7 @@
                                             {% endif %}
                                         </div>
                                         <div class="dropdown-menu">
-                                            <a class="dropdown-item" data-toggle="modal" data-target="#lessonModal">Інфо</a>
+                                            <a class="dropdown-item" data-toggle="modal" data-target="#lessonModal{{lesson.id}}">Інфо</a>
                                             <a class="dropdown-item" href="{% url 'lessons_action' 'edit'  lesson.id %}">Редагувати</a>
                                             <a class="dropdown-item" href="{% url 'lessons_action' 'delete'  lesson.id %}">Видалити</a>
                                             <div class="dropdown-header">
@@ -212,7 +212,7 @@
                                             <a class="dropdown-item" target="_blank" href="{% url 'presence_actions' lesson.id 'edit' %}">Редагувати</a>
                                         </div>
                                     </div>
-                                    <div class="modal fade" id="lessonModal">
+                                    <div class="modal fade" id="lessonModal{{lesson.id}}">
                                       <div class="modal-dialog modal-sm modal-dialog-centered">
                                         <div class="modal-content">
 
