@@ -1,0 +1,34 @@
+<div class="form-group">
+    <div class="add_form name">
+        <label for="id_type">Вид</label>
+        {{form.name}}
+    </div>
+    <div class="row add_form">
+        <div class="col">
+            <div class="date_of_event">
+                <label for="id_date_of_event">Дата</label>
+                {{form.date_of_event}}
+            </div>
+        </div>
+        <div class="col">
+            <div class="add_form time_start">
+                <label for="id_time_start">Час початку</label>
+                {{form.time_start}}
+            </div>
+        </div>
+        <div class="col">
+            <div class="add_form time_end">
+                <label for="id_time_end">Час кінця</label>
+                {{form.time_end}}
+            </div>
+        </div>
+    </div>
+    <div class="add_form location">
+        <label for="id_location">Локація</label>
+        {{form.location}}
+    </div>
+    <div class="add_form participants">
+        <label for="id_participants">Учасники</label>
+        {{form.participants}}
+    </div>
+</div>

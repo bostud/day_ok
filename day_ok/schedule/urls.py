@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     home_view,
     reports,
-    lessons_view, lessons_actions, add_lessons,
+    lessons_view, lessons_actions, add_lessons, get_lessons_list,
     events, event_actions, event_location,
     classrooms, classrooms_actions,
     groups, groups_actions, group_delete, group_unpin_student,
@@ -26,6 +26,7 @@ lessons_urlpatterns = [
         lessons_actions,
         name='lessons_action',
     ),
+    path('lessons/get', get_lessons_list, name='get_lessons'),
 ]
 
 event_urlpatterns = [

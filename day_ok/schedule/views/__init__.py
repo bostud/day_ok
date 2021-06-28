@@ -1,5 +1,5 @@
 from .base import reports, home_view, about, contacts
-from .lessons import lessons_view, add_lessons, lessons_actions
+from .lessons import lessons_view, add_lessons, lessons_actions, get_lessons_list
 from .events import events, event_actions, event_location
 from .teachers import teachers_view, teachers, set_teacher_lessons_style, teacher_delete  # noqa
 from .teachers import unpin_subject

@@ -85,8 +85,8 @@ def prepare_edit_lessons_form_data(lessons_id: int) -> dict:
 
 
 def calculate_time_end(
-        time_start: datetime.time,
-        subject: Subject,
+    time_start: datetime.time,
+    subject: Subject,
 ) -> datetime.time:
     date_today = now()
     dt_start = datetime.combine(date_today, time_start)
@@ -159,6 +159,35 @@ def add_lessons_from_form(form: AddLessonsForm) -> int:
         parent_lessons.delete()
 
     return lessons_created
+
+
+def add_test_lessons(
+    first_name: str,
+    last_name: str,
+    teacher: int,
+    subject: int,
+    date_lessons: datetime.date,
+    time_start: datetime.time,
+    classroom: int,
+) -> int:
+    student = Student.objects.create(
+        first_name=first_name,
+        last_name=last_name,
+        status=Student.Status.TEST,
+    )
+    student.save()
+    lesson = Lessons.objects.create(
+        classroom=classroom,
+        teacher=teacher,
+        lesssons_type=Lessons.Type.INDIVIDUAL,
+        subject=subject,
+        date=date_lessons,
+        time_start=time_start,
+        time_end=time_start,
+        student=student,
+    )
+    lesson.save()
+    return lesson.id
 
 
 def get_weekly_classroom_lessons_by_day(
@@ -356,3 +385,7 @@ def get_lessons_for_week_view(
         ))
         day += 1
     return res
+
+
+def get_lessons(**kwargs):
+    return Lessons.objects.filter(**kwargs).all().iterator()

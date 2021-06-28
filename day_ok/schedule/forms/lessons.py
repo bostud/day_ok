@@ -5,7 +5,7 @@ from ..models import (
 from django import forms
 from ..utils import get_weekdays_tuple, datetime_now_tz as now
 from .utils import (
-    get_groups, get_teachers, get_classrooms,
+    get_groups, get_teachers, get_classrooms, get_dummy_choices,
     DateInput, get_students, get_subjects, DateInputEmpty
 )
 
@@ -55,7 +55,7 @@ class LessonsByDayForm(forms.Form):
     )
 
 
-class AddLessonsForm(forms.Form):
+class LessonsForm(forms.Form):
     classroom = forms.ChoiceField(
         label='Аудиторія',
         choices=get_classrooms,
@@ -67,22 +67,52 @@ class AddLessonsForm(forms.Form):
         label='Предмет',
         choices=get_subjects,
     )
-    lessons_type = forms.ChoiceField(
-        label='Тип заняття',
-        choices=Lessons.Type.choices,
-        initial=Lessons.Type.INDIVIDUAL,
-    )
     teacher = forms.ChoiceField(
         label='Викладач',
         choices=get_teachers,
     )
     student = forms.ChoiceField(
         label='Учень',
-        help_text='Тільки якщо тип - індивідуальний',
         choices=get_students,
-        initial='',
         required=False,
     )
+
+    lessons_type = forms.ChoiceField(
+        label='Тип заняття',
+        choices=Lessons.Type.choices,
+        initial=Lessons.Type.INDIVIDUAL,
+    )
+
+    classroom.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+    teacher.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+    subject.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+    student.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+    time_start.widget.attrs.update({
+        'class': 'form-control timepicker',
+        'data-time-format': "H:i",
+        'data-step': "30",
+        'data-min-time': "09:00",
+        'data-max-time': "20:00",
+        'data-show-2400': "true",
+    })
+    lessons_type.widget.attrs.update({
+        'class': 'form-control',
+    })
+
+
+class AddLessonsForm(LessonsForm):
     group = forms.ChoiceField(
         label='Група',
         help_text='Тільки якщо тип - груповий',
@@ -111,6 +141,22 @@ class AddLessonsForm(forms.Form):
         choices=get_weekdays_tuple,
         required=False,
     )
+
+    group.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+    date_from_valid.widget.attrs.update({
+        'class': 'form-control datepicker',
+    })
+    date_until_valid.widget.attrs.update({
+        'class': 'form-control datepicker',
+    })
+    weekdays_for_repeating.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+        'multiply': 'multiply',
+    })
 
 
 class EditLessonsForm(AddLessonsForm):
@@ -194,3 +240,89 @@ class FilterLessonsForm(forms.Form):
         'multiply': 'multiply',
         'data-selected-text-format': 'count',
     })
+
+
+class AddTestLessons(forms.Form):
+    first_name = forms.CharField(
+        required=True,
+        max_length=50,
+    )
+    last_name = forms.CharField(
+        required=True,
+        max_length=150,
+    )
+    date_lessons = forms.DateField(
+        widget=DateInputEmpty(),
+        input_formats=['%d.%m.%Y'],
+    )
+    time_start = forms.TimeField(
+        label='Початок заняття',
+        required=False,
+    )
+    lessons_type = forms.ChoiceField(
+        choices=Lessons.Type.choices,
+    )
+    subject = forms.ChoiceField(
+        choices=get_subjects,
+        required=False,
+    )
+    teacher = forms.ChoiceField(
+        choices=get_teachers,
+        required=False,
+    )
+    classroom = forms.ChoiceField(
+        choices=get_classrooms,
+        required=False,
+    )
+    lessons = forms.ChoiceField(
+        choices=get_dummy_choices,
+        required=False,
+    )
+
+    first_name.widget.attrs.update({
+        'class': 'form-control',
+        'placeholder': 'Ім`я',
+    })
+    last_name.widget.attrs.update({
+        'class': 'form-control',
+        'placeholder': 'Прізвище',
+    })
+    date_lessons.widget.attrs.update({
+        'class': 'form-control datepicker',
+        'placeholder': '01.01.2021',
+    })
+    lessons.widget.attrs.update({
+        'class': 'form-control',
+    })
+    subject.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+    teacher.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+    lessons_type.widget.attrs.update({
+        'class': 'form-control',
+    })
+    classroom.widget.attrs.update({
+        'class': 'form-control selectpicker',
+        'data-live-search': 'true',
+    })
+    time_start.widget.attrs.update({
+        'class': 'form-control timepicker',
+        'data-time-format': "H:i",
+        'data-step': "30",
+        'data-min-time': "09:00",
+        'data-max-time': "20:00",
+        'data-show-2400': "true",
+    })
+
+
+class GetLessonsForm(forms.Form):
+    date = forms.DateField(
+        input_formats=['%d.%m.%Y'],
+    )
+    lessons_type = forms.ChoiceField(
+        choices=Lessons.Type.choices,
+    )

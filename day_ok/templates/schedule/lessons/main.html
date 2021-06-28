@@ -49,6 +49,25 @@
                 </a>
             </div>
         </div>
+        <div class="col">
+            <div>
+                <h5>
+                    <button class="btn btn-outline-info" data-toggle="collapse" data-target="#add_test">
+                        <span class="fas fa-plus"></span>
+                    </button>
+                    Додати тестове заняття
+                </h5>
+                <div id="add_test" class="collapse add">
+                    <form class="form" method="post" action="{% url 'add_lessons' %}">
+                        {% csrf_token %}
+                        {% include 'schedule/lessons/add_lessons_test.html' with form=add_lessons_test_form %}
+                        <input hidden type="checkbox" value="1" checked name="is_test" id="id_is_test">
+                        <button type="submit" class="btn btn-success">Додати</button>
+                    </form>
+                    <hr />
+                </div>
+            </div>
+        </div>
     </div>
     <br />
     <div class="row">

@@ -68,4 +68,3 @@ class LessonsDayWeekView(Base):
     is_today: bool
     lessons: List[Lessons]
     head_color: str
-

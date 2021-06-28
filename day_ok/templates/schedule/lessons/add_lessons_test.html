@@ -1,0 +1,96 @@
+<div class="form-group">
+    <div class="row add_form">
+        <div class="col">
+            <div class="add_form first_name">
+                {{form.first_name}}
+            </div>
+        </div>
+        <div class="col">
+            <div class="add_form first_name">
+                {{form.last_name}}
+            </div>
+        </div>
+    </div>
+    <div class="row add_form">
+        <div class="col">
+            <div class="add_form date_of_lessons">
+                <label for="id_date_of_lessons">Дата</label>
+                {{form.date_lessons}}
+            </div>
+        </div>
+        <div class="col">
+            <div class="add_form lessons_type">
+                <label for="id_lessons_type">Тип заняття</label>
+                {{form.lessons_type}}
+            </div>
+        </div>
+    </div>
+    <div id="individual_block">
+        <div class="row add_form">
+            <div class="col">
+                <div class="add_form teacher">
+                    <label for="id_teacher">Викладач</label>
+                    {{form.teacher}}
+                </div>
+            </div>
+            <div class="col">
+                <div class="add_form subject">
+                    <label for="id_subject">Предмет</label>
+                    {{form.subject}}
+                </div>
+            </div>
+        </div>
+        <div class="add_form classroom">
+            <label for="id_classroom">Аудиторія</label>
+            {{form.classroom}}
+        </div>
+    </div>
+    <div id="group_block">
+        <div class="row add_form">
+            <div class="col">
+                <div class="add_form teacher">
+                    <label for="id_teacher">Заняття</label>
+                    {{form.lessons}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#id_date_lessons').change(function (e) {
+        getLessons(this);
+    });
+
+    function getLessons(elem) {
+        let dateLessons = document.getElementById('id_date_lessons').value
+        let lessonsType = document.getElementById('id_lessons_type').value;
+        if (parseInt(lessonsType) === 2 && dateLessons) {
+            $.ajax({
+                type: "GET",
+                url: "{% url 'get_lessons' %}?date=" + dateLessons.toString() + "&lessons_type=" + lessonsType,
+                success: function (response) {
+                    if (response.status === 'OK') {
+                        let lessonsOptions = document.getElementById('id_lessons');
+                        lessonsOptions.options.length = 0;
+                        for (rec = response.result.length; rec>=0,rec--;) {
+                            let option = document.createElement('option');
+                            option.text = response['result'][rec][1];
+                            option.value = response['result'][rec][0];
+                            lessonsOptions.add(option);
+                        }
+                    }
+                },
+                error: function (response) {
+                    alert(response["status"]);
+                }
+            })
+        }
+    }
+
+    $('#id_lessons_type').change(function (elem) {
+        document.getElementById('individual_block').hidden = (parseInt(this.value) === 2);
+        document.getElementById('group_block').hidden = (parseInt(this.value) === 1);
+        getLessons(this);
+    });
+</script>

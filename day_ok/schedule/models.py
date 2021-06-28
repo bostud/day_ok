@@ -58,13 +58,12 @@ class ContactMixin(models.Model):
     last_name = models.CharField(
         'Прізвище', max_length=100, blank=False)
     phone_number = models.CharField(
-        'Номер телефону', max_length=13, blank=False)
+        'Номер телефону', max_length=13, blank=False, null=True)
     email = models.CharField(max_length=150, blank=True, null=True)
     date_of_birth = models.DateField('Дата народження', blank=True, null=True)
     date_created = models.DateTimeField(auto_created=True, auto_now_add=True)
     record_status = models.IntegerField(
         choices=RecordStatus.choices,
-        max_length=2,
         default=RecordStatus.ACTIVE
     )
     date_update = models.DateTimeField(null=True)
@@ -579,7 +578,11 @@ class Lessons(models.Model):
     )
 
     def __str__(self):
-        return f"{self.classroom.name}/{self.get_lessons_type_name}"
+        return f"{self.classroom.name} / " \
+               f"{self.subject.name} / " \
+               f"{self.get_lessons_type_name} / " \
+               f"{self.time_start.strftime('%H:%M')}-" \
+               f"{self.time_end.strftime('%H:%M')}"
 
     def format_date(self):
         return self.date.strftime('%d.%m.%Y')
@@ -840,11 +843,10 @@ class StudentPresence(models.Model):
         verbose_name = 'Відвідування'
         verbose_name_plural = 'Відвідування'
 
-    lessons = models.ForeignKey(
+    lessons = models.OneToOneField(
         Lessons,
         on_delete=models.CASCADE,
         verbose_name='Заняття',
-        unique=True,
     )
     participants = models.ManyToManyField(
         Student,

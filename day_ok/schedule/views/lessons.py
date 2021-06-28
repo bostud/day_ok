@@ -1,6 +1,6 @@
 from typing import Dict, Any
 from django.shortcuts import render, redirect
-from django.http import HttpRequest
+from django.http import HttpRequest, JsonResponse
 from ..middleware import authenticated
 from datetime import datetime, timedelta
 from ..utils import datetime_now_tz as now
@@ -9,6 +9,8 @@ from ..forms.lessons import (
     LessonsByClassRoomForm,
     AddLessonsForm, LessonsByDayForm,
     EditLessonsForm, FilterLessonsForm,
+    AddTestLessons,
+    GetLessonsForm,
 )
 from ..models import ClassRoom
 from ..bl.lessons import (
@@ -22,6 +24,8 @@ from ..bl.lessons import (
     get_lessons_data_by_filter_form,
     get_lessons_data_for_teachers,
     get_lessons_for_week_view,
+    add_test_lessons,
+    get_lessons,
 )
 from ..utils import (
     get_weekday_number, get_weekday_name,
@@ -45,6 +49,8 @@ def lessons_view(request: HttpRequest, show_type: str, *args, **kwargs):
     context: Dict[Any, Any] = {
         'form': landing_form(),
         'show_type': show_type,
+        'add_lessons_form': AddLessonsForm(),
+        'add_lessons_test_form': AddTestLessons(),
     }
     dt_now = now()
 
@@ -137,11 +143,18 @@ def add_lessons(request: HttpRequest, *args, **kwargs):
     }
     context.update(**prepare_add_lessons_form_data())
     if request.method == 'POST':
-        form = AddLessonsForm(request.POST)
+        is_test = request.POST.get('is_test', False)
+        action_form = AddTestLessons if is_test else AddLessonsForm
+        form = action_form(request.POST)
         if form.is_valid():
-            new_lessons_count = add_lessons_from_form(form)
+            new_lessons_count = (
+                add_lessons_from_form(form)
+                if not is_test else
+                add_test_lessons(**form.cleaned_data)
+            )
             context['new_lessons'] = new_lessons_count
-
+        if is_test:
+            return redirect('lessons', 'week')
     return render(request, 'schedule/lessons/actions.html', context)
 
 
@@ -187,3 +200,23 @@ def lessons_actions(request: HttpRequest, action: str, lessons_id: int):
             return res
 
     return render(request, template_name, ctx)
+
+
+@authenticated
+def get_lessons_list(request: HttpRequest, *args, **kwargs):
+    if request.method == 'GET':
+        form = GetLessonsForm(request.GET)
+        if form.is_valid():
+            query_filter = {
+                'date': form.cleaned_data['date'],
+                'lessons_type': int(form.cleaned_data['lessons_type']),
+            }
+            result = [(r.id, str(r)) for r in get_lessons(**query_filter)]
+            return JsonResponse(
+                {
+                    'status': 'OK',
+                    'result': result,
+                },
+                status=200,
+            )
+    return JsonResponse({}, status=400)
